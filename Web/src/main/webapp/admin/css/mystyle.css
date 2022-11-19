@@ -1,0 +1,11 @@
+.mg-15{
+    margin:15px;
+}
+.end-flex{
+    justify-content: flex-end!important;
+    
+}
+.btn-del{
+	width: 73px;
+	margin-bottom: 12px;
+}
