@@ -13,10 +13,10 @@ public class RSA_Algorithm {
 	private PublicKey publicKey;
 	private Cipher cipher;
 
-	public RSA_Algorithm() throws Exception {
+	public RSA_Algorithm(int sizeOfKey) throws Exception {
 		this.cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-		generator.initialize(2048);
+		generator.initialize(sizeOfKey);
 		KeyPair pair = generator.generateKeyPair();
 		this.privateKey = pair.getPrivate();
 		this.publicKey = pair.getPublic();
@@ -84,7 +84,7 @@ public class RSA_Algorithm {
 	}
 
 	public static void main(String[] args) throws Exception {
-		RSA_Algorithm rsa = new RSA_Algorithm();
+		RSA_Algorithm rsa = new RSA_Algorithm(512);
 		try (FileOutputStream fos = new FileOutputStream("public.key")) {
 			fos.write(rsa.getPublicKey_code().getEncoded());
 		}
