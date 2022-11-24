@@ -14,7 +14,7 @@ public class RSA_Algorithm {
 	private Cipher cipher;
 
 	public RSA_Algorithm(int sizeOfKey) throws Exception {
-		this.cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+		this.cipher = Cipher.getInstance("RSA/ECB/NoPadding");
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 		generator.initialize(sizeOfKey);
 		KeyPair pair = generator.generateKeyPair();
@@ -75,27 +75,11 @@ public class RSA_Algorithm {
 		return Base64.getEncoder().encodeToString(this.privateKey.getEncoded());
 	}
 
-	private String encode(byte[] data) {
+	public String encode(byte[] data) {
 		return Base64.getEncoder().encodeToString(data);
 	}
 
-	private byte[] decode(String data) {
+	public byte[] decode(String data) {
 		return Base64.getDecoder().decode(data);
 	}
-
-	public static void main(String[] args) throws Exception {
-		RSA_Algorithm rsa = new RSA_Algorithm(512);
-		try (FileOutputStream fos = new FileOutputStream("public.key")) {
-			fos.write(rsa.getPublicKey_code().getEncoded());
-		}
-		try (FileOutputStream fos = new FileOutputStream("private_key.pem")) {
-			fos.write(rsa.getPrivateKey_code().getEncoded());
-		}
-		String plaintext = "Hello world!";
-		
-		System.out.println("Encrypt: " + rsa.encryptString(plaintext, "private_key.pem"));
-		System.out.println("Encrypt: " + rsa.decryptString(rsa.encryptString(plaintext, "private_key.pem"), "public.key"));
-
-	}
-
 }
