@@ -67,48 +67,31 @@
 						<div class="title-left">
 							<h3>Thông tin thanh toán</h3>
 						</div>
-						<form class="needs-validation" novalidate>
-							<div class="row">
-								<div class="col-md-6 mb-3">
-									<label for="firstName">Họ và tên lót *</label> <input
-										type="text" class="form-control" id="firstName" placeholder=""
-										value="" required>
-									<div class="invalid-feedback">Valid first name is
-										required.</div>
-								</div>
-								<div class="col-md-6 mb-3">
-									<label for="lastName">Tên *</label> <input type="text"
-										class="form-control" id="lastName" placeholder="" value=""
-										required>
-									<div class="invalid-feedback">Valid last name is
-										required.</div>
+						<form class="needs-validation" action="checkout" >
+							<div class="mb-3">
+								<label for="username">Tên *</label>
+								<div class="input-group">
+									<input type="text" class="form-control" id="name" name="name"
+										placeholder="" required>
+								
 								</div>
 							</div>
 							<div class="mb-3">
-								<label for="username">Số điện thoại *</label>
+								<label for="phone-num">Số điện thoại *</label>
 								<div class="input-group">
-									<input type="text" class="form-control" id="username"
+									<input type="text" class="form-control" id="phone-num" name="phone-num"
 										placeholder="" required>
 									<div class="invalid-feedback" style="width: 100%;">Your
 										username is required.</div>
 								</div>
 							</div>
 							<div class="mb-3">
-								<label for="email">Địa chỉ Email *</label> <input type="email"
+								<label for="email">Địa chỉ Email *</label> <input type="email" name= "email"
 									class="form-control" id="email" placeholder="">
 								<div class="invalid-feedback">Please enter a valid email
 									address for shipping updates.</div>
 							</div>
-							<div class="mb-3">
-								<label for="address">Địa chỉ 1 *</label> <input type="text"
-									class="form-control" id="address" placeholder="" required>
-								<div class="invalid-feedback">Please enter your shipping
-									address.</div>
-							</div>
-							<div class="mb-3">
-								<label for="address2">Địa chỉ 2 *</label> <input type="text"
-									class="form-control" id="address2" placeholder="">
-							</div>
+
 							<div class="row">
 								<div class="col-md-4 mb-3">
 									<label for="country">Tỉnh/TP *</label>
@@ -118,7 +101,7 @@
 										<option value="United States">United States</option>
 
 									</select> -->
-									<select name="calc_shipping_provinces" class="wide w-100"
+									<select name="city" class="wide w-100"
 										id="country" required=""
 										onchange="print_state('sate',this.selectedIndex);">
 										<option value="">Chọn</option>
@@ -127,8 +110,8 @@
 									<div class="invalid-feedback">Hãy chọn Tỉnh/TP</div>
 								</div>
 								<div class="col-md-4 mb-3">
-									<label for="state">Quận/Huyện *</label> <select
-										name="calc_shipping_district" class="wide w-100" id="state"
+									<label for="district">Quận/Huyện *</label> <select
+										name="district" class="wide w-100" id="district"
 										required=""
 										onchange="print_district('wards',this.selectedIndex);">
 										<option value="">Chọn</option>
@@ -136,8 +119,8 @@
 									<div class="invalid-feedback">Hãy chọn Quận/Huyện</div>
 								</div>
 								<div class="col-md-4 mb-3">
-									<label for="wards">Phường xã *</label> <select
-										name="calc_shipping_wards" class="wide w-100" id="wards"
+									<label for="ward">Phường xã *</label> <select
+										name="ward" class="wide w-100" id="ward"
 										required="">
 										<option value="">Chọn</option>
 									</select>
@@ -147,14 +130,46 @@
 								<input class="billing_address_2" name="" type="hidden" value="">
 
 							</div>
+														<div class="mb-3">
+								<label for="address">Mô tả địa chỉ *</label> <input type="text"
+									class="form-control" id="address" placeholder="" required name="des-address">
+								<div class="invalid-feedback">Vui lòng nhập mô tả địa chỉ</div>
+							</div>
+				
 							<hr class="mb-4">
-							<div class="custom-control custom-checkbox">
-								<input type="checkbox" class="custom-control-input"
-									id="save-info"> <label class="custom-control-label"
-									for="save-info">Lưu thông tin</label>
+							
+					<div class="mb-3">
+								<label for="ship">Giao hàng</label> 
+								<div class="mb-4">
+									<div class="custom-control custom-radio">
+										<input id="shippingOption1" name="shipping-option"
+											class="custom-control-input" checked="checked" type="radio" value="1">
+										<label class="custom-control-label" for="shippingOption1">Giao
+											hàng tiêu chuẩn</label>
+											 <span class="float-right font-weight-bold">10.000
+											VND</span>
+									</div>
+									<div class="ml-4 mb-2 small">(1-2 ngày)</div>
+									<div class="custom-control custom-radio">
+										<input id="shippingOption2" name="shipping-option"
+											class="custom-control-input" type="radio"  value="2"> <label
+											class="custom-control-label" for="shippingOption2">Giao
+											hàng nhanh</label> <span class="float-right font-weight-bold">20.000
+											VND</span>
+									</div>
+									<div class="ml-4 mb-2 small">(5-6 tiếng)</div>
+									<div class="custom-control custom-radio">
+										<input id="shippingOption3" name="shipping-option"
+											class="custom-control-input" type="radio"  value="3"> <label
+											class="custom-control-label" for="shippingOption3">Giao
+											ngay lập tức</label> <span class="float-right font-weight-bold">30.000
+											VND</span>
+									</div>
+									<div class="ml-4 mb-2 small">(20-30 phút)</div>
+								</div>
 							</div>
 							<hr class="mb-4">
-							<div class="title">
+	<!-- 						<div class="title">
 								<span>Payment</span>
 							</div>
 							<div class="d-block my-3">
@@ -162,6 +177,7 @@
 									<input id="debit" name="paymentMethod" type="radio"
 										class="custom-control-input" checked required> <label
 										class="custom-control-label" for="debit">MoMo</label>
+									
 								</div>
 								<div class="custom-control custom-radio">
 									<input id="credit" name="paymentMethod" type="radio"
@@ -174,21 +190,21 @@
 										class="custom-control-input" required> <label
 										class="custom-control-label" for="paypal">Tiền mặt</label>
 								</div>
-							</div>
+							</div> -->
 	
 				<!-- 				<button type="button" 
 									data-toggle="collapse" data-target="#payment-cart">Simple
 									collapsible</button> -->
-							<div id="qr-code" >
+			<!-- 				<div id="qr-code" >
 								<div class="row">
 									<img alt=""  style="width: 50%"src="images/payment-icon/momo-payment.png">
 								</div>
-							</div>
+							</div> -->
 							<div id="payment-cart" class="collapse" >
 								<div class="row">
 									<div class="col-md-6 mb-3">
 										<label for="cc-name">Name on card</label> <input type="text"
-											class="form-control" id="cc-name" placeholder="" required>
+											class="form-control" id="cc-name" placeholder="" >
 										<small class="text-muted">Full name as displayed on
 											card</small>
 										<div class="invalid-feedback">Name on card is required</div>
@@ -196,7 +212,7 @@
 									<div class="col-md-6 mb-3">
 										<label for="cc-number">Credit card number</label> <input
 											type="text" class="form-control" id="cc-number"
-											placeholder="" required>
+											placeholder="" >
 										<div class="invalid-feedback">Credit card number is
 											required</div>
 									</div>
@@ -205,12 +221,12 @@
 									<div class="col-md-3 mb-3">
 										<label for="cc-expiration">Expiration</label> <input
 											type="text" class="form-control" id="cc-expiration"
-											placeholder="" required>
+											placeholder="" >
 										<div class="invalid-feedback">Expiration date required</div>
 									</div>
 									<div class="col-md-3 mb-3">
 										<label for="cc-expiration">CVV</label> <input type="text"
-											class="form-control" id="cc-cvv" placeholder="" required>
+											class="form-control" id="cc-cvv" placeholder="" >
 										<div class="invalid-feedback">Security code required</div>
 									</div>
 									<div class="col-md-6 mb-3">
@@ -233,45 +249,12 @@
 							</div>
 
 							<hr class="mb-1">
+							<input type="submit" id="checkout-submit">
 						</form>
 					</div>
 				</div>
 				<div class="col-sm-6 col-lg-6 mb-3">
 					<div class="row">
-						<div class="col-md-12 col-lg-12">
-							<div class="shipping-method-box">
-								<div class="title-left">
-									<h3>Giao hàng</h3>
-								</div>
-								<div class="mb-4">
-									<div class="custom-control custom-radio">
-										<input id="shippingOption1" name="shipping-option"
-											class="custom-control-input" checked="checked" type="radio" value="giao hang tieu chuan">
-										<label class="custom-control-label" for="shippingOption1">Giao
-											hàng tiêu chuẩn</label>
-											 <span class="float-right font-weight-bold">10.000
-											VND</span>
-									</div>
-									<div class="ml-4 mb-2 small">(1-2 ngày)</div>
-									<div class="custom-control custom-radio">
-										<input id="shippingOption2" name="shipping-option"
-											class="custom-control-input" type="radio"  value="giao hang nhanh"> <label
-											class="custom-control-label" for="shippingOption2">Giao
-											hàng nhanh</label> <span class="float-right font-weight-bold">20.000
-											VND</span>
-									</div>
-									<div class="ml-4 mb-2 small">(5-6 tiếng)</div>
-									<div class="custom-control custom-radio">
-										<input id="shippingOption3" name="shipping-option"
-											class="custom-control-input" type="radio"  value="giao ngay lap tuc"> <label
-											class="custom-control-label" for="shippingOption3">Giao
-											ngay lập tức</label> <span class="float-right font-weight-bold">30.000
-											VND</span>
-									</div>
-									<div class="ml-4 mb-2 small">(20-30 phút)</div>
-								</div>
-							</div>
-						</div>
 						<div class="col-md-12 col-lg-12">
 							<div class="odr-box">
 								<div class="title-left">
@@ -350,7 +333,7 @@
 							</div>
 						</div>
 						<div class="col-12 d-flex shopping-box">
-							<a href="checkout.jsp" class="ml-auto btn hvr-hover">Chốt đơn</a>
+							<a onclick="checkOut()" class="ml-auto btn hvr-hover">Xác thực</a>
 						</div>
 					</div>
 				</div>
@@ -464,7 +447,7 @@
 			function print_state(state_id, state_index) {
 			    fetch("json/data.json").then(res => res.json())
 			        .then(data => {
-			        	 var option_str = document.querySelector('#state');
+			        	 var option_str = document.querySelector('#district');
 			            option_str.length = 0;
 			            option_str.options[0] = new Option('Chọn Quận/Huyện', '');
 			            option_str.selectedIndex = 0;
@@ -479,7 +462,7 @@
 				function print_district(district_id, district_index) {
 				    fetch("json/data.json").then(res => res.json())
 				        .then(data => {
-				            var option_str = document.getElementById('wards');
+				            var option_str = document.getElementById('ward');
 				            option_str.length = 0;
 				            option_str.options[0] = new Option('Chọn Phường/Xã', '');
 				            option_str.selectedIndex = 0;
@@ -497,6 +480,9 @@
 				        })
 		
 		}
+				function checkOut(){
+					document.getElementById("checkout-submit").click();
+				}
 	</script>
 </body>
 
