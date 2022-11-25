@@ -1,6 +1,8 @@
 package servlet;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,9 +47,10 @@ public class CheckOut extends HttpServlet {
 		HttpSession session = request.getSession();
 		ShoppingCart<String, Product> cart = (ShoppingCart<String, Product>) session.getAttribute("cart");
 		String address = ward + " - " + district + " - " + city;
-		WritePDF.makeInvoicePDF(name, phoneNum, email, address, desAddres, shipping, ward, "25-11-2022",
+		LocalDateTime dateIssue = LocalDateTime.now();
+		WritePDF.makeInvoicePDF(name, phoneNum, email, address, desAddres, shipping, ward, dateIssue,
 				cart.getCartItems());
-		request.getRequestDispatcher("authentication.jsp").forward(request, response);
+		response.sendRedirect("authentication.jsp");
 
 	}
 
