@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<embed src="/invoice.pdf" type="application/pdf" width="100%" height="600px" />
+	<embed src="./invoice.pdf" type="application/pdf" width="100%" height="600px" />
 </body>
 </html>
