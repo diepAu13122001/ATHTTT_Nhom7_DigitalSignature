@@ -36,11 +36,13 @@ import model.Product;
 import servlet.Cart;
 
 public class WritePDF {
+	private static final Font FONT_BRAND = new Font(FontFamily.HELVETICA, 15, Font.BOLD, BaseColor.GRAY);
 	private static final Font FONT_FIELDNAME = new Font(FontFamily.HELVETICA, 12, Font.ITALIC, BaseColor.BLACK);
 	private static final Font FONT_TITLE2 = new Font(FontFamily.HELVETICA, 14, Font.BOLD, BaseColor.BLACK);
 	private static final Font FONT_TITLE1 = new Font(FontFamily.HELVETICA, 18, Font.BOLD, BaseColor.BLACK);
 	private static final Font FONT_HEADER_TABLE = new Font(FontFamily.HELVETICA, 12, Font.BOLD, BaseColor.BLACK);
 	private static final TabSettings TAB_FIELDNAME = new TabSettings(150f);
+	private static final TabSettings TAB_SUBTOTAL = new TabSettings(100f);
 	private static final String PATH ="C:\\Users\\Asus\\eclipse-workspace\\ATBMHTT\\ATHTTT_Nhom7_DigitalSignature\\Web\\src\\main\\webapp\\invoice.pdf";
 	public static void main(String[] args) {
 //		makeInvoicePDF("Nguyen Khai Hieu", "khaihieupc2@gmail.com", "0343385406", "Thu Duc-HCM-Viet Nam",
@@ -50,7 +52,8 @@ public class WritePDF {
 	}
 
 	public static void makeInvoicePDF(String name, String phoneNumber, String email, String address, String desAddress,
-			String shipping, String payement, LocalDateTime dateIssue, List<ShoppingCartItem<Product>> list) {
+			String shipping, String payement, LocalDateTime dateIssue, List<ShoppingCartItem<Product>> list,double subTotal,double discount
+			,double ship, double grandTotal) {
 		Document document = new Document();
 
 		try {
@@ -60,67 +63,30 @@ public class WritePDF {
 
 			// mở file để thực hiện viết
 			document.open();
+			Paragraph brand = new Paragraph("NHOM-7_ATBMHTTT", FONT_BRAND);
+			brand.setAlignment(Paragraph.ALIGN_RIGHT);
+			brand.setSpacingAfter(30);
+			document.add(brand);
 			// thêm nội dung sử dụng add function
 			Paragraph paragraph1 = new Paragraph("INVOICE", FONT_TITLE1);
 			paragraph1.setAlignment(Paragraph.ALIGN_CENTER);
-			paragraph1.setSpacingAfter(15);
 			document.add(paragraph1);
+			Paragraph paragraphDate = new Paragraph("("+formatDate(dateIssue)+")", new Font(FontFamily.HELVETICA,10, Font.ITALIC, BaseColor.BLACK));
+			paragraphDate.setAlignment(Paragraph.ALIGN_CENTER);
+			paragraphDate.setSpacingAfter(15);
+			
+			document.add(paragraphDate);
 
 			document.add(new Paragraph("Information", FONT_TITLE2));
 
-			Paragraph paragraph2 = new Paragraph();
-			paragraph2.add(new Phrase("Name:", FONT_FIELDNAME));
-			paragraph2.setTabSettings(TAB_FIELDNAME);
-			Phrase phrase1 = new Phrase(removeAccent(name));
-			paragraph2.add(Chunk.TABBING);
-			paragraph2.add(phrase1);
-			paragraph2.setIndentationLeft(25);
-			document.add(paragraph2);
+			document.add(addParagraph3("Name", name));
 			//
-			Paragraph paragraph3 = new Paragraph();
-			paragraph3.add(new Phrase("Phone number:", FONT_FIELDNAME));
-			paragraph3.setTabSettings(TAB_FIELDNAME);
-			Phrase phrase2 = new Phrase(removeAccent(phoneNumber));
-			paragraph3.add(Chunk.TABBING);
-			paragraph3.add(phrase2);
-			paragraph3.setIndentationLeft(25);
-			document.add(paragraph3);
+			document.add(addParagraph3("Phone number", phoneNumber));
 			//
-			Paragraph paragraph4 = new Paragraph();
-			paragraph4.add(new Phrase("Email:", FONT_FIELDNAME));
-			paragraph4.setTabSettings(TAB_FIELDNAME);
-			Phrase phrase3 = new Phrase(removeAccent(email));
-			paragraph4.add(Chunk.TABBING);
-			paragraph4.add(phrase3);
-			paragraph4.setIndentationLeft(25);
-			document.add(paragraph4);
-			//
-			Paragraph paragraph5 = new Paragraph();
-			paragraph5.add(new Phrase("Address:", FONT_FIELDNAME));
-			paragraph5.setTabSettings(TAB_FIELDNAME);
-			Phrase phrase4 = new Phrase(removeAccent(address));
-			paragraph5.add(Chunk.TABBING);
-			paragraph5.add(phrase4);
-			paragraph5.setIndentationLeft(25);
-			document.add(paragraph5);
-			//
-			Paragraph paragraph6 = new Paragraph();
-			paragraph6.add(new Phrase("Description address:", FONT_FIELDNAME));
-			paragraph6.setTabSettings(TAB_FIELDNAME);
-			Phrase phrase6 = new Phrase(removeAccent(desAddress));
-			paragraph6.add(Chunk.TABBING);
-			paragraph6.add(phrase6);
-			paragraph6.setIndentationLeft(25);
-			document.add(paragraph6);
-			//
-			Paragraph paragraph7 = new Paragraph();
-			paragraph7.add(new Phrase("Date issue :", FONT_FIELDNAME));
-			paragraph7.setTabSettings(TAB_FIELDNAME);
-			Phrase phrase7 = new Phrase(formatDate(dateIssue));
-			paragraph7.add(Chunk.TABBING);
-			paragraph7.add(phrase7);
-			paragraph7.setIndentationLeft(25);
-			document.add(paragraph7);
+			document.add(addParagraph3("Email", email));
+			document.add(addParagraph3("Address", address));
+			document.add(addParagraph3("Desciption address", desAddress));
+			
 			//
 			Paragraph paragraphTile2 = new Paragraph("Orders", FONT_TITLE2);
 			paragraphTile2.setSpacingAfter(10);
@@ -168,7 +134,13 @@ public class WritePDF {
 				}
 			}
 			document.add(t);
-
+			//								
+			document.add(addParagraph2(subTotal,"SUB TOTAL"));
+			document.add(addParagraph2(discount,"DISCOUNT"));
+			document.add(addParagraph2(ship,"SHIP"));
+			document.add(addParagraph2(grandTotal,"GRAND TOTAL"));
+			//
+							
 			// đóng filelo World PDF document.
 			document.close();
 			System.out.println("OK");
@@ -179,7 +151,27 @@ public class WritePDF {
 			e.printStackTrace();
 		}
 	}
-	public static void styleCell(PdfPCell c) {
+	private static Paragraph addParagraph2(double value, String nameField) {
+		Paragraph paragraph = new Paragraph();
+		paragraph.setIndentationLeft(310);
+		paragraph.add(new Phrase(nameField +" :", FONT_FIELDNAME));
+		paragraph.setTabSettings(TAB_SUBTOTAL);
+		Phrase phrase = new Phrase(formatCurrent(value)+" VND");
+		paragraph.add(Chunk.TABBING);
+		paragraph.add(phrase);								
+		return paragraph;
+	}
+	private static Paragraph addParagraph3(String nameField,String value) {
+		Paragraph paragraph = new Paragraph();
+		paragraph.add(new Phrase(nameField+":", FONT_FIELDNAME));
+		paragraph.setTabSettings(TAB_FIELDNAME);
+		Phrase phrase1 = new Phrase(removeAccent(value));
+		paragraph.add(Chunk.TABBING);
+		paragraph.add(phrase1);
+		paragraph.setIndentationLeft(25);							
+		return paragraph;
+	}
+	private static void styleCell(PdfPCell c) {
 			c.setPaddingLeft(5);
 			c.setPaddingBottom(10);
 			c.setPaddingTop(5);
@@ -187,11 +179,11 @@ public class WritePDF {
 			
 	}
 	public static String formatDate(LocalDateTime localDateTime) {
-		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss");
+		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		 String formatDateTime = localDateTime.format(formatter);
 		  return formatDateTime;
 	}
-	public static String removeAccent(String s) {
+	private static String removeAccent(String s) {
 		s = s.replaceAll("Đ", "D");
 		s = s.replaceAll("đ", "d");
 		String temp = Normalizer.normalize(s, Normalizer.Form.NFD);

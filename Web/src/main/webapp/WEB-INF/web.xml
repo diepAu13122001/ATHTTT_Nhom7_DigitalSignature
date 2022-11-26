@@ -25,4 +25,13 @@
     <filter-name>filter2</filter-name>
     <url-pattern>/admin/*</url-pattern>
   </filter-mapping>
+  <filter>
+    <filter-name>filter3</filter-name>
+    <filter-class>filter.LoginCustomerFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>filter3</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
 </web-app>

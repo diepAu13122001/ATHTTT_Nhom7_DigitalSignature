@@ -1,9 +1,6 @@
 package filter;
 
 import java.io.IOException;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -11,19 +8,23 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import model.Customer;
 
 /**
- * Servlet Filter implementation class RouterFilter
+ * Servlet Filter implementation class LoginCustomerFilter
  */
-
-public class RouterFilter implements Filter {
-
+public class LoginCustomerFilter  implements Filter {
+       
     /**
-     * Default constructor. 
+     * @see HttpFilter#HttpFilter()
      */
-    public RouterFilter() {
+    public LoginCustomerFilter() {
+        super();
         // TODO Auto-generated constructor stub
     }
 
@@ -42,13 +43,23 @@ public class RouterFilter implements Filter {
 		// place your code here
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		String  url = httpRequest.getServletPath();
-		if(url.endsWith("header.jsp") || url.endsWith("footer.jsp")) {
-			httpResponse.sendRedirect(httpRequest.getContextPath());
+		String url = httpRequest.getRequestURI();
+		String[] split = url.split("/");
+		if(split[split.length-1].equals("checkout.jsp")||split[split.length-1].equals("authentication.jsp")) {
+			HttpSession session = httpRequest.getSession(true);
+			Customer customer = (Customer) session.getAttribute("user");
+			if(customer == null) {
+				httpResponse.sendRedirect(httpRequest.getContextPath()+"/login");
+			}
+			else {
+				chain.doFilter(httpRequest, httpResponse);
+			}
+			
+		}else {
+			chain.doFilter(httpRequest, httpResponse);
 		}
-		
 		// pass the request along the filter chain
-		chain.doFilter(request, response);
+
 	}
 
 	/**

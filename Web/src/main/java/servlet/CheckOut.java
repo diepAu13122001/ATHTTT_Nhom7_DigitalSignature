@@ -11,8 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import cart.ShoppingCart;
+import dao.ProductDAO;
 import io.WritePDF;
+import model.Customer;
 import model.Product;
+import model.Shipping;
 
 /**
  * Servlet implementation class CheckOut
@@ -42,15 +45,29 @@ public class CheckOut extends HttpServlet {
 		String city = request.getParameter("city");
 		String district = request.getParameter("district");
 		String ward = request.getParameter("ward");
-		String shipping = request.getParameter("shipping-option");
+		String shippingOption = request.getParameter("shipping-option");
 		String desAddres = request.getParameter("des-address");
 		HttpSession session = request.getSession();
 		ShoppingCart<String, Product> cart = (ShoppingCart<String, Product>) session.getAttribute("cart");
+		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
 		String address = ward + " - " + district + " - " + city;
 		LocalDateTime dateIssue = LocalDateTime.now();
-		WritePDF.makeInvoicePDF(name, phoneNum, email, address, desAddres, shipping, ward, dateIssue,
-				cart.getCartItems());
-		response.sendRedirect("authentication.jsp");
+		Shipping shipping = productDAO.getShippingById(Integer.parseInt(shippingOption));
+		double subTotal = cart.getTotal();
+		double discount = 0;
+		double ship =shipping.getPrice();
+		double grandTotal = subTotal + discount+ ship;
+		String shippingType = shipping.getType();  
+
+		
+		Customer customer = (Customer)session.getAttribute("user");
+		boolean isInsert = productDAO.insertOrders(customer.getId(), name, phoneNum, email, address, desAddres, 0, dateIssue, cart.getCartItems(), discount, Integer.parseInt(shippingOption), grandTotal);
+		if(isInsert) {
+			WritePDF.makeInvoicePDF(name, phoneNum, email, address, desAddres, shippingType, ward, dateIssue,
+					cart.getCartItems(),subTotal,discount,ship,grandTotal);
+			response.sendRedirect("authentication.jsp");
+		}
+		
 
 	}
 

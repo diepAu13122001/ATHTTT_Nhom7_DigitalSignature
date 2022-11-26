@@ -36,7 +36,7 @@ public class DataProduct extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
-		List<Product> listProducts = productDAO.getListProduct();
+		List<Product> listProducts = null;
 		List<Category> lisProductCategories = productDAO.getListCategories();
 
 		ServletContext context = getServletContext();
