@@ -7,17 +7,17 @@ import java.util.GregorianCalendar;
 import cart.Item;
 
 public class Product implements Item{
-	String idProduct;
+	int idProduct;
 	String nameProduct;
 	String description;
 	double price;
 	String image;
 	String category_name;
 	int popular;
-	public String getIdProduct() {
+	public int getIdProduct() {
 		return idProduct;
 	}
-	public void setIdProduct(String idProduct) {
+	public void setIdProduct(int idProduct) {
 		this.idProduct = idProduct;
 	}
 	public String getNameProduct() {
