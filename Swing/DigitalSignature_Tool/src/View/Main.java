@@ -608,10 +608,12 @@ public class Main extends JFrame {
 		jPanel2.add(signBtn);
 
 		jScrollPane1.setPreferredSize(new java.awt.Dimension(900, 250));
+		jScrollPane1.setAutoscrolls(true);
 
 		billAfterSignArea.setColumns(20);
 		billAfterSignArea.setRows(5);
 		billAfterSignArea.setPreferredSize(new java.awt.Dimension(780, 200));
+		billAfterSignArea.setLineWrap(true);
 		jScrollPane1.setViewportView(billAfterSignArea);
 
 		jPanel2.add(jScrollPane1);
