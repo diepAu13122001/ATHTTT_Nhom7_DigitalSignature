@@ -5,6 +5,8 @@ public class Customer {
 	String lastName;
 	String email;
 	String password;
+	int numberOrders;
+	int numberReviews;
 	boolean isLogin;
 	public int getId() {
 		return id;
@@ -33,13 +35,20 @@ public class Customer {
 	public String getPassword() {
 		return password;
 	}
-	@Override
-	public String toString() {
-		return "Customer [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
-				+ ", password=" + password + ", isLogin=" + isLogin + "]";
-	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public int getNumberOrders() {
+		return numberOrders;
+	}
+	public void setNumberOrders(int numberOrders) {
+		this.numberOrders = numberOrders;
+	}
+	public int getNumberReviews() {
+		return numberReviews;
+	}
+	public void setNumberReviews(int numberReviews) {
+		this.numberReviews = numberReviews;
 	}
 	public boolean isLogin() {
 		return isLogin;
@@ -47,6 +56,19 @@ public class Customer {
 	public void setLogin(boolean isLogin) {
 		this.isLogin = isLogin;
 	}
-
+	@Override
+	public String toString() {
+		return "Customer [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", password=" + password + ", numberOrders=" + numberOrders + ", numberReviews=" + numberReviews
+				+ ", isLogin=" + isLogin + "]";
+	}
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    Customer that = (Customer) o;
+	    return id == that.id;
+	}
+	
 
 }

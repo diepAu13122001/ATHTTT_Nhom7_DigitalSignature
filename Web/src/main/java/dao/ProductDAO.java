@@ -19,6 +19,8 @@ import java.util.List;
 import cart.ShoppingCartItem;
 import io.WritePDF;
 import model.Category;
+import model.Customer;
+import model.Orders;
 import model.Product;
 import model.ProductCategory;
 import model.Review;
@@ -48,8 +50,7 @@ public class ProductDAO {
 			ps.setString(7, linkL);
 			ps.executeUpdate();
 			//
-			
-			
+
 		} catch (SQLException e) {
 			result = false;
 			e.printStackTrace();
@@ -79,10 +80,39 @@ public class ProductDAO {
 		}
 		return null;
 	}
-	
 
-	public boolean insertOrders( int userId, String name, String phoneNumber, String email, String address, String desAddress,
-			int payement, LocalDateTime dateIssue, List<ShoppingCartItem<Product>> orders,
+	public List<Orders> getOrders() {
+		List<Orders> orders = new ArrayList<>();
+		try {		
+			PreparedStatement ps = conn.prepareStatement("select * from orders");
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String dateCreate = rs.getString("issue_date");
+				String phoneNum = rs.getString("phone_num");
+				String address = rs.getString("address");
+				double grandTotal = rs.getDouble("grand_price");
+				int payment = rs.getInt("payment");
+				int authentication = rs.getInt("authentication");
+				Orders order = new Orders();
+				order.setId(id);
+				order.setDateCreate(dateCreate);
+				order.setPhoneNum(phoneNum);
+				order.setAddress(address);
+				order.setGrandPrice(grandTotal);
+				order.setPayment(payment);
+				order.setAuthentication(authentication);
+				orders.add(order);
+			}
+			return orders;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public boolean insertOrders(int userId, String name, String phoneNumber, String email, String address,
+			String desAddress, int payement, LocalDateTime dateIssue, List<ShoppingCartItem<Product>> orders,
 			double discount, int shipId, double grandTotal) {
 		boolean result = true;
 		try {
@@ -104,22 +134,21 @@ public class ProductDAO {
 			ps.execute();
 			ps = conn.prepareStatement(" SELECT LAST_INSERT_ID()");
 			ResultSet rs = ps.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				int lastId = rs.getInt(1);
-				System.out.println(lastId+" last id");
-				for(ShoppingCartItem<Product> cartItem : orders) {
+				System.out.println(lastId + " last id");
+				for (ShoppingCartItem<Product> cartItem : orders) {
 					ps = conn.prepareStatement("insert into order_detail values(?,?,?)");
 					ps.setInt(1, cartItem.getItem().getIdProduct());
 					ps.setInt(2, lastId);
 					ps.setInt(3, cartItem.getQuantity());
 					ps.execute();
-					
+
 				}
-			}			
+			}
 			ps.close();
 			conn.commit();
-			
-			
+
 		} catch (SQLException e) {
 			result = false;
 			e.printStackTrace();
@@ -127,7 +156,7 @@ public class ProductDAO {
 		return result;
 
 	}
-	
+
 	public List<Category> getListCategories() {
 		List<Category> resultList = new ArrayList<Category>();
 		try {
@@ -144,7 +173,7 @@ public class ProductDAO {
 				resultList.add(category);
 			}
 			ps.close();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -194,7 +223,7 @@ public class ProductDAO {
 				resultList.add(category);
 
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -482,6 +511,6 @@ public class ProductDAO {
 
 	public static void main(String[] args) throws SQLException {
 		ProductDAO productDAO = new ProductDAO();
-
+		System.out.println(productDAO.getOrders().size());
 	}
 }

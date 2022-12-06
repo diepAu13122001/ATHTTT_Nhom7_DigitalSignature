@@ -26,7 +26,7 @@
                         <li><a class="dropdown-item" href="#!">Tài khoản</a></li>
                         <li><a class="dropdown-item" href="#!">Cài đặt</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="/DoAn_CuoiKy_LTWeb/logout-admin">Đăng xuất</a></li>
+                        <li><a class="dropdown-item" href="../logout-admin">Đăng xuất</a></li>
                     </ul>
                 </li>
             </ul>
