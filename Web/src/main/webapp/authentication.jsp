@@ -52,7 +52,7 @@
 					<div class="title-left">
 						<h2 style="font-weight: 500">Thông tin đơn hàng</h2>
 					</div>
-					<iframe src="./invoice.pdf" width="100%" height="600px"> </iframe>
+					<iframe src="showPdf" width="100%" height="600px"> </iframe>
 			
 			</div>
 				<div class="col-sm-6 col-lg-6 mb-3">
