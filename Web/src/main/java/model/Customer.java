@@ -8,6 +8,14 @@ public class Customer {
 	int numberOrders;
 	int numberReviews;
 	boolean isLogin;
+	int accountGoogle;
+	
+	public int getAccountGoogle() {
+		return accountGoogle;
+	}
+	public void setAccountGoogle(int accountGoogle) {
+		this.accountGoogle = accountGoogle;
+	}
 	public int getId() {
 		return id;
 	}

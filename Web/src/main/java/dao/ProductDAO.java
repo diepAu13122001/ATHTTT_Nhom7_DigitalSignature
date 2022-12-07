@@ -20,6 +20,7 @@ import cart.ShoppingCartItem;
 import io.WritePDF;
 import model.Category;
 import model.Customer;
+import model.OrderDetail;
 import model.Orders;
 import model.Product;
 import model.ProductCategory;
@@ -94,6 +95,7 @@ public class ProductDAO {
 				double grandTotal = rs.getDouble("grand_price");
 				int payment = rs.getInt("payment");
 				int authentication = rs.getInt("authentication");
+				String nameReceiver = rs.getString("name_receiver");
 				Orders order = new Orders();
 				order.setId(id);
 				order.setDateCreate(dateCreate);
@@ -102,6 +104,7 @@ public class ProductDAO {
 				order.setGrandPrice(grandTotal);
 				order.setPayment(payment);
 				order.setAuthentication(authentication);
+				order.setNameReceiver(nameReceiver);
 				orders.add(order);
 			}
 			return orders;
@@ -110,7 +113,69 @@ public class ProductDAO {
 		}
 		return null;
 	}
-
+	public Orders getOrderById(int id) {
+		Orders order = new Orders();
+		try {		
+			PreparedStatement ps = conn.prepareStatement("select * from orders where id = ?");
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				int ids = rs.getInt("id");
+				int userId = rs.getInt("user_id");
+				int shipId = rs.getInt("ship_id");
+				String dateCreate = rs.getString("issue_date");
+				String phoneNum = rs.getString("phone_num");
+				String address = rs.getString("address");
+				double grandTotal = rs.getDouble("grand_price");
+				int payment = rs.getInt("payment");
+				int authentication = rs.getInt("authentication");
+				double discount = rs.getDouble("discount");
+				String email = rs.getString("email");
+				String addressDetail= rs.getString("address_detail");
+				String nameReceiver = rs.getString("name_receiver");
+				order.setId(ids);
+				order.setUserId(userId);
+				order.setDateCreate(dateCreate);
+				order.setPhoneNum(phoneNum);
+				order.setAddress(address);
+				order.setGrandPrice(grandTotal);
+				order.setPayment(payment);
+				order.setAuthentication(authentication);	
+				order.setEmail(email);
+				order.setDiscount(discount);
+				order.setAddressDetail(addressDetail);
+				Shipping shipping = getShippingById(shipId);
+				order.setShipping(shipping);
+				order.setNameReceiver(nameReceiver);
+				
+			}
+			return order;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public List<OrderDetail> getOrderDetails(int id){
+		List<OrderDetail> orderDetails = new ArrayList<>();
+		try {		
+			PreparedStatement ps = conn.prepareStatement(" select * from order_detail where order_id = ?;");
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				OrderDetail orderDetail = new OrderDetail();
+				int quantity = rs.getInt("quantity");
+				int productId = rs.getInt("product_id");
+				orderDetail.setQuantity(quantity);
+				Product product = getProductById(productId);
+				orderDetail.setProduct(product);
+				orderDetails.add(orderDetail);
+			}
+			return orderDetails;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public boolean insertOrders(int userId, String name, String phoneNumber, String email, String address,
 			String desAddress, int payement, LocalDateTime dateIssue, List<ShoppingCartItem<Product>> orders,
 			double discount, int shipId, double grandTotal) {
@@ -118,8 +183,8 @@ public class ProductDAO {
 		try {
 			conn.setAutoCommit(false);
 			PreparedStatement ps = conn.prepareStatement("INSERT INTO "
-					+ "`freshop_db`.`orders` (`user_id`, `issue_date`, `phone_num`, `email`, `ship_id`, `payment`, `grand_price`, `address`, `address_detail`, `discount`, `authentication`)"
-					+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+					+ "`freshop_db`.`orders` (`user_id`, `issue_date`, `phone_num`, `email`, `ship_id`, `payment`, `grand_price`, `address`, `address_detail`, `discount`, `authentication`,`name_receiver`)"
+					+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);");
 			ps.setInt(1, userId);
 			ps.setString(2, WritePDF.formatDate(dateIssue));
 			ps.setString(3, phoneNumber);
@@ -131,6 +196,7 @@ public class ProductDAO {
 			ps.setString(9, desAddress);
 			ps.setDouble(10, discount);
 			ps.setDouble(11, 0);
+			ps.setString(12, name);
 			ps.execute();
 			ps = conn.prepareStatement(" SELECT LAST_INSERT_ID()");
 			ResultSet rs = ps.executeQuery();

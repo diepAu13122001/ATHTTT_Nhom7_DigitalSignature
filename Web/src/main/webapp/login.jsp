@@ -140,7 +140,7 @@ background-color: #4285f4!important;
 						</div>
 					</c:if>
 					<form class="mt-3 review-form-box" id="formLogin" method="post" onsubmit="return loginValidate()"
-						action="login">
+						action="./login">
 						<div class="form-row">
 							<div class="form-group col-md-6">
 								<label for="InputEmail" class="mb-0">Email</label> <input type="email" required
@@ -200,7 +200,7 @@ background-color: #4285f4!important;
 		<!-- ALL JS FILES -->
 		<script type="text/javascript">
 			function googleAccess(){
-				window.location ="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/DoAn_CuoiKy_LTWeb/login&response_type=code&client_id=1036870259189-5q0j11me86k3v4ni4eng6v02v2pe7jql.apps.googleusercontent.com&approval_prompt=force";
+				window.location ="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/Digital_Signature_Web/login&response_type=code&client_id=1036870259189-5q0j11me86k3v4ni4eng6v02v2pe7jql.apps.googleusercontent.com&approval_prompt=force";
 			}
 			   function loginValidate(){
 			   		var pass = document.querySelector('#InputPassword');

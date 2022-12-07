@@ -75,6 +75,7 @@ public class Login extends HttpServlet {
 		    if(!khd.isAccountGoogleExist(googlePojo.getEmail())) {
 		    	 khd.insertCustomer(customer,1);
 		    	 customer = khd.findByEmail(googlePojo.getEmail(),1);
+		    	 khd.insertRole("USER", customer.getId());
 		    }else {
 		    	customer = khd.findByEmail(googlePojo.getEmail(),1);
 		    }

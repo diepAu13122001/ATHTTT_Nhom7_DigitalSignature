@@ -1,9 +1,14 @@
 package model;
 
+import java.util.List;
+
 public class Orders {
 	int id;
+	int userId;
 	Customer customer;
 	String dateCreate;
+	String nameReceiver;
+
 	String phoneNum;
 	String email;
 	String address;
@@ -13,17 +18,43 @@ public class Orders {
 	Shipping shipping;
 	int payment;
 	int authentication;
-	public int getId() {
-		return id;
+	List<OrderDetail> orderDetails;
+	public double totalPrice() {
+		double result=0;
+		for(OrderDetail orderDetail : orderDetails) {
+			result+=orderDetail.quantity*orderDetail.product.price;
+		}
+		return result/10;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public String getNameReceiver() {
+		return nameReceiver;
+	}
+	public void setNameReceiver(String nameReceiver) {
+		this.nameReceiver = nameReceiver;
 	}
 	public Customer getCustomer() {
 		return customer;
 	}
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+	public List<OrderDetail> getOrderDetails() {
+		return orderDetails;
+	}
+	public void setOrderDetails(List<OrderDetail> orderDetails) {
+		this.orderDetails = orderDetails;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	public String getDateCreate() {
 		return dateCreate;

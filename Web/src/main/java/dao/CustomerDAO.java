@@ -132,24 +132,25 @@ public class CustomerDAO {
 		return resultList;
 	}
 
-	public Customer getCustomerById(String id) {
-
+	public Customer getCustomerById(int id) {
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
-			ps.setString(1, id);
+			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				int ids = rs.getInt(1);
-				String lastName = rs.getString(2).trim();
-				String firstName = rs.getString(3).trim();
-				String emails = rs.getString(4).trim();
-				String pass = rs.getString(5).trim();
+				int ids = rs.getInt("id");
+				String lastName = rs.getString("last_name").trim();
+				String firstName = rs.getString("first_name").trim();
+				String emails = rs.getString("email").trim();
+				String pass = rs.getString("password").trim();
+				int accountGoogle = rs.getInt("account_google");
 				Customer customer = new Customer();
 				customer.setId(ids);
 				customer.setEmail(emails);
 				customer.setLastName(lastName);
 				customer.setFirstName(firstName);
 				customer.setPassword(pass);
+				customer.setAccountGoogle(accountGoogle);			
 				return customer;
 			}
 			

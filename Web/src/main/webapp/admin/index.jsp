@@ -120,7 +120,7 @@
                                     </tfoot>
                                     <tbody>
                                          <c:forEach begin="0" end="${orders.size()-1}" var="i">
-                                    		<tr>                         
+                                    		<tr onclick="orderDetail(${orders.get(i).id})" style="cursor: pointer;">                         
                                             <td>${orders.get(i).id}</td>
                                             <td>${orders.get(i).dateCreate}</td>
                                             <td>${orders.get(i).phoneNum}</td>
@@ -153,6 +153,11 @@
                 </main>
 	 	    </div>
 	 </div>
+	 <script>
+	 function orderDetail(id) {
+		window.location.href = "./order-detail?id="+id;
+	}
+	 </script>
 	  	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../admin/js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
