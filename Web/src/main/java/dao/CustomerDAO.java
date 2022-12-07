@@ -10,21 +10,27 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+import com.itextpdf.text.xml.simpleparser.NewLineHandler;
+
 import model.Customer;
+import model.Orders;
 
 public class CustomerDAO {
 	DBConnect db;
 	Connection conn;
-
+	
 	public CustomerDAO() throws SQLException {
 		db = new DBConnect();
 		conn = db.getConnection();
 	}
-
+	
 	public boolean insertCustomer(Customer customer,int accountGoogle) {
 		boolean result = true;
 		try {
@@ -58,7 +64,7 @@ public class CustomerDAO {
 	public String getRole(int idUser) {
 		String role = "";
 		try {
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM ROLE_USER WHERE id = ?;");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM ROLE_USER WHERE user_id = ?;");
 			ps.setInt(1, idUser);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -70,20 +76,55 @@ public class CustomerDAO {
 		return role;
 	}
 
-	public List<Customer> getListCustomer() {
+	public List<Customer> getCustomers() {
 
 		List<Customer> resultList = new ArrayList<Customer>();
+		Map<Integer, Integer> mapOrders = new HashMap<>();
+		Map<Integer, Integer> mapReviews = new HashMap<>();
 		try {
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM KHACHHANG;");
+			PreparedStatement ps = conn.prepareStatement("select users.id, users.last_name, users.first_name,users.email\r\n"
+					+ "from users inner join role_user on users.id = role_user.user_id \r\n"
+					+ "where role_user.role_name = 'USER'");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				String makh = rs.getString(1).trim();
-				String lastName = rs.getString(2).trim();
-				String firstName = rs.getString(3).trim();
-				String emails = rs.getString(4).trim();
-				String pass = rs.getString(5).trim();
-				// Customer kh = new Customer(makh, firstName, lastName, emails, pass);
-				// resultList.add(kh);
+				int id = rs.getInt("id"); 
+				String lastName = rs.getString("last_name").trim();
+				String firstName = rs.getString("first_name").trim();
+				String emails = rs.getString("email").trim();
+				Customer customer =new Customer();
+				customer.setId(id);
+				customer.setLastName(lastName);
+				customer.setFirstName(firstName);
+				customer.setEmail(emails);
+				resultList.add(customer);
+			
+			}
+			ps = conn.prepareStatement("select user_id, count(user_id) as number_orders\r\n"
+					+ "from orders\r\n"
+					+ "group by user_id;");
+			ResultSet rs2 = ps.executeQuery();
+
+			while (rs2.next()) {
+				int id = Integer.parseInt(rs2.getString("user_id").trim()); 
+				int numberOrders =  Integer.parseInt( rs2.getString("number_orders").trim());
+				mapOrders.put(id, numberOrders);
+											
+			}
+			ps = conn.prepareStatement("select user_id, count(user_id) as number_reviews\r\n"
+					+ "from reviews\r\n"
+					+ "group by user_id;");
+			ResultSet rs3 = ps.executeQuery();
+
+			while (rs3.next()) {
+				int id = Integer.parseInt(rs3.getString("user_id").trim()); 
+				int numberReviews =  Integer.parseInt( rs3.getString("number_reviews").trim());
+				mapReviews.put(id, numberReviews)		;				
+			}
+			for(Customer customer: resultList) {
+				Integer id1 = mapOrders.get(customer.getId());
+				Integer id2 = mapReviews.get(customer.getId());
+				customer.setNumberOrders(id1!=null?id1:0);
+				customer.setNumberReviews(id2!=null?id2:0);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -91,24 +132,25 @@ public class CustomerDAO {
 		return resultList;
 	}
 
-	public Customer getCustomerById(String id) {
-
+	public Customer getCustomerById(int id) {
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
-			ps.setString(1, id);
+			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				int ids = rs.getInt(1);
-				String lastName = rs.getString(2).trim();
-				String firstName = rs.getString(3).trim();
-				String emails = rs.getString(4).trim();
-				String pass = rs.getString(5).trim();
+				int ids = rs.getInt("id");
+				String lastName = rs.getString("last_name").trim();
+				String firstName = rs.getString("first_name").trim();
+				String emails = rs.getString("email").trim();
+				String pass = rs.getString("password").trim();
+				int accountGoogle = rs.getInt("account_google");
 				Customer customer = new Customer();
 				customer.setId(ids);
 				customer.setEmail(emails);
 				customer.setLastName(lastName);
 				customer.setFirstName(firstName);
 				customer.setPassword(pass);
+				customer.setAccountGoogle(accountGoogle);			
 				return customer;
 			}
 			
@@ -216,11 +258,10 @@ public class CustomerDAO {
 //		db.remove();
 //	}
 	public static void main(String[] args) throws SQLException {
-		List<String> ids = new ArrayList<String>();
-		ids.add("NX-8EBkJqL");
-		ids.add("NX-biyZkhC");
-		CustomerDAO dao = new CustomerDAO();
-		System.out.println(dao.removeReview(ids));
+		CustomerDAO customerDAO = new CustomerDAO();
+		for(Customer customer : customerDAO.getCustomers()) {
+			System.out.println(customer);
+		}
 	}
 
 }

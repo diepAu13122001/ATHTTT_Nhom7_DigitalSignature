@@ -11,21 +11,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dao.ProductDAO;
-import model.Category;
-import model.Product;
-import model.ProductCategory;
+import model.Orders;
 
 /**
- * Servlet implementation class DataProduct
+ * Servlet implementation class OrdersAdmin
  */
-@WebServlet("/admin/dataproduct")
-public class DataProduct extends HttpServlet {
+@WebServlet("/admin/")
+public class HomeAdmin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public DataProduct() {
+    public HomeAdmin() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -34,15 +32,12 @@ public class DataProduct extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
-		int totalProduct = productDAO.getTotalProduct();
-		List<Product> listProducts = productDAO.pagdingProduct(0, totalProduct);
+		List<Orders> orders = productDAO.getOrders();
 		
 		ServletContext context = getServletContext();
-		context.setAttribute("products", listProducts);
-		//context.setAttribute("productsCate", lisProductCategories);
-		request.getRequestDispatcher("table-product.jsp").forward(request, response);		
+		context.setAttribute("orders", orders);
+		request.getRequestDispatcher("index.jsp").forward(request, response);		
 	}
 
 	/**

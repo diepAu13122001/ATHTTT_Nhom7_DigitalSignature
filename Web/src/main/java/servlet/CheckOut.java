@@ -65,7 +65,7 @@ public class CheckOut extends HttpServlet {
 		if(isInsert) {
 			WritePDF.makeInvoicePDF(name, phoneNum, email, address, desAddres, shippingType, ward, dateIssue,
 					cart.getCartItems(),subTotal,discount,ship,grandTotal);
-			response.sendRedirect("authentication.jsp");
+			response.sendRedirect("authentication.jsp?customer="+customer.getId());
 		}
 		
 

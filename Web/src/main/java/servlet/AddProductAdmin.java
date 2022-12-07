@@ -26,13 +26,13 @@ import model.IDRandom;
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
 maxFileSize = 1024 * 1024 * 10, // 10MB
 maxRequestSize = 1024 * 1024 * 50) // 50MB
-public class AddProduct extends HttpServlet {
+public class AddProductAdmin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String SAVE_DIR = "uploadFiles";
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AddProduct() {
+    public AddProductAdmin() {
         super();
         // TODO Auto-generated constructor stub
     }

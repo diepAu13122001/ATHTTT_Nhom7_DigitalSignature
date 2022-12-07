@@ -40,7 +40,7 @@
                             </div>
                             
                             <div class="sb-sidenav-menu-heading">Thông tin khách hàng</div>
-                            <a class="nav-link" href="charts.html">
+                            <a class="nav-link" href="./customer">
                                 <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                                 Khách hàng
                             </a>

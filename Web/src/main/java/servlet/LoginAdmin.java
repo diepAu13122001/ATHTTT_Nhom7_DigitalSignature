@@ -43,7 +43,7 @@ public class LoginAdmin extends HttpServlet {
 		if (khd.checkLogin(username, pass) && role.equals("ADMIN")) {
 				session.setAttribute("userAdmin", user);
 				request.setAttribute("emailAdmin", username);
-				response.sendRedirect("admin/index.jsp");
+				response.sendRedirect("admin/");
 		} else {
 			request.setAttribute("emailAdmin", username);
 			request.getRequestDispatcher("login-admin.jsp").forward(request, response);

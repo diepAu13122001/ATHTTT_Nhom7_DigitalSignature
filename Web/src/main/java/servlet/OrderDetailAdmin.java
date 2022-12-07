@@ -9,23 +9,25 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import dao.CustomerDAO;
 import dao.ProductDAO;
-import model.Category;
-import model.Product;
-import model.ProductCategory;
+import model.Customer;
+import model.OrderDetail;
+import model.Orders;
 
 /**
- * Servlet implementation class DataProduct
+ * Servlet implementation class OrderDetailAdmin
  */
-@WebServlet("/admin/dataproduct")
-public class DataProduct extends HttpServlet {
+@WebServlet("/admin/order-detail")
+public class OrderDetailAdmin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public DataProduct() {
+    public OrderDetailAdmin() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -34,15 +36,19 @@ public class DataProduct extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
-		int totalProduct = productDAO.getTotalProduct();
-		List<Product> listProducts = productDAO.pagdingProduct(0, totalProduct);
+		CustomerDAO customerDAO = (CustomerDAO)getServletContext().getAttribute("khachHangDAO");
+		int orderId = Integer.parseInt(request.getParameter("id"));
+		Orders orders = productDAO.getOrderById(orderId);
+		Customer customer = customerDAO.getCustomerById(orders.getUserId());
+		orders.setCustomer(customer);
+		List<OrderDetail> orderDetails = productDAO.getOrderDetails(orderId);
+		orders.setOrderDetails(orderDetails);
 		
-		ServletContext context = getServletContext();
-		context.setAttribute("products", listProducts);
-		//context.setAttribute("productsCate", lisProductCategories);
-		request.getRequestDispatcher("table-product.jsp").forward(request, response);		
+		HttpSession context = request.getSession();
+		context.setAttribute("order", orders);
+		
+		request.getRequestDispatcher("order-detail.jsp").forward(request, response);		
 	}
 
 	/**
