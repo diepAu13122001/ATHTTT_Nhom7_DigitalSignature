@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSession;
 
 import dao.CustomerDAO;
+import dao.DigitalSignatureDAO;
 import dao.ProductDAO;
 import dao.UrlDAO;
 
@@ -25,6 +26,8 @@ public final class ContextListener implements ServletContextListener {
 			context.setAttribute("productDAO", productDAO);
 			UrlDAO urlDAO = new UrlDAO();
 			context.setAttribute("urlDAO", urlDAO);
+			DigitalSignatureDAO digitalSignatureDAO = new DigitalSignatureDAO();
+			context.setAttribute("digitalSignatureDAO", digitalSignatureDAO);
 	
 		} catch (Exception ex) {
 			System.out.println("Couldn't create bookstore database bean: "

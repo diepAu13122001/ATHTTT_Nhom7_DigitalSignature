@@ -85,7 +85,7 @@ public class ProductDAO {
 	public List<Orders> getOrders() {
 		List<Orders> orders = new ArrayList<>();
 		try {		
-			PreparedStatement ps = conn.prepareStatement("select * from orders");
+			PreparedStatement ps = conn.prepareStatement("select * from orders order by id desc");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt("id");
@@ -176,10 +176,10 @@ public class ProductDAO {
 		}
 		return null;
 	}
-	public boolean insertOrders(int userId, String name, String phoneNumber, String email, String address,
+	public int insertOrders(int userId, String name, String phoneNumber, String email, String address,
 			String desAddress, int payement, LocalDateTime dateIssue, List<ShoppingCartItem<Product>> orders,
 			double discount, int shipId, double grandTotal) {
-		boolean result = true;
+	
 		try {
 			conn.setAutoCommit(false);
 			PreparedStatement ps = conn.prepareStatement("INSERT INTO "
@@ -200,8 +200,9 @@ public class ProductDAO {
 			ps.execute();
 			ps = conn.prepareStatement(" SELECT LAST_INSERT_ID()");
 			ResultSet rs = ps.executeQuery();
+			int lastId = 0;
 			if (rs.next()) {
-				int lastId = rs.getInt(1);
+				lastId = rs.getInt(1);
 				System.out.println(lastId + " last id");
 				for (ShoppingCartItem<Product> cartItem : orders) {
 					ps = conn.prepareStatement("insert into order_detail values(?,?,?)");
@@ -214,12 +215,13 @@ public class ProductDAO {
 			}
 			ps.close();
 			conn.commit();
+			return lastId;
 
 		} catch (SQLException e) {
-			result = false;
+			
 			e.printStackTrace();
 		}
-		return result;
+		return -1;
 
 	}
 

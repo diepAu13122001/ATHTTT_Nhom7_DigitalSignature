@@ -1,26 +1,28 @@
 package servlet;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import model.Customer;
 
 /**
  * Servlet implementation class Authentication
  */
-@WebServlet("/showPdf")
-public class ShowPDF extends HttpServlet {
+@WebServlet("/authentication")
+public class RedirectAuthenticationPage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ShowPDF() {
+    public RedirectAuthenticationPage() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,12 +31,16 @@ public class ShowPDF extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		File file = new File("C:\\Users\\Asus\\eclipse-workspace\\ATBMHTT\\ATHTTT_Nhom7_DigitalSignature\\Web\\invoice.pdf");
-	    response.setHeader("Content-Type",    getServletContext().getMimeType(file.getName()));
-	    response.setHeader("Content-Length", String.valueOf(file.length()));
-	    response.setHeader("Content-Disposition", "inline; filename=\"invoice.pdf\"");
-	    Files.copy(file.toPath(), response.getOutputStream());
-	  
+		ServletContext context = getServletContext();
+		String fileName = (String)context.getAttribute("fileNameInvoice");
+		HttpSession session = request.getSession();
+		Customer customer = (Customer)session.getAttribute("user");
+		if(fileName!=null && customer!=null) {
+			request.getRequestDispatcher("authentication.jsp").forward(request, response);
+		}else {
+			request.getRequestDispatcher("notfound.jsp").forward(request, response);
+		}
+		
 	}
 
 	/**
