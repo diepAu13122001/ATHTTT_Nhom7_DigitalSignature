@@ -40,6 +40,18 @@ create table rule_user(
     user_id int,
     rule_name varchar(100)
 );
+create table digital_signature(
+    user_id int ,
+    order_id int,
+    hash_string text,
+    constraint ds_pk primary key(user_id, order_id)
+);
+create table key_user(
+	id int primary key auto_increment,
+    user_id int,
+    public_key text,
+    active int
+);
 ALTER TABLE products ADD FOREIGN KEY (category_id) REFERENCES categories(id);
 ALTER TABLE reviews ADD FOREIGN KEY (users_id) REFERENCES users(id);
 ALTER TABLE reviews ADD FOREIGN KEY (product_id) REFERENCES products(id);
@@ -47,4 +59,8 @@ ALTER TABLE orders ADD FOREIGN KEY (user_id) REFERENCES users(id);
 ALTER TABLE order_detail ADD FOREIGN KEY (product_id) REFERENCES products(id);
 ALTER TABLE order_detail ADD FOREIGN KEY (order_id) REFERENCES orders(id);
 ALTER TABLE rule_user ADD FOREIGN KEY (user_id) REFERENCES users(id);
+
+ALTER TABLE digital_signature ADD FOREIGN KEY (user_id) REFERENCES users(id);
+ALTER TABLE digital_signature ADD FOREIGN KEY (order_id) REFERENCES orders(id);
+ALTER TABLE key_user ADD FOREIGN KEY (user_id) REFERENCES users(id);
 
