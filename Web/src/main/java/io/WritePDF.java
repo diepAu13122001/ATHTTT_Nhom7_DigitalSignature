@@ -43,7 +43,7 @@ public class WritePDF {
 	private static final Font FONT_HEADER_TABLE = new Font(FontFamily.HELVETICA, 12, Font.BOLD, BaseColor.BLACK);
 	private static final TabSettings TAB_FIELDNAME = new TabSettings(150f);
 	private static final TabSettings TAB_SUBTOTAL = new TabSettings(100f);
-	private static final String PATH ="C:\\Users\\Asus\\eclipse-workspace\\ATBMHTT\\ATHTTT_Nhom7_DigitalSignature\\Web\\invoice.pdf";
+	public static final String PATH ="C:\\Users\\Asus\\eclipse-workspace\\ATBMHTT\\ATHTTT_Nhom7_DigitalSignature\\Web\\";
 	public static void main(String[] args) {
 //		makeInvoicePDF("Nguyen Khai Hieu", "khaihieupc2@gmail.com", "0343385406", "Thu Duc-HCM-Viet Nam",
 //				"03/Duong 17/TP Thu Duc/TP HCM", "", "", "30/11/2022", null);
@@ -53,13 +53,14 @@ public class WritePDF {
 
 	public static void makeInvoicePDF(String name, String phoneNumber, String email, String address, String desAddress,
 			String shipping, String payement, LocalDateTime dateIssue, List<ShoppingCartItem<Product>> list,double subTotal,double discount
-			,double ship, double grandTotal) {
+			,double ship, double grandTotal, String fileName) {
 		Document document = new Document();
 
 		try {
 			// khởi tạo một PdfWriter truyền vào document và FileOutputStream
+			File file = new File(PATH+fileName);
 			PdfWriter.getInstance(document, new FileOutputStream(
-				PATH));
+					file));
 
 			// mở file để thực hiện viết
 			document.open();

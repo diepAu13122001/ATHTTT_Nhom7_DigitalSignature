@@ -59,23 +59,24 @@
 				<div class="title-left">
 						<h2 style="font-weight: 500">Xác thực</h2>
 					</div>
-				<form class="needs-validation" action="checkout" >
+					<form class="needs-validation" action="handle-authentication" method="post" enctype="multipart/form-data" >
 							<div class="mb-3">
-								<label for="username">Thông tin mã hoá</label>
+								<label for="file1">Hoá đơn mã hoá</label>
 								<div class="input-group">
-									<input type="text" class="form-control" id="name" name="name"
+									<input type="file" class="form-control" id="file1" name="file-encrypt"
 										placeholder="" required>
 								
 								</div>
 							</div>
 							<div class="mb-3">
-								<label for="username">Public key</label>
+								<label for="file2">Public key</label>
 								<div class="input-group">
-									<input type="file" class="form-control" id="name" name="name"
+									<input type="text" class="form-control" id="file2" name="public-key"
 										placeholder="" required>
 								
 								</div>
 							</div>
+							 <div class="col-12 d-flex shopping-box"><button type="submit" class="ml-auto btn hvr-hover">Xác thực</button> </div>
 							</form>
 				</div>
 			</div>

@@ -1,8 +1,12 @@
 package servlet;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import cart.ShoppingCart;
+import dao.DigitalSignatureDAO;
 import dao.ProductDAO;
+import digital_signature.Hash;
 import io.WritePDF;
 import model.Customer;
 import model.Product;
@@ -47,9 +53,11 @@ public class CheckOut extends HttpServlet {
 		String ward = request.getParameter("ward");
 		String shippingOption = request.getParameter("shipping-option");
 		String desAddres = request.getParameter("des-address");
+		
 		HttpSession session = request.getSession();
 		ShoppingCart<String, Product> cart = (ShoppingCart<String, Product>) session.getAttribute("cart");
 		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
+		
 		String address = ward + " - " + district + " - " + city;
 		LocalDateTime dateIssue = LocalDateTime.now();
 		Shipping shipping = productDAO.getShippingById(Integer.parseInt(shippingOption));
@@ -57,15 +65,36 @@ public class CheckOut extends HttpServlet {
 		double discount = 0;
 		double ship =shipping.getPrice();
 		double grandTotal = subTotal + discount+ ship;
-		String shippingType = shipping.getType();  
-
-		
+		String shippingType = shipping.getType();  	
 		Customer customer = (Customer)session.getAttribute("user");
-		boolean isInsert = productDAO.insertOrders(customer.getId(), name, phoneNum, email, address, desAddres, 0, dateIssue, cart.getCartItems(), discount, Integer.parseInt(shippingOption), grandTotal);
-		if(isInsert) {
+		int idOrder = productDAO.insertOrders(customer.getId(), name, phoneNum, email, address, desAddres, 0, dateIssue, cart.getCartItems(), discount, Integer.parseInt(shippingOption), grandTotal);
+		if(idOrder > 0) {
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
+	        String formatDateTime = dateIssue.format(formatter);
+			String fileName = "invoice_"+formatDateTime+"_"+customer.getId()+".pdf";
+			
 			WritePDF.makeInvoicePDF(name, phoneNum, email, address, desAddres, shippingType, ward, dateIssue,
-					cart.getCartItems(),subTotal,discount,ship,grandTotal);
-			response.sendRedirect("authentication.jsp?customer="+customer.getId());
+					cart.getCartItems(),subTotal,discount,ship,grandTotal,fileName);
+			
+			session.setAttribute("idOrder", idOrder);
+			try {
+				Hash hash = new Hash();
+				String hashString = hash.hashFile(WritePDF.PATH+fileName);
+				
+				DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO)getServletContext().getAttribute("digitalSignatureDAO");
+				digitalSignatureDAO.insertDigitalSignature(customer.getId(), idOrder, hashString);
+				
+			} catch (NoSuchAlgorithmException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			ServletContext context = getServletContext();
+			context.setAttribute("fileNameInvoice", fileName);
+			
+			
+			
+			response.sendRedirect("./authentication");
 		}
 		
 

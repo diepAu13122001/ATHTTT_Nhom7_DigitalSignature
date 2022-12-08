@@ -72,7 +72,7 @@
 								<label for="username">Tên *</label>
 								<div class="input-group">
 									<input type="text" class="form-control" id="name" name="name"
-										placeholder="" required>
+										placeholder="" required value="${user.firstName}">
 								
 								</div>
 							</div>
@@ -80,14 +80,14 @@
 								<label for="phone-num">Số điện thoại *</label>
 								<div class="input-group">
 									<input type="text" class="form-control" id="phone-num" name="phone-num"
-										placeholder="" required>
+										placeholder="" required >
 									<div class="invalid-feedback" style="width: 100%;">Your
 										username is required.</div>
 								</div>
 							</div>
 							<div class="mb-3">
 								<label for="email">Địa chỉ Email *</label> <input type="email" name= "email"
-									class="form-control" id="email" placeholder="">
+									class="form-control" id="email" placeholder="" value="${user.email}">
 								<div class="invalid-feedback">Please enter a valid email
 									address for shipping updates.</div>
 							</div>
