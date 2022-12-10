@@ -52,31 +52,35 @@
 					<div class="title-left">
 						<h2 style="font-weight: 500">Thông tin đơn hàng</h2>
 					</div>
-					<iframe src="showPdf" width="100%" height="600px"> </iframe>
+					<iframe src="showPdf?invoice=${invoice}" width="100%" height="600px"> </iframe>
 			
 			</div>
 				<div class="col-sm-6 col-lg-6 mb-3">
 				<div class="title-left">
 						<h2 style="font-weight: 500">Xác thực</h2>
 					</div>
-					<form class="needs-validation" action="handle-authentication" method="post" enctype="multipart/form-data" >
+					<form id="upload-form" class="needs-validation" action="handle-authentication" enctype="multipart/form-data" method="post">
 							<div class="mb-3">
 								<label for="file1">Hoá đơn mã hoá</label>
 								<div class="input-group">
 									<input type="file" class="form-control" id="file1" name="file-encrypt"
-										placeholder="" required>
-								
+										placeholder="" required>							
 								</div>
 							</div>
+							<input type="hidden" name="invoice" value="${invoice}">
 							<div class="mb-3">
 								<label for="file2">Public key</label>
+								<c:if test="${ errorKey!=null}">
+								 <label id="pass-validate" class="mb-0" style="color: red; display: block">${errorKey}</label></c:if>
+								
 								<div class="input-group">
-									<input type="text" class="form-control" id="file2" name="public-key"
+								
+									<input type="text" class="form-control" id="public-key" name="public-key"
 										placeholder="" required>
 								
 								</div>
 							</div>
-							 <div class="col-12 d-flex shopping-box"><button type="submit" class="ml-auto btn hvr-hover">Xác thực</button> </div>
+							 <div class="col-12 d-flex shopping-box"><button type="submit" class="ml-auto btn hvr-hover" >Xác thực</button> </div>
 							</form>
 				</div>
 			</div>
@@ -105,6 +109,9 @@
 	<script src="js/custom.js"></script>
 	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
 		async defer></script>
+	<script>
+	
+	</script>
 
 </body>
 

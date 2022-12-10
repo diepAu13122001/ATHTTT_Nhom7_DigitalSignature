@@ -1,6 +1,9 @@
 package model;
 
+import java.lang.invoke.StringConcatFactory;
 import java.util.List;
+
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 public class Orders {
 	int id;
@@ -15,9 +18,10 @@ public class Orders {
 	String addressDetail;
 	double grandPrice;
 	double discount;
+	String fileInvoice;
+
 	Shipping shipping;
-	int payment;
-	int authentication;
+	String status;
 	List<OrderDetail> orderDetails;
 	public double totalPrice() {
 		double result=0;
@@ -25,6 +29,18 @@ public class Orders {
 			result+=orderDetail.quantity*orderDetail.product.price;
 		}
 		return result/10;
+	}
+	public String getFileInvoice() {
+		return fileInvoice;
+	}
+	public void setFileInvoice(String fileInvoice) {
+		this.fileInvoice = fileInvoice;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	public String getNameReceiver() {
 		return nameReceiver;
@@ -104,18 +120,31 @@ public class Orders {
 	public void setShipping(Shipping shipping) {
 		this.shipping = shipping;
 	}
-	public int getPayment() {
-		return payment;
+	public String status() {
+		String result = "";
+		switch (status) {
+		case "NA":
+			result = "Chưa xác thực";
+			break;
+		case "NP":
+			result = "Chưa thanh toán";
+			break;
+		case "PS":
+			result = "Đã thanh toán";
+			break;
+		case "SS":
+			result = "Đã giao hàng";
+			break;
+		case "CO":
+			result = "Đã huỷ";
+			break;
+
+		default:
+			break;
+		}
+		return result;
 	}
-	public void setPayment(int payment) {
-		this.payment = payment;
-	}
-	public int getAuthentication() {
-		return authentication;
-	}
-	public void setAuthentication(int authentication) {
-		this.authentication = authentication;
-	}
+	
 	
 	
 }

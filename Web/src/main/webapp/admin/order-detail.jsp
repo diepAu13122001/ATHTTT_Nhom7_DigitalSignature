@@ -253,25 +253,10 @@
 												<li>
 												<ul class="list-unstyled text-right">
 													<li><strong>Trạng thái đơn hàng: </strong></li>
+			
+													 
 													<li class="mg-li">
-													 <c:if
-														test="${order.payment == 0}">
-														<button type="button" class="btn btn-danger">Chưa
-															thanh toán</button>
-													</c:if> <c:if test="${order.payment == 1}">
-														<button type="button" class="btn btn-success">Đã
-															thanh toán</button>
-													</c:if>
-													</li>
-													<li class="mg-li">
-													 <c:if
-														test="${order.authentication == 0}">
-														<button type="button" class="btn btn-danger">Chưa
-															xác thực</button>
-													</c:if> <c:if test="${order.authentication == 1}">
-														<button type="button" class="btn btn-success">Đã
-															xác thực</button>
-													</c:if>
+													${order.status()}
 													</li>
 												</ul>
 												</li>

@@ -103,8 +103,8 @@
                                             <th>SĐT</th>
                                             <th>Địa chỉ</th>
                                             <th>Tổng giá trị(VND)</th>
-                                            <th>Thanh toán</th>
-                                             <th>Xác thực</th>
+                                            <th>Trạng thái</th>
+                                          
                                         </tr>
                                     </thead>
                                     <tfoot>
@@ -114,8 +114,8 @@
                                             <th>SĐT</th>
                                             <th>Địa chỉ</th>
                                             <th>Tổng giá trị(VND)</th>
-                                            <th>Thanh toán</th>
-                                             <th>Xác thực</th>
+                                            <th>Trạng thái</th>
+                                            
                                         </tr>
                                     </tfoot>
                                     <tbody>
@@ -128,21 +128,9 @@
                                              <td><fmt:formatNumber type="number"  groupingUsed="true"
 																value="${orders.get(i).grandPrice}" />  </td>
                                              <td>
-                                             <c:if test="${orders.get(i).payment == 0}">
-                                             	 <button type="button" class="btn btn-danger">Chưa thanh toán</button>
-                                             </c:if>
-                                              <c:if test="${orders.get(i).payment == 1}">
-                                             	 <button type="button" class="btn btn-success">Đã thanh toán</button>
-                                             </c:if>
+                                           	${orders.get(i).status()}
                                             </td>
-                                             <td>
-                                             <c:if test="${orders.get(i).authentication == 0}">
-                                             	 <button type="button" class="btn btn-danger">Chưa xác thực</button>
-                                             </c:if>
-                                              <c:if test="${orders.get(i).authentication == 1}">
-                                             	 <button type="button" class="btn btn-success">Đã xác thực</button>
-                                             </c:if>
-                                             </td>                                     	
+                                                                                	
                                         </tr>
                                     </c:forEach>
                                     </tbody>

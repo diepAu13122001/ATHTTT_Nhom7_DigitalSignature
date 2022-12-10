@@ -158,11 +158,8 @@
 							<div class="cart-and-bay-btn">
 								<a class="btn hvr-hover" data-fancybox-close="" onclick="buyNow('${product.idProduct}')">Mua
 									ngay</a>
-								<c:url var="url" value="/addcart">
-									<c:param name="add" value="${product.idProduct }"></c:param>
-			
-								</c:url>
-								<a class="btn hvr-hover" data-fancybox-close="" href="${url}">Thêm
+							
+								<a class="btn hvr-hover" data-fancybox-close="" href="#" onclick="addToCart(${product.idProduct})">Thêm
 									vào giỏ hàng</a>
 
 							</div>
@@ -573,6 +570,7 @@
 
 	</script>
 	 <!-- ALL JS FILES -->
+	   <script src="js/addcart.js"></script>
     <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

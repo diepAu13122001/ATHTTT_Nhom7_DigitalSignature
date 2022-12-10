@@ -147,7 +147,7 @@
 																	<c:param name="url" value="SearchProduct" ></c:param>
 																
 														</c:url>
-															<a class="cart" href="${url}">Add to Cart</a>
+															<a class="cart" href="#" onclick="addToCart(${product.idProduct})">Thêm vào giỏ hàng</a>
 														</div>
 													</div>
 													<div class="why-text">
@@ -212,7 +212,7 @@
 								
 																	
 														</c:url>
-														<a  class="btn hvr-hover" href="${url}" >Add to Cart</a>
+														<a  class="btn hvr-hover" href="#" onclick="addToCart(${product.idProduct})" >Thêm vào giỏ hàng</a>
 													</div>
 												</div>
 											</div>
@@ -401,6 +401,7 @@
 	}
 	</script>
 	 <!-- ALL JS FILES -->
+	  <script src="js/addcart.js"></script>
     <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

@@ -1,8 +1,19 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt"%>
 
 <!-- Start Main Top -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+	integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+	crossorigin="anonymous" />
+<style>
+.login-box .dropdown-toggle::after {
+	top: 20px;
+	right: -14px;
+}
+</style>
 <div>
 	<div id="toast"></div>
 	<div class="main-top">
@@ -43,8 +54,7 @@
 					<c:if test="${user.email != null}">
 						<div class="our-link">
 							<ul>
-								<li><a href="#"><i class="fa fa-user s_color"></i>Tài
-										khoản &nbsp; ( ${user.firstName})</a></li>
+
 								<li><a href="cart.jsp"><i class="fa fa-shopping-cart"></i>
 										Giỏ hàng</a></li>
 
@@ -66,9 +76,23 @@
 						</c:if>
 						<c:if test="${user.email!= null}">
 							<%-- <div class="login__btn"> <a href="logout" class=""><fmt:message key="logout"  /></a></div> --%>
-							<div class="login__btn">
-								<a href="logout" onclick="signOut()" class="">Đăng xuất</a>
-							</div>
+							<ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+								<li class="nav-item dropdown"><a
+									class="nav-link dropdown-toggle" id="navbarDropdown" href="#"
+									role="button" data-bs-toggle="dropdown"
+									onclick="showDropdown()" style="color: #fff"><i
+										class="fas fa-user fa-fw"></i> Tài khoản &nbsp; (
+										${user.firstName}) </a>
+									<ul class="dropdown-menu dropdown-menu-end"
+										aria-labelledby="navbarDropdown"
+										style="position: absolute; color: #000">
+										<li><a class="dropdown-item" href="#!">Thông tin cá nhân</a></li>
+										<li><a class="dropdown-item" href="./orders">Đơn hàng</a></li>
+										<li><hr class="dropdown-divider" /></li>
+										<li><a class="dropdown-item" href="./logout">Đăng
+												xuất</a></li>
+									</ul></li>
+							</ul>
 						</c:if>
 
 
@@ -158,8 +182,7 @@
 										<c:param name="idProduct"
 											value="${cartItem.getItem().idProduct}"></c:param>
 									</c:url> <a href="${url}" class="photo"><img
-										src="${cartItem.getItem().image}"
-										class="cart-thumb" alt="" /></a>
+										src="${cartItem.getItem().image}" class="cart-thumb" alt="" /></a>
 									<h6>
 										<a href="${url}">${cartItem.getItem().nameProduct}</a>
 									</h6>
@@ -170,13 +193,16 @@
 									</p></li>
 							</c:forEach>
 							<li class="total"><a href="cart"
-								class="btn btn-default hvr-hover btn-cart">Giỏ hàng</a> <span class="float-right"><strong>Tổng :</strong> <fmt:formatNumber type="number"
-										maxFractionDigits="3" value="${cart.getTotal()}" /> ₫</span></li>
+								class="btn btn-default hvr-hover btn-cart">Giỏ hàng</a> <span
+								class="float-right"><strong>Tổng :</strong> <fmt:formatNumber
+										type="number" maxFractionDigits="3" value="${cart.getTotal()}" />
+									₫</span></li>
 						</c:if>
 						<c:if test="${cart==null}">
 							<li class="total"><a href="cart.jsp"
-								class="btn btn-default hvr-hover btn-cart">Giỏ hàng</a> <span class="float-right"><strong>Tổng :</strong> <fmt:formatNumber type="number"
-										maxFractionDigits="3" value="0" /> ₫</span></li>
+								class="btn btn-default hvr-hover btn-cart">Giỏ hàng</a> <span
+								class="float-right"><strong>Tổng :</strong> <fmt:formatNumber
+										type="number" maxFractionDigits="3" value="0" /> ₫</span></li>
 						</c:if>
 
 					</ul>
@@ -193,11 +219,16 @@
 		<div class="container">
 			<div class="input-group">
 				<span class="input-group-addon"><i class="fa fa-search"></i></span>
-				<input type="text" class="form-control"
-					placeholder="Tìm kiếm"> <span
-					class="input-group-addon close-search"><i
+				<input type="text" class="form-control" placeholder="Tìm kiếm">
+				<span class="input-group-addon close-search"><i
 					class="fa fa-times"></i></span>
 			</div>
 		</div>
 	</div>
 </div>
+<script>
+	function showDropdown() {
+		let drop = document.querySelector('.dropdown-menu.dropdown-menu-end');
+		drop.classList.toggle('show');
+	}
+</script>
