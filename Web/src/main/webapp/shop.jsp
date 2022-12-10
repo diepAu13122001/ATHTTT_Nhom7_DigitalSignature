@@ -8,33 +8,35 @@
 
 <head lang="${param.lang}">
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <!-- Mobile Metas -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	
-    <!-- Site Metas -->
-    <title>Freshshop</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="google-signin-client_id" content="1036870259189-5q0j11me86k3v4ni4eng6v02v2pe7jql.apps.googleusercontent.com">
-	<link rel="stylesheet" href="css/header.css">
-    <!-- Site Icons -->
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-	<link rel="stylesheet" href="fonts/themify-icons-font/themify-icons/themify-icons.css">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <!-- Site CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <!-- Responsive CSS -->
-    <link rel="stylesheet" href="css/responsive.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/custom.css">
-	   
-    <!--[if lt IE 9]>
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Site Metas -->
+<title>Freshshop</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="google-signin-client_id"
+	content="1036870259189-5q0j11me86k3v4ni4eng6v02v2pe7jql.apps.googleusercontent.com">
+<link rel="stylesheet" href="css/header.css">
+<!-- Site Icons -->
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="stylesheet"
+	href="fonts/themify-icons-font/themify-icons/themify-icons.css">
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<!-- Site CSS -->
+<link rel="stylesheet" href="css/style.css">
+<!-- Responsive CSS -->
+<link rel="stylesheet" href="css/responsive.css">
+<!-- Custom CSS -->
+<link rel="stylesheet" href="css/custom.css">
+
+<!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
@@ -62,7 +64,6 @@
 .paging a.active {
 	background: #000;
 }
-
 </style>
 </head>
 
@@ -87,22 +88,26 @@
 										<option value="3">Giá thấp → Giá cao</option>
 										<option value="4">Mới nhất</option>
 									</select> -->
-					<div class="select-sort-box">
-                    <!--     <select id="basic" class="selectpicker show-tick form-control" data-placeholder="$ USD">
+									<div class="select-sort-box">
+										<!--     <select id="basic" class="selectpicker show-tick form-control" data-placeholder="$ USD">
 							<option >D VND</a></option>
 							<option >$ USD</option>
 						</select>  -->
-						<a href="#" class="select-sort"> ${sortTitle} </a>
-						<i class="fa fa-caret-down" aria-hidden="true"></i>
-						
-					<ul class="subnav-sort">
-						<li><a href="shop?page-number=${tag}&sort=random">Không sắp xếp</a></li>
-						<li><a href="shop?page-number=${tag}&sort=high-to-low">Giá cao → Giá thấp</a></li>
-						<li><a href="shop?page-number=${tag}&sort=low-to-high">Giá thấp → Giá cao</a></li>
-						<li><a href="shop?page-number=${tag}&sort=popularty">Phổ biến</a></li>
-						
-					</ul>
-                    </div>
+										<a href="#" class="select-sort"> ${sortTitle} </a> <i
+											class="fa fa-caret-down" aria-hidden="true"></i>
+
+										<ul class="subnav-sort">
+											<li><a href="shop?page-number=${tag}&sort=random">Không
+													sắp xếp</a></li>
+											<li><a href="shop?page-number=${tag}&sort=high-to-low">Giá
+													cao → Giá thấp</a></li>
+											<li><a href="shop?page-number=${tag}&sort=low-to-high">Giá
+													thấp → Giá cao</a></li>
+											<li><a href="shop?page-number=${tag}&sort=popularty">Phổ
+													biến</a></li>
+
+										</ul>
+									</div>
 								</div>
 								<p>Showing all 6 results</p>
 							</div>
@@ -136,8 +141,7 @@
 														<div class="type-lb">
 															<p class="sale">Sale</p>
 														</div>
-														<img src="${product.image}"
-															class="img-fluid" alt="Image">
+														<img src="${product.image}" class="img-fluid" alt="Image">
 
 														<div class="mask-icon">
 															<ul>
@@ -151,23 +155,18 @@
 																	data-placement="right" title="Add to Wishlist"><i
 																		class="far fa-heart"></i></a></li>
 															</ul>
-														<c:url var="url" value="/addcart">
-																	<c:param name="page-number" value="${tag}"></c:param>
-																	<c:param name="sort" value="${sortby}"></c:param>
-																	<c:param name="add" value="${product.idProduct }"></c:param>
-														
-															</c:url> 
-															<input type="hidden" id="id-product" name="add" value="${product.idProduct}">
-															<a class="cart" href="${url}" >Add to Cart</a>
+													> <a class="cart"
+																href="#" onclick="addToCart(${product.idProduct})">Thêm
+																vào giỏ hàng</a>
 														</div>
 													</div>
 													<div class="why-text">
 														<h4 class="title-nowrap">${product.nameProduct}</h4>
 
 														<h5>
-															 <fmt:formatNumber type="number"  groupingUsed="true"
-																value="${product.convertToInt(product.price)}" /> 
-																
+															<fmt:formatNumber type="number" groupingUsed="true"
+																value="${product.convertToInt(product.price)}" />
+
 															₫
 														</h5>
 													</div>
@@ -179,20 +178,20 @@
 								<div role="tabpanel" class="tab-pane fade" id="list-view">
 									<c:forEach var="product" items="${pagings}">
 										<div class="list-view-box">
-												<c:url var="url" value="/shopdetail">
-													<c:param name="idProduct" value="${product.idProduct}"></c:param>
-												</c:url>
-												<input id="url-product" value="${url}" type="hidden">
+											<c:url var="url" value="/shopdetail">
+												<c:param name="idProduct" value="${product.idProduct}"></c:param>
+											</c:url>
+											<input id="url-product" value="${url}" type="hidden">
 											<div class="row" onclick="showDetail('${url}')">
 												<div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
-									
-													<div class="products-single fix" 	>
+
+													<div class="products-single fix">
 														<div class="box-img-hover">
 															<div class="type-lb">
 																<p class="new">New</p>
 															</div>
-															<img src="${product.image }"
-																class="img-fluid" alt="Image">
+															<img src="${product.image }" class="img-fluid"
+																alt="Image">
 															<div class="mask-icon">
 																<ul>
 																	<li><a href="#" data-toggle="tooltip"
@@ -214,19 +213,17 @@
 													<div class="why-text full-width">
 														<h4>${product.nameProduct}</h4>
 														<h5>
-															<fmt:formatNumber type="number"  groupingUsed="true"
+															<fmt:formatNumber type="number" groupingUsed="true"
 																value="${product.price}" />
 															₫
 
 														</h5>
 														<p>${product.description}</p>
-												<c:url var="url" value="/addcart">
-															<c:param name="page-number" value="${tag}"></c:param>
-															<c:param name="sort" value="${sortby}"></c:param>
-															<c:param name="add" value="${product.idProduct }"></c:param>
-														</c:url> 
-															<input type="hidden" id="id-product" name="add" value="${product.idProduct}">
-														<a class="btn hvr-hover" href="${url}">Add to Cart</a>
+												
+													<a
+															class="btn hvr-hover" href="#"
+															onclick="addToCart(${product.idProduct})">Thêm vào
+															giỏ hàng</a>
 													</div>
 												</div>
 											</div>
@@ -452,25 +449,27 @@
 			    }
 			  
 		}
-		 
+		
 		</script>
-	 <!-- ALL JS FILES -->
-    <script src="js/jquery-3.2.1.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <!-- ALL PLUGINS -->
-    <script src="./js/bootsnav.js"></script>
-    <script src="js/jquery.superslides.min.js"></script>
-    <script src="js/bootstrap-select.js"></script>
-    <script src="js/inewsticker.js"></script>
-    <script src="js/images-loded.min.js"></script>
-    <script src="js/isotope.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/baguetteBox.min.js"></script>
-    <script src="js/form-validator.min.js"></script>
-    <script src="js/contact-form-script.js"></script>
-    <script src="js/custom.js"></script>
-	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<!-- ALL JS FILES -->
+	<script src="js/addcart.js"></script>
+	<script src="js/jquery-3.2.1.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<!-- ALL PLUGINS -->
+	<script src="./js/bootsnav.js"></script>
+	<script src="js/jquery.superslides.min.js"></script>
+	<script src="js/bootstrap-select.js"></script>
+	<script src="js/inewsticker.js"></script>
+	<script src="js/images-loded.min.js"></script>
+	<script src="js/isotope.min.js"></script>
+	<script src="js/owl.carousel.min.js"></script>
+	<script src="js/baguetteBox.min.js"></script>
+	<script src="js/form-validator.min.js"></script>
+	<script src="js/contact-form-script.js"></script>
+	<script src="js/custom.js"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
+		async defer></script>
 </body>
 
 </html>

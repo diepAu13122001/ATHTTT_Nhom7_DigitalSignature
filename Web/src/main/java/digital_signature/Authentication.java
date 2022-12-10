@@ -25,6 +25,8 @@ import javax.servlet.http.Part;
 import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 
 import dao.DigitalSignatureDAO;
+import dao.ProductDAO;
+import dao.UrlDAO;
 import model.Customer;
 
 /**
@@ -64,11 +66,13 @@ public class Authentication extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
+		HttpSession session = request.getSession();
 		String filePublicKey = request.getParameter("public-key");
-		for (Part part : request.getParts()) {		
+		String invoice = request.getParameter("invoice");
+		for (Part part : request.getParts()) {
 			InputStream inputStream = part.getInputStream();
 			String fileName = extractFileName(part);
-			
 			if (!fileName.isEmpty()) {
 				byteEncrypt = inputStream.readAllBytes();
 			}
@@ -79,26 +83,27 @@ public class Authentication extends HttpServlet {
 			PublicKey publicKey;
 			publicKey = rsaCipher.publicKeyType(filePublicKey);
 			String decryptHash = rsaCipher.decrypt(byteEncrypt, publicKey);
-			
-			DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO)getServletContext().getAttribute("digitalSignatureDAO");
-			HttpSession session = request.getSession();
-			Customer customer = (Customer)session.getAttribute("user");
-			int idOrder = (int)session.getAttribute("idOrder");
+
+			DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO) getServletContext()
+					.getAttribute("digitalSignatureDAO");
+
+			Customer customer = (Customer) session.getAttribute("user");
+			String split[] = invoice.split("_");
+			int idOrder = Integer.parseInt(split[split.length-1]); 
 			String hashString = digitalSignatureDAO.getHashString(customer.getId(), idOrder);
-			System.out.println("Hash: "+hashString);
-			if(hashString.equals(decryptHash)) {
-				response.getWriter().append("Xác thực thành công").append(request.getContextPath());
+			System.out.println("Hash: " + hashString);		
+			if (hashString.equals(decryptHash)) {
+				productDAO.updateStatus(idOrder, "NP");
+				response.sendRedirect("payment.jsp");
 			}else {
-				response.getWriter().append("Xác thực thất bại").append(request.getContextPath());
+				response.sendRedirect("authentication-fail.jsp");
 			}
-		} catch (InvalidKeyException | InvalidKeySpecException | NoSuchPaddingException | IllegalBlockSizeException
-				| BadPaddingException | NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		}
-
+		} catch (NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException
+				| NoSuchAlgorithmException |InvalidKeyException | InvalidKeySpecException | IllegalArgumentException e) {
+			response.sendRedirect("authentication-fail.jsp");
+		} 
 		
+
 	}
 
 	/**

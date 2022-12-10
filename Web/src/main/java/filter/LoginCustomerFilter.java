@@ -14,20 +14,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import cart.ShoppingCart;
 import model.Customer;
+import model.Product;
+import servlet.Cart;
 
 /**
  * Servlet Filter implementation class LoginCustomerFilter
  */
-public class LoginCustomerFilter  implements Filter {
-       
-    /**
-     * @see HttpFilter#HttpFilter()
-     */
-    public LoginCustomerFilter() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+public class LoginCustomerFilter implements Filter {
+
+	/**
+	 * @see HttpFilter#HttpFilter()
+	 */
+	public LoginCustomerFilter() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * @see Filter#destroy()
@@ -39,25 +42,29 @@ public class LoginCustomerFilter  implements Filter {
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		// place your code here
-		HttpServletRequest httpRequest = (HttpServletRequest)request;
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String url = httpRequest.getRequestURI();
 		String[] split = url.split("/");
-		if(split[split.length-1].equals("checkout.jsp")||split[split.length-1].equals("authentication.jsp")) {
+		String last = split[split.length - 1];
+		if (last.equals("checkout.jsp") || last.equals("authentication.jsp")
+				|| last.equals("payment.jsp") || last.equals("orders")) {
 			HttpSession session = httpRequest.getSession(true);
 			Customer customer = (Customer) session.getAttribute("user");
-			if(customer == null) {
-				
-				httpResponse.sendRedirect(httpRequest.getContextPath()+"/login");
-			}
-			else {
+
+			if (customer == null) {
+				httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+			} else {
+
 				chain.doFilter(httpRequest, httpResponse);
+
 			}
-			
-		}else {
+
+		} else {
 			chain.doFilter(httpRequest, httpResponse);
 		}
 		// pass the request along the filter chain

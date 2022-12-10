@@ -41,27 +41,20 @@
 </head>
 <body>
 
-	<jsp:include page="header.jsp"></jsp:include>
+	
 	<div class="page-wrap d-flex flex-row align-items-center">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12 text-center">
-            <c:if test="${error!=null}">
-            	 <span class="display-1 d-block">THÔNG BÁO</span>
-                <div class="mb-4 lead">${error}</div>
-            </c:if>
-             <c:if test="${error==null}">
-              <span class="display-1 d-block">404</span>
-                <div class="mb-4 lead">Không tìm thấy trang.</div>
-             </c:if>
+                <span class="display-1 d-block">404</span>
+                <div class="mb-4 lead">Không tìm thấy file.</div>
                
-                <a href="./index.jsp" class="btn btn-link">Back to Home</a>
             </div>
         </div>
     </div>
 	</div>
 	
-		<jsp:include page="footer.jsp"></jsp:include>
+	
 		<!-- ALL JS FILES -->
 	
 		<script src="js/jquery-3.2.1.min.js"></script>

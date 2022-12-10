@@ -1,6 +1,8 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,22 +12,24 @@ import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
 
-import cart.ShoppingCart;
+
 import dao.ProductDAO;
 import dao.UrlDAO;
+import model.OrderDetail;
+import model.Orders;
 import model.Product;
 
 /**
- * Servlet implementation class AddCart
+ * Servlet implementation class OrderDetail
  */
-@WebServlet("/addcart")
-public class AddCart extends HttpServlet {
+@WebServlet("/orderDetail")
+public class OrderDetailCustomer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AddCart() {
+    public OrderDetailCustomer() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -35,34 +39,16 @@ public class AddCart extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
-		HttpSession session = request.getSession();
-		ShoppingCart<String, Product> cart = (ShoppingCart<String, Product>)session.getAttribute("cart");
-	
-		if (cart == null) {
-			cart = new ShoppingCart<String, Product>();
-			session.setAttribute("cart", cart);
-		}
 
-		String productID = request.getParameter("id");
-	
-		
-		if(productID!=null) {
-			Product product = productDAO.getProductById(Integer.parseInt(productID));
-			cart.add(productID, product);
-			//request.setAttribute("addProduct", product);
-		}
-		UrlDAO urlDAO = (UrlDAO)getServletContext().getAttribute("urlDAO");
-		String urlLast = urlDAO.getUrlLast();
-		if(urlLast==null) {
-			urlLast="index.jsp";
-		}else {
-			urlLast=urlLast.substring(1);
-		}
+		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
+		int orderId = Integer.parseInt(request.getParameter("id"));
+		Orders orders = productDAO.getOrderById(orderId);
+		List<OrderDetail> orderDetails = productDAO.getOrderDetails(orderId);
+		orders.setOrderDetails(orderDetails);
 //	    request.getRequestDispatcher(urlLast).forward(request, response);         
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        String json = new Gson().toJson(cart);
+        String json = new Gson().toJson(orders);
         response.getWriter().write(json);
 	}
 
