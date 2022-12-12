@@ -1,4 +1,4 @@
-package servlet;
+package servlet_admin;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -6,23 +6,20 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import dao.HistoryUrl;
-
-
+import dao.ProductDAO;
 
 /**
- * Servlet implementation class Logout
+ * Servlet implementation class UpdateOrder
  */
-@WebServlet("/logout")
-public class Logout extends HttpServlet {
+@WebServlet("/admin/update-order")
+public class UpdateOrder extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Logout() {
+    public UpdateOrder() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,13 +28,18 @@ public class Logout extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		session.invalidate();
-		//Lay duong dan cuoi cung
-		HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
-		String urlLast = historyUrl.getUrlLast();
-		response.sendRedirect(urlLast);
-	
+		// TODO Auto-generated method stub
+		int idOrder = Integer.parseInt(request.getParameter("id-order")); 
+		String status = request.getParameter("status-order");
+		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
+		boolean isUpdate = productDAO.updateOrder(idOrder,status);
+		if(isUpdate) {
+			request.setAttribute("udpateSuccess", true);
+		}else {
+			request.setAttribute("udpateSuccess", false);
+		}
+		
+		request.getRequestDispatcher("order-detail?id="+idOrder).forward(request, response);
 	}
 
 	/**

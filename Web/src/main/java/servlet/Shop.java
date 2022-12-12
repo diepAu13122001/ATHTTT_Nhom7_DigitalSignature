@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 
 import cart.ShoppingCart;
 import dao.ProductDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.Category;
 import model.Product;
 import model.SortPopular;
@@ -48,6 +48,7 @@ public class Shop extends HttpServlet {
 		// TODO Auto-generated method stub
 		//Get list product
 				ServletContext context = getServletContext();
+				HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
 				ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
 				List<Category> listCategory = productDAO.getListCategories();//Danh sach ten danh muc
 				//Tinh so trang
@@ -103,17 +104,8 @@ public class Shop extends HttpServlet {
 				context.setAttribute("sortTitle", sort);
 				context.setAttribute("pagings", pagings);
 		
-	
-		UrlDAO urlDAO = (UrlDAO)getServletContext().getAttribute("urlDAO");
-	    StringBuilder requestURL = new StringBuilder(request.getServletPath());
-	    String queryString = request.getQueryString();
-	    if (queryString == null) {
-	        urlDAO.setUrlLast(requestURL.toString());
-	    } else {
-	    	 urlDAO.setUrlLast(requestURL.append('?').append(queryString).toString());
-	    }
-	    System.out.println(urlDAO.getUrlLast());
-	   request.getRequestDispatcher("shop.jsp").forward(request, response);
+				historyUrl.saveHistoryUrl(request);
+	    		request.getRequestDispatcher("shop.jsp").forward(request, response);
 	    
 		//Search
 		

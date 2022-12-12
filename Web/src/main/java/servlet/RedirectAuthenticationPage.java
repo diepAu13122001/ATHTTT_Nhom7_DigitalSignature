@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.ProductDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import io.WritePDF;
 import model.Customer;
 import model.Orders;
@@ -40,15 +40,10 @@ public class RedirectAuthenticationPage extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		ServletContext context = getServletContext();
-		UrlDAO urlDAO = (UrlDAO) getServletContext().getAttribute("urlDAO");
+		HistoryUrl historyUrl = (HistoryUrl) getServletContext().getAttribute("urlDAO");
+		historyUrl.saveHistoryUrl(request);
 		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
-		StringBuilder requestURL = new StringBuilder(request.getServletPath());
-		String queryString = request.getQueryString();
-		if (queryString == null) {
-			urlDAO.setUrlLast(requestURL.toString());
-		} else {
-			urlDAO.setUrlLast(requestURL.append('?').append(queryString).toString());
-		}
+
 //		String fileName = (String)context.getAttribute("fileNameInvoice");
 		String invoice = request.getParameter("invoice");
 		request.setAttribute("invoice", invoice);
@@ -58,8 +53,9 @@ public class RedirectAuthenticationPage extends HttpServlet {
 			try {
 				String split[] = invoice.split("_");
 				int idOrder = Integer.parseInt(split[split.length - 1]);
+				int userId = Integer.parseInt(split[split.length - 2]);
 				Orders orders = productDAO.getOrderById(idOrder);
-				if (orders.getStatus().equals("NA")) {
+				if (orders.getStatus().equals("NA") && userId == customer.getId() ) {
 					request.getRequestDispatcher("authentication.jsp").forward(request, response);
 				} else {
 					if (orders.getStatus().equals("NP")) {
@@ -67,7 +63,6 @@ public class RedirectAuthenticationPage extends HttpServlet {
 					}
 
 					else {
-						request.setAttribute("error", "Đơn hàng đã huỷ");
 						request.getRequestDispatcher("notfound.jsp").forward(request, response);
 					}
 				}

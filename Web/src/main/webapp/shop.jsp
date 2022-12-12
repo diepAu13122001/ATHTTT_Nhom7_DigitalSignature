@@ -165,7 +165,7 @@
 
 														<h5>
 															<fmt:formatNumber type="number" groupingUsed="true"
-																value="${product.convertToInt(product.price)}" />
+																value="${product.getPrice()}" />
 
 															₫
 														</h5>
@@ -214,7 +214,7 @@
 														<h4>${product.nameProduct}</h4>
 														<h5>
 															<fmt:formatNumber type="number" groupingUsed="true"
-																value="${product.price}" />
+																value="${product.getPrice()}" />
 															₫
 
 														</h5>

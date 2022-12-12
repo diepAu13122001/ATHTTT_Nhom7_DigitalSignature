@@ -39,7 +39,7 @@ public class Product implements Item{
 		this.description = description;
 	}
 	public double getPrice() {
-		return price/10;
+		return price;
 	}
 	public void setPrice(double price) {
 		this.price = price;

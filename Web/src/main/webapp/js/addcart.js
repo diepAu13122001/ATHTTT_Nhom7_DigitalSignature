@@ -27,7 +27,7 @@ function addToCart(id) {
 	})
 }
 function formatCurrent(value) {
-	return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value / 10);
+	return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 }
 function showSuccessToast() {
 	toast({

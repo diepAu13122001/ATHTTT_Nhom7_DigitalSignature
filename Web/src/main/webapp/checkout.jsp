@@ -154,7 +154,7 @@
 										<input id="shippingOption2" name="shipping-option"
 											class="custom-control-input" type="radio"  value="2"> <label
 											class="custom-control-label" for="shippingOption2">Giao
-											hàng nhanh</label> <span class="float-right font-weight-bold">20.000
+											hàng nhanh</label> <span class="float-right font-weight-bold">15.000
 											VND</span>
 									</div>
 									<div class="ml-4 mb-2 small">(5-6 tiếng)</div>
@@ -162,7 +162,7 @@
 										<input id="shippingOption3" name="shipping-option"
 											class="custom-control-input" type="radio"  value="3"> <label
 											class="custom-control-label" for="shippingOption3">Giao
-											ngay lập tức</label> <span class="float-right font-weight-bold">30.000
+											ngay lập tức</label> <span class="float-right font-weight-bold">20.000
 											VND</span>
 									</div>
 									<div class="ml-4 mb-2 small">(20-30 phút)</div>
@@ -316,18 +316,18 @@
 								<div class="d-flex">
 									<h4>Thuế VAT (5%)</h4>
 									<div class="ml-auto font-weight-bold cast"> <fmt:formatNumber type = "number" 
-         														maxFractionDigits = "3" value = "${cart.getTax(0.05)}" /> VND</div>
+         														maxFractionDigits = "3" value = "0" /> VND</div>
 								</div>
 								<div class="d-flex">
 									<h4>Phí ship</h4>
 									<div id ="shipcost" class="ml-auto font-weight-bold">10.000 VND</div>
 								</div>
 								<hr>
-								<input type="text" hidden="" value="${cart.getTax(0.05)+cart.getTotal()}" id="subtotal">
+								<input type="text" hidden="" value="${cart.getTotal()}" id="subtotal">
 								<div class="d-flex gr-total">
 									<h5>Thành tiền</h5>
 									<div id="grand-total" class="ml-auto h5"> <fmt:formatNumber type = "number" 
-         														maxFractionDigits = "3" value = "${cart.getTax(0.05)+cart.getTotal()+10000}" /> VND</div>
+         														maxFractionDigits = "3" value = "${cart.getTotal()+10000}" /> VND</div>
 								</div>
 								<hr>
 							</div>
@@ -393,15 +393,15 @@
 		}
 		shipOption2.onclick= function(){
 			shipcost.innerHTML = '<fmt:formatNumber type = "number" 
-					maxFractionDigits = "3" value = "20000" /> VND'	;
-						var total = (Number(subtotal.value)+20000).toString();
+					maxFractionDigits = "3" value = "15000" /> VND'	;
+						var total = (Number(subtotal.value)+15000).toString();
 						var format = total.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 						grandtotal.innerHTML=format +" VND";
 		}
 		shipOption3.onclick= function(){
 			shipcost.innerHTML = '<fmt:formatNumber type = "number" 
-					maxFractionDigits = "3" value = "30000" /> VND'	;
-						var total = (Number(subtotal.value)+30000).toString();
+					maxFractionDigits = "3" value = "20000" /> VND'	;
+						var total = (Number(subtotal.value)+20000).toString();
 						var format = total.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 						grandtotal.innerHTML=format +" VND";
 		}

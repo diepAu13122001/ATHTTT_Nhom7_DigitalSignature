@@ -26,7 +26,7 @@ import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 
 import dao.DigitalSignatureDAO;
 import dao.ProductDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.Customer;
 
 /**
@@ -38,8 +38,8 @@ import model.Customer;
 		maxRequestSize = 1024 * 1024 * 50) // 50MB
 public class Authentication extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static byte[] byteEncrypt;
-	private static byte[] bytePubliKey;
+	private static byte[][] byteUpload= new byte[2][];
+
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -68,22 +68,28 @@ public class Authentication extends HttpServlet {
 			throws ServletException, IOException {
 		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
 		HttpSession session = request.getSession();
-		String filePublicKey = request.getParameter("public-key");
+		String filePublicKey = request.getParameter("pk-base64");
 		String invoice = request.getParameter("invoice");
+		int index = 0;
 		for (Part part : request.getParts()) {
 			InputStream inputStream = part.getInputStream();
 			String fileName = extractFileName(part);
 			if (!fileName.isEmpty()) {
-				byteEncrypt = inputStream.readAllBytes();
+				byteUpload[index] = inputStream.readAllBytes();
+				index++;
 			}
 		}
 
 		try {
 			RSACipher rsaCipher = new RSACipher();
 			PublicKey publicKey;
-			publicKey = rsaCipher.publicKeyType(filePublicKey);
-			String decryptHash = rsaCipher.decrypt(byteEncrypt, publicKey);
-
+			if(filePublicKey!=null) {
+				publicKey = rsaCipher.publicKeyType(filePublicKey);
+			}else {
+				publicKey = rsaCipher.publicKeyFile(byteUpload[1]);
+			}	
+			String decryptHash = rsaCipher.decrypt(byteUpload[0], publicKey);
+			
 			DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO) getServletContext()
 					.getAttribute("digitalSignatureDAO");
 
@@ -100,6 +106,7 @@ public class Authentication extends HttpServlet {
 			}
 		} catch (NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException
 				| NoSuchAlgorithmException |InvalidKeyException | InvalidKeySpecException | IllegalArgumentException e) {
+			e.printStackTrace();
 			response.sendRedirect("authentication-fail.jsp");
 		} 
 		

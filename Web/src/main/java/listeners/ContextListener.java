@@ -1,5 +1,10 @@
 package listeners;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebListener;
@@ -8,30 +13,35 @@ import javax.servlet.http.HttpSession;
 import dao.CustomerDAO;
 import dao.DigitalSignatureDAO;
 import dao.ProductDAO;
-import dao.UrlDAO;
-
-
+import dao.HistoryUrl;
+import timer.TimerExample;
 
 @WebListener
 public final class ContextListener implements ServletContextListener {
 	private ServletContext context = null;
+	private ScheduledExecutorService scheduler;
 
 	public void contextInitialized(ServletContextEvent event) {
 		context = event.getServletContext();
-
+//		  scheduler = Executors.newSingleThreadScheduledExecutor();
+//		  Runnable commad = new TimerExample();
+//		  long initialDelay = 10;
+//		  TimeUnit unit = TimeUnit.SECONDS;
+//		  long period = 2;
+//		  scheduler.scheduleAtFixedRate(commad, initialDelay, period,unit);
 		try {
+
 			CustomerDAO khachHangDAO = new CustomerDAO();
 			context.setAttribute("khachHangDAO", khachHangDAO);
 			ProductDAO productDAO = new ProductDAO();
 			context.setAttribute("productDAO", productDAO);
-			UrlDAO urlDAO = new UrlDAO();
-			context.setAttribute("urlDAO", urlDAO);
+			HistoryUrl historyUrl = new HistoryUrl();
+			context.setAttribute("urlDAO", historyUrl);
 			DigitalSignatureDAO digitalSignatureDAO = new DigitalSignatureDAO();
 			context.setAttribute("digitalSignatureDAO", digitalSignatureDAO);
-	
+
 		} catch (Exception ex) {
-			System.out.println("Couldn't create bookstore database bean: "
-					+ ex.getMessage());
+			System.out.println("Couldn't create bookstore database bean: " + ex.getMessage());
 		}
 	}
 
@@ -44,7 +54,7 @@ public final class ContextListener implements ServletContextListener {
 		ProductDAO productDAO = (ProductDAO) context.getAttribute("productDAO");
 
 		context.removeAttribute("productDAO");
-		UrlDAO urlDAO = (UrlDAO)context.getAttribute("urlDAO");
+		HistoryUrl historyUrl = (HistoryUrl) context.getAttribute("urlDAO");
 		context.removeAttribute("urlDAO");
 	}
 }

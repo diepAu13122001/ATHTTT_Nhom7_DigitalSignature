@@ -14,7 +14,9 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cart.ShoppingCartItem;
 import io.WritePDF;
@@ -59,6 +61,37 @@ public class ProductDAO {
 		return result;
 	}
 
+	public boolean updateOrder(int id,String status) {
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"UPDATE orders SET status = ?,date_modified = ?"
+							+ " where id = ? ");
+			ps.setString(1, status);
+			ps.setString(2, WritePDF.formatDate(LocalDateTime.now()));		
+			ps.setInt(3, id);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public Map<String, String> getStutusOrder() {
+		try {
+			Map<String, String> map = new HashMap<>();
+			PreparedStatement ps = conn.prepareStatement("select * from status_order");
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				map.put(rs.getString("status_code"), rs.getString("status_name"));
+			}
+			return map;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public Shipping getShippingById(int id) {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select * from shipping where id = ?");
@@ -85,7 +118,8 @@ public class ProductDAO {
 	public List<Orders> getOrders() {
 		List<Orders> orders = new ArrayList<>();
 		try {
-			PreparedStatement ps = conn.prepareStatement("select * from orders order by id desc");
+			PreparedStatement ps = conn.prepareStatement("select * from orders inner join status_order on \r\n"
+					+ "orders.status = status_order.status_code  order by id desc");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt("id");
@@ -94,6 +128,7 @@ public class ProductDAO {
 				String address = rs.getString("address");
 				double grandTotal = rs.getDouble("grand_price");
 				String status = rs.getString("status");
+				String statusName = rs.getString("status_name");
 				String nameReceiver = rs.getString("name_receiver");
 				Orders order = new Orders();
 				order.setId(id);
@@ -103,6 +138,7 @@ public class ProductDAO {
 				order.setGrandPrice(grandTotal);
 				order.setNameReceiver(nameReceiver);
 				order.setStatus(status);
+				order.setStatusName(statusName);
 				orders.add(order);
 			}
 			return orders;
@@ -115,7 +151,8 @@ public class ProductDAO {
 	public List<Orders> getOrdersByUser(int userId) {
 		List<Orders> orders = new ArrayList<>();
 		try {
-			PreparedStatement ps = conn.prepareStatement("select * from orders where user_id = ? order by id desc");
+			PreparedStatement ps = conn.prepareStatement("select * from orders inner join status_order on "
+					+ "orders.status = status_order.status_code where user_id = ? order by id desc");
 			ps.setInt(1, userId);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -127,6 +164,7 @@ public class ProductDAO {
 				String status = rs.getString("status");
 				String nameReceiver = rs.getString("name_receiver");
 				String fileInvocie = rs.getString("file_invoice");
+				String statusName = rs.getString("status_name");
 				Orders order = new Orders();
 				order.setId(id);
 				order.setDateCreate(dateCreate);
@@ -136,6 +174,7 @@ public class ProductDAO {
 				order.setNameReceiver(nameReceiver);
 				order.setStatus(status);
 				order.setFileInvoice(fileInvocie);
+				order.setStatusName(statusName);
 				orders.add(order);
 			}
 			return orders;
@@ -148,7 +187,8 @@ public class ProductDAO {
 	public Orders getOrderById(int id) {
 		Orders order = new Orders();
 		try {
-			PreparedStatement ps = conn.prepareStatement("select * from orders where id = ?");
+			PreparedStatement ps = conn.prepareStatement("select * from orders inner join status_order on \r\n"
+					+ "orders.status = status_order.status_code where orders.id = ?");
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -165,6 +205,8 @@ public class ProductDAO {
 				String addressDetail = rs.getString("address_detail");
 				String nameReceiver = rs.getString("name_receiver");
 				String fileInvocie = rs.getString("file_invoice");
+				String statusName = rs.getString("status_name");
+				order.setStatusName(statusName);
 				order.setId(ids);
 				order.setUserId(userId);
 				order.setDateCreate(dateCreate);
@@ -209,28 +251,33 @@ public class ProductDAO {
 		}
 		return null;
 	}
+
 	public void updateFileInvoice(int id, String fileInvoice) {
 		try {
-			PreparedStatement ps = conn.prepareStatement("UPDATE `freshop_db`.`orders` SET `file_invoice` = ? WHERE `id` = ?;");
+			PreparedStatement ps = conn
+					.prepareStatement("UPDATE `freshop_db`.`orders` SET `file_invoice` = ? WHERE `id` = ?;");
 			ps.setString(1, fileInvoice);
 			ps.setInt(2, id);
 			ps.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
+
 	public void updateStatus(int id, String status) {
 		try {
-			PreparedStatement ps = conn.prepareStatement("UPDATE `freshop_db`.`orders` SET `status` = ? WHERE `id` = ?;");
+			PreparedStatement ps = conn
+					.prepareStatement("UPDATE `freshop_db`.`orders` SET `status` = ? WHERE `id` = ?;");
 			ps.setString(1, status);
 			ps.setInt(2, id);
 			ps.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
+
 	public int insertOrders(int userId, String name, String phoneNumber, String email, String address,
 			String desAddress, LocalDateTime dateIssue, List<ShoppingCartItem<Product>> orders, double discount,
 			int shipId, double grandTotal, String status, String fileInvoice) {
@@ -238,9 +285,8 @@ public class ProductDAO {
 		try {
 
 			PreparedStatement ps = conn.prepareStatement(
-					"INSERT INTO `freshop_db`.`orders` (`user_id`, `issue_date`, `phone_num`, `email`, `ship_id`, `grand_price`, `address`, `address_detail`, `discount`, `name_receiver`, `status`, `file_invoice`)"
-					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?);\r\n"
-							+ "");
+					"INSERT INTO `freshop_db`.`orders` (`user_id`, `issue_date`, `phone_num`, `email`, `ship_id`, `grand_price`, `address`, `address_detail`, `discount`, `name_receiver`, `status`, `file_invoice`,`date_modified`)"
+							+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);\r\n" + "");
 			ps.setInt(1, userId);
 			ps.setString(2, WritePDF.formatDate(dateIssue));
 			ps.setString(3, phoneNumber);
@@ -253,6 +299,7 @@ public class ProductDAO {
 			ps.setString(10, name);
 			ps.setString(11, status);
 			ps.setString(12, fileInvoice);
+			ps.setString(13, WritePDF.formatDate(dateIssue));
 			ps.execute();
 			ps = conn.prepareStatement(" SELECT LAST_INSERT_ID()");
 			ResultSet rs = ps.executeQuery();
@@ -634,6 +681,6 @@ public class ProductDAO {
 
 	public static void main(String[] args) throws SQLException {
 		ProductDAO productDAO = new ProductDAO();
-		productDAO.updateFileInvoice(3,"invoice_2022-12-11_000003_1000_3");
+		productDAO.updateFileInvoice(3, "invoice_2022-12-11_000003_1000_3");
 	}
 }

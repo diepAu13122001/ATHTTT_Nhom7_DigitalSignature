@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import dao.UrlDAO;
+import dao.HistoryUrl;
 
 
 /**
@@ -30,14 +30,8 @@ public class Cart extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		UrlDAO urlDAO = (UrlDAO)getServletContext().getAttribute("urlDAO");
-	    StringBuilder requestURL = new StringBuilder(request.getServletPath());
-	    String queryString = request.getQueryString();
-	    if (queryString == null) {
-	        urlDAO.setUrlLast(requestURL.toString());
-	    } else {
-	    	 urlDAO.setUrlLast(requestURL.append('?').append(queryString).toString());
-	    }
+		HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
+	    historyUrl.saveHistoryUrl(request);
 	    request.getRequestDispatcher("cart.jsp").forward(request, response);
 	}
 

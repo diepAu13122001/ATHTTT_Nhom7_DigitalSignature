@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dao.ProductDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.Category;
 import model.Product;
 import model.SortPopular;
@@ -111,14 +111,8 @@ public class SearchProduct extends HttpServlet {
 			sort="Phổ biến nhất";
 		}
 		//Lay duong dan cuoi cung
-		UrlDAO urlDAO = (UrlDAO)getServletContext().getAttribute("urlDAO");
-	    StringBuilder requestURL = new StringBuilder(request.getServletPath());
-	    String queryString = request.getQueryString();
-	    if (queryString == null) {
-	        urlDAO.setUrlLast(requestURL.toString());
-	    } else {
-	    	 urlDAO.setUrlLast(requestURL.append('?').append(queryString).toString());
-	    }
+		HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
+	    historyUrl.saveHistoryUrl(request);
 //	    System.out.println(urlDAO.getUrlLast());
 		
 		

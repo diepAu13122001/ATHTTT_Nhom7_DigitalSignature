@@ -24,10 +24,10 @@
 .pb-1 {
 	padding-bottom: 1rem !important;
 }
-.mg-li{
+
+.mg-li {
 	margin: 10px 0;
 }
-
 </style>
 </head>
 <body class="sb-nav-fixed">
@@ -45,9 +45,16 @@
 							hàng</li>
 					</ol>
 
-
-					<form action="add-product" enctype="multipart/form-data"
-						method="post">
+					<c:if test="${udpateSuccess==true}">
+						<div class="alert alert-success" role="alert">Cập nhật thành
+							công</div>
+					</c:if>
+					<c:if test="${udpateSuccess==false}">
+						<div class="alert alert-danger" role="alert">Cập nhật thất
+							bại</div>
+					</c:if>
+					<form action="update-order" method="get">
+						<input type="hidden" value="${order.id}" name="id-order">
 						<nav class="navbar navbar-light bg-light ">
 							<div class="container-fluid end-flex">
 								<button type="submit" class="btn btn-success">
@@ -78,31 +85,31 @@
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Tên
 																				người nhận</strong></label> <input type="text" class="form-control"
-																			required="required" id="name" name="name-product"
+																			required="required" id="name" name="name-receiver" disabled="disabled"
 																			value="${order.nameReceiver }">
 																	</div>
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Số
 																				điện thoại người nhận</strong></label> <input type="number"
 																			class="form-control" required="required" id="name"
-																			name="name-product" value="${order.phoneNum }">
+																			name="phone-num" value="${order.phoneNum }" disabled="disabled">
 																	</div>
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Email</strong></label>
 																		<input type="text" class="form-control"
-																			required="required" id="name" name="name-product"
+																			required="required" id="name" name="email" disabled="disabled"
 																			value="${order.email }">
 																	</div>
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Địa
 																				chỉ</strong></label> <input type="text" class="form-control"
-																			required="required" id="name" name="name-product"
+																			required="required" id="name" name="address" disabled="disabled"
 																			value="${order.address }">
 																	</div>
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Mô
 																				tả địa chỉ</strong></label> <input type="text" class="form-control"
-																			required="required" id="name" name="name-product"
+																			required="required" id="name" name="address-detail" disabled="disabled"
 																			value="${order.addressDetail}">
 																	</div>
 																</div>
@@ -244,21 +251,32 @@
 											<ul class="list-unstyled text-right">
 												<li><strong>ID: </strong>${order.customer.id}</li>
 												<li><strong>Email: </strong>${order.customer.email}</li>
-												<li><strong>Loại TK: </strong>
-												<c:if test="${order.customer.accountGoogle == 0}">
+												<li><strong>Loại TK: </strong> <c:if
+														test="${order.customer.accountGoogle == 0}">
 													Thường
 												</c:if> <c:if test="${order.customer.accountGoogle == 1}">
 													Google
 												</c:if></li>
 												<li>
-												<ul class="list-unstyled text-right">
-													<li><strong>Trạng thái đơn hàng: </strong></li>
-			
-													 
-													<li class="mg-li">
-													${order.status()}
-													</li>
-												</ul>
+													<ul class="list-unstyled text-right">
+														<li><strong>Trạng thái đơn hàng: </strong></li>
+
+
+														<li class="mg-li"><select class="form-select"
+															name="status-order">
+																<c:forEach items="${statusOrdes.entrySet()}" var="entry">
+																	<c:if test="${ order.status.equals(entry.getKey())}">
+																		<option value="${entry.getKey()}" selected="selected">${entry.getValue()}</option>
+																	</c:if>
+																	<c:if test="${!order.status.equals(entry.getKey())}">
+																		<option value="${entry.getKey()}">${entry.getValue()}</option>
+																	</c:if>
+
+																</c:forEach>
+
+
+														</select></li>
+													</ul>
 												</li>
 											</ul>
 										</div>

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import cart.ShoppingCart;
 import dao.ProductDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.Product;
 import model.Review;
 
@@ -52,15 +52,8 @@ public class ShopDetail extends HttpServlet {
 		System.out.println(url + " " + info + "--hello");
 
 		// Lay duong dan cuoi cung
-		UrlDAO urlDAO = (UrlDAO) getServletContext().getAttribute("urlDAO");
-		StringBuilder requestURL = new StringBuilder(request.getServletPath());
-		String queryString = request.getQueryString();
-		if (queryString == null) {
-			urlDAO.setUrlLast(requestURL.toString());
-		} else {
-			urlDAO.setUrlLast(requestURL.append('?').append(queryString).toString());
-		}
-		System.out.println(urlDAO.getUrlLast());
+		HistoryUrl historyUrl = (HistoryUrl) getServletContext().getAttribute("urlDAO");
+		historyUrl.saveHistoryUrl(request);
 
 		// Lay danh sach danh gia
 		List<Review> listReviews = productDAO.getListReviews(Integer.parseInt(id));

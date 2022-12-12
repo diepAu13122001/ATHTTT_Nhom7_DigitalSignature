@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSession;
 
 
 import cart.ShoppingCart;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.Product;
 
 /**
@@ -57,8 +57,8 @@ public class RemoveCart extends HttpServlet {
 			System.out.println("Remove cart OK!");
 		}
 
-		UrlDAO urlDAO = (UrlDAO) getServletContext().getAttribute("urlDAO");
-		String urlLast = urlDAO.getUrlLast();
+		HistoryUrl historyUrl = (HistoryUrl) getServletContext().getAttribute("urlDAO");
+		String urlLast = historyUrl.getUrlLast();
 		if (urlLast == null) {
 			urlLast = "index.jsp";
 		} else {

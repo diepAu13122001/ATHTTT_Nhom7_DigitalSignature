@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 
 import cart.ShoppingCart;
 import dao.ProductDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.Product;
 
 /**
@@ -52,8 +52,8 @@ public class AddCart extends HttpServlet {
 			cart.add(productID, product);
 			//request.setAttribute("addProduct", product);
 		}
-		UrlDAO urlDAO = (UrlDAO)getServletContext().getAttribute("urlDAO");
-		String urlLast = urlDAO.getUrlLast();
+		HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
+		String urlLast = historyUrl.getUrlLast();
 		if(urlLast==null) {
 			urlLast="index.jsp";
 		}else {

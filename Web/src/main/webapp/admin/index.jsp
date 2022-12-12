@@ -128,7 +128,7 @@
                                              <td><fmt:formatNumber type="number"  groupingUsed="true"
 																value="${orders.get(i).grandPrice}" />  </td>
                                              <td>
-                                           	${orders.get(i).status()}
+                                           	${orders.get(i).statusName}
                                             </td>
                                                                                 	
                                         </tr>
