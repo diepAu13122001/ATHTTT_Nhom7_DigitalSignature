@@ -131,5 +131,12 @@ public class RSACipher {
 		return publicKey;
 
 	}
+	public PublicKey publicKeyFile(byte[] bytes) throws InvalidKeySpecException, NoSuchAlgorithmException {
+		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		PublicKey publicKey = keyFactory.generatePublic(keySpec);
+		return publicKey;
+
+	}
 
 }

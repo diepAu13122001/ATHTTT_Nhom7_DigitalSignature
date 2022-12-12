@@ -55,7 +55,7 @@
 						<div class="our-link">
 							<ul>
 
-								<li><a href="cart.jsp"><i class="fa fa-shopping-cart"></i>
+								<li><a href="cart"><i class="fa fa-shopping-cart"></i>
 										Giỏ hàng</a></li>
 
 							</ul>
@@ -68,10 +68,10 @@
 					<div class="login-box">
 						<c:if test="${user.email == null}">
 							<div class="login__btn">
-								<a href="register.jsp" class="">Đăng ký</a>
+								<a href="./register" class="">Đăng ký</a>
 							</div>
 							<div class="login__btn">
-								<a href="login.jsp" class="">Đăng nhập</a>
+								<a href="./login" class="">Đăng nhập</a>
 							</div>
 						</c:if>
 						<c:if test="${user.email!= null}">
@@ -199,7 +199,7 @@
 									₫</span></li>
 						</c:if>
 						<c:if test="${cart==null}">
-							<li class="total"><a href="cart.jsp"
+							<li class="total"><a href="./cart"
 								class="btn btn-default hvr-hover btn-cart">Giỏ hàng</a> <span
 								class="float-right"><strong>Tổng :</strong> <fmt:formatNumber
 										type="number" maxFractionDigits="3" value="0" /> ₫</span></li>

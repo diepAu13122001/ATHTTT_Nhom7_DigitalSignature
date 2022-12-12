@@ -98,12 +98,13 @@
 																	type="number" groupingUsed="true"
 																	value="${order.grandPrice}" /></td>
 															<td class="text-center align-middle">
-																${order.status()}</td>
+																${order.statusName}</td>
 															<td class="text-center align-middle">
 																<div class="btn-group align-top">
 																	<button class="btn btn-sm btn-outline-secondary badge"
 																		type="button" data-toggle="modal"
-																		data-target="#user-form-modal" onclick="showOrderDetail(${order.id})">
+																		data-target="#user-form-modal"
+																		onclick="showOrderDetail(${order.id})">
 																		<i class="fas fa-info-circle"></i>
 																	</button>
 
@@ -215,15 +216,18 @@
 									<div class="py-1">
 										<div id="layoutSidenav_content">
 											<nav class="navbar navbar-light bg-light ">
-												<div class="container-fluid end-flex" style="justify-content: flex-end;">
-												
-												<a  class="btn btn-success" style="color:#fff">
-														
-												</a>
-												
-													
+												<div class="container-fluid end-flex"
+													style="justify-content: flex-end;">
+													<div class="row">
+														<div class="col-sm" id="cancel-order"></div>
+														<div class="col-sm" id="status-order"></div>
+													</div>
+
+
+
 												</div>
 											</nav>
+											
 											<nav class="navbar navbar-light  ">
 												<div class="row">
 
@@ -246,14 +250,11 @@
 
 																				<div class="well">
 																					<ul class="list-unstyled mb0">
-																						<li><strong>Tên người nhận: </strong>
-																							</li>
+																						<li><strong>Tên người nhận: </strong></li>
 																						<li><strong>SĐT: </strong></li>
 																						<li><strong>Email: </strong></li>
-																						<li><strong>Địa chỉ: </strong>
-																						</li>
-																						<li><strong>Mô tả địa chỉ: </strong>
-																						</li>
+																						<li><strong>Địa chỉ: </strong></li>
+																						<li><strong>Mô tả địa chỉ: </strong></li>
 																					</ul>
 																				</div>
 																			</div>
@@ -295,14 +296,13 @@
 																								<th class="per70 text-center">Sản phẩm</th>
 																								<th class="per5 text-center">Số lượng</th>
 																								<th class="per25 text-center">Đơn giá</th>
-																								<th class="per25 text-center">Thành
-																									tiền</th>
+																								<th class="per25 text-center">Thành tiền</th>
 																							</tr>
 																						</thead>
 																						<tbody>
 
-																							
-																	
+
+
 																						</tbody>
 																						<tfoot>
 																							<tr>
@@ -364,6 +364,26 @@
 								</div>
 							</div>
 						</div>
+			
+						<div class="modal fade modal-child" id="exampleModal" tabindex="-1"
+							role="dialog" aria-labelledby="exampleModalLabel"
+							aria-hidden="true">
+							<input id ="id-order" type="hidden" value="">
+							<div class="modal-dialog" role="document" style="margin-top: 200px;">
+								<div class="modal-content" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);  ">
+									<div class="modal-header">
+										<h3 class="modal-title" id="exampleModalLabel">Thông báo</h3>
+										
+									</div>
+									<div class="modal-body"><h2 class="modal-title" id="exampleModalLabel">Bạn có muốn huỷ đơn hàng không ?</h2></div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" onclick="closeModalChild()"
+											>Không</button>
+										<button type="button" class="btn btn-primary" onclick="cancelOrder()">Chắc chắn</button>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -403,12 +423,34 @@
 				console.log(responseJson.orderDetails[0].quantity);
 				$(".modal-title span").html("#"+responseJson.dateCreate+"-"+responseJson.id);
 				if(responseJson.status == "NA"){
-					$('#user-form-modal .btn-success').html("Xác thực");
-					$('#user-form-modal .btn-success').attr("href","./authentication?invoice="+responseJson.fileInvoice);
+					$('#user-form-modal #status-order').html("<a class='btn btn-labeled btn-warning' style='color: #fff'> "
+					+"<span class='btn-label'><i class='fas fa-user-check'></i></span>&nbsp;&nbsp;Xác thực</a>");
+					$('#user-form-modal #status-order a').attr("href","./authentication?invoice="+responseJson.fileInvoice);
+					$('#user-form-modal #cancel-order').html("<a class='btn btn-labeled btn-danger' style='color: #fff' onclick='showModalChild("+responseJson.id+")'> "
+					+"<span class='btn-label'><i class='fa fa-trash'></i></span>&nbsp;&nbsp;Huỷ đơn</a>");
 				}
 				if(responseJson.status == "NP"){
-					$('#user-form-modal .btn-success').html("Thanh toán");
-					$('#user-form-modal .btn-success').attr("href","./payment.jsp");
+					$('#user-form-modal #status-order').html("<a class='btn btn-labeled btn-primary' style='color: #fff'> "
+							+"<span class='btn-label'><i class='fa fa-credit-card' aria-hidden='true'></i></span>&nbsp;&nbsp;Thanh toán</a>");
+							$('#user-form-modal #status-order a').attr("href","payment.jsp");
+							$('#user-form-modal #cancel-order').html("<a class='btn btn-labeled btn-danger' style='color: #fff' onclick='showModalChild("+responseJson.id+")'> "
+							+"<span class='btn-label'><i class='fa fa-trash'></i></span>&nbsp;&nbsp;Huỷ đơn</a>");
+				}
+				
+				if(responseJson.status == "CO"){
+					$('#user-form-modal #cancel-order').html("");
+					$('#user-form-modal #status-order').html("<a class='btn btn-labeled btn-danger' style='color: #fff'"
+							+"<span class='btn-label'><i class='fa fa-ban'></i></span>&nbsp;&nbsp;Đã huỷ</a>");
+				}
+				if(responseJson.status == "SP"){
+					$('#user-form-modal #cancel-order').html("");
+					$('#user-form-modal #status-order').html("<a class='btn btn-labeled btn-info' style='color: #fff'"
+							+"<span class='btn-label'><i class='fa fa-truck'></i></span>&nbsp;&nbsp;Đang giao hàng</a>");
+				}
+				if(responseJson.status == "HS"){
+					$('#user-form-modal #cancel-order').html("");
+					$('#user-form-modal #status-order').html("<a class='btn btn-labeled btn-success' style='color: #fff'"
+							+"<span class='btn-label'><i class='fa fa-check'></i></span>&nbsp;&nbsp;Đã giao hàng</a>");
 				}
 				$(".list-unstyled").html("<li><strong>Tên người nhận: </strong> "+responseJson.nameReceiver+"</li>"+
 						"<li><strong>SĐT: </strong> "+responseJson.phoneNum+"</li>"+
@@ -418,8 +460,10 @@
 				);
 				
 				let total = 0;
+				$('#user-form-modal .table-bordered tbody').html("");
 				$.each(responseJson.orderDetails, function(key, value) {
 					total += value.product.price*value.quantity;
+				
 					$('#user-form-modal .table-bordered tbody').append("<tr	style='cursor: pointer'>"+
 							"<td>"+value.product.nameProduct+"</td>"+
 							"<td class='text-center'>"+value.quantity+"</td>"+
@@ -430,16 +474,34 @@
 					
 				});
 				$("#totalPrice").html(formatCurrent(total));
-				$("#discount").html(formatCurrent(responseJson.discount*10));
-				$("#ship").html(formatCurrent(responseJson.shipping.price*10));
-				$("#grandPrice").html(formatCurrent(responseJson.grandPrice*10));
+				$("#discount").html(formatCurrent(responseJson.discount));
+				$("#ship").html(formatCurrent(responseJson.shipping.price));
+				$("#grandPrice").html(formatCurrent(responseJson.grandPrice));
 				
 			}
 		})
 	}
 	function formatCurrent(value) {
-		return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value / 10);
+		return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 	}
+	function closeModalChild() {
+		$('#exampleModal').css("opacity", 0);
+		$('#exampleModal').css("display","none");
+		//$('#exampleModal').css("display","none");
+		//$('#exampleModal').attr("aria-hidden","true");
+	}
+	function showModalChild(id) {
+		$('#exampleModal').css("opacity", 1);
+		$('#exampleModal').css("display","block");
+		$('body').removeClass("modal-open");
+		$("#id-order").val(id);
+		//$('#exampleModal').css("display","none");
+		//$('#exampleModal').attr("aria-hidden","true");
+	}
+	function cancelOrder(){
+		window.location.href= "./cancel-order?id-order="+	$("#id-order").val();
+	}
+	
 	</script>
 
 </body>

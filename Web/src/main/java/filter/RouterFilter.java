@@ -1,6 +1,8 @@
 package filter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -43,10 +45,13 @@ public class RouterFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String  url = httpRequest.getServletPath();
-		if(url.endsWith("header.jsp") || url.endsWith("footer.jsp")) {
-			httpResponse.sendRedirect(httpRequest.getContextPath());
+		String []  urls = {"header.jsp","footer.jsp","bills.jsp","shop.jsp","search-product.jsp","search-detail.jsp","cart.jsp"};
+		List<String> list = Arrays.asList(urls);
+		String split[] = url.split("/");
+		String last = split[split.length - 1];
+		if(list.contains(last)) {
+			httpResponse.sendRedirect(httpRequest.getContextPath()+"/notfound.jsp");
 		}
-		
 		// pass the request along the filter chain
 		chain.doFilter(request, response);
 	}

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.ProductDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.Customer;
 import model.IDRandom;
 import model.Review;
@@ -55,8 +55,8 @@ public class AddReview extends HttpServlet {
 	    java.sql.Date dateReview = java.sql.Date.valueOf(dateTime.toLocalDate());
 	    productDAO.insertReview(content,Integer.parseInt(rating),dateReview,Integer.parseInt(id), customer.getId());
 //	    request.getRequestDispatcher("shopdetail").forward(request, response);
-		UrlDAO urlDAO = (UrlDAO)getServletContext().getAttribute("urlDAO");
-		String urlLast = urlDAO.getUrlLast();
+		HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
+		String urlLast = historyUrl.getUrlLast();
 		if(urlLast==null) {
 			urlLast="index.jsp";
 		}else {

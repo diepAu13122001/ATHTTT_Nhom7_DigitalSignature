@@ -35,10 +35,10 @@ public class ShowPDF extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		ServletContext context = getServletContext();
+
 		String invoice = request.getParameter("invoice");
 		String fileName = invoice + ".pdf";
-		System.out.println("DM id ne: " + invoice);
+
 		if (invoice != null) {
 			try {
 				File file = new File(WritePDF.PATH + fileName);

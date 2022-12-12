@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import dao.HistoryUrl;
 import dao.ProductDAO;
 import model.Customer;
 import model.OrderDetail;
@@ -36,6 +37,8 @@ public class OrdersCustomer extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
+		HistoryUrl historyUrl = (HistoryUrl) getServletContext().getAttribute("urlDAO");
+		
 		HttpSession session = request.getSession();
 		Customer customer = (Customer)session.getAttribute("user");
 		List<Orders> orders = productDAO.getOrdersByUser(customer.getId());
@@ -44,7 +47,7 @@ public class OrdersCustomer extends HttpServlet {
 			order.setOrderDetails(orderDetails);
 		}
 		request.setAttribute("orders", orders);
-
+		historyUrl.saveHistoryUrl(request);
 		request.getRequestDispatcher("bills.jsp").forward(request, response);
 	}
 

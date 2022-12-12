@@ -22,13 +22,21 @@ public class Orders {
 
 	Shipping shipping;
 	String status;
+	String statusName;
+
 	List<OrderDetail> orderDetails;
 	public double totalPrice() {
 		double result=0;
 		for(OrderDetail orderDetail : orderDetails) {
 			result+=orderDetail.quantity*orderDetail.product.price;
 		}
-		return result/10;
+		return result;
+	}
+	public String getStatusName() {
+		return statusName;
+	}
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
 	}
 	public String getFileInvoice() {
 		return fileInvoice;

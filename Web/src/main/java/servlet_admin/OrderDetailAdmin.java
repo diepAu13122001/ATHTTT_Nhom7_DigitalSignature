@@ -2,6 +2,7 @@ package servlet_admin;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -45,8 +46,11 @@ public class OrderDetailAdmin extends HttpServlet {
 		List<OrderDetail> orderDetails = productDAO.getOrderDetails(orderId);
 		orders.setOrderDetails(orderDetails);
 		
+		Map<String, String> map = productDAO.getStutusOrder();
+		
 		HttpSession context = request.getSession();
 		context.setAttribute("order", orders);
+		context.setAttribute("statusOrdes", map);
 		
 		request.getRequestDispatcher("order-detail.jsp").forward(request, response);		
 	}

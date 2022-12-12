@@ -174,13 +174,13 @@
                             <div class="d-flex">
                             <h4>Thuế</h4>
                             <div class="ml-auto font-weight-bold"> <fmt:formatNumber type = "number" 
-         														maxFractionDigits = "3" value = "${cart.getTax(0.05)}" /> VND </div>
+         														maxFractionDigits = "3" value = "0" /> VND </div>
                         </div>
                         <hr>
                         <div class="d-flex gr-total">
                             <h5>Thành tiền</h5>
                             <div class="ml-auto h5 grand-total"> <fmt:formatNumber type = "number" 
-         														maxFractionDigits = "3" value = "${cart.getTotal()+cart.getTax(0.05)}" /> VND </div>
+         														maxFractionDigits = "3" value = "${cart.getTotal()}" /> VND </div>
                         </div>
                         <hr> </div>
                 </div>

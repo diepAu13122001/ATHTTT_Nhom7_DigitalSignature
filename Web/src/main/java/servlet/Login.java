@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import access.google.GooglePojo;
 import access.google.GoogleUtils;
 import dao.CustomerDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.Customer;
 
 /**
@@ -42,13 +42,9 @@ public class Login extends HttpServlet {
 		CustomerDAO khd = (CustomerDAO) getServletContext().getAttribute("khachHangDAO");
 
 		// Lay duong dan cuoi cung
-		UrlDAO urlDAO = (UrlDAO)getServletContext().getAttribute("urlDAO");
-		String urlLast = urlDAO.getUrlLast();
-		if(urlLast==null) {
-			urlLast="index.jsp";
-		}else {
-			urlLast=urlLast.substring(1);
-		}
+		HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
+		String urlLast = historyUrl.getUrlLast();
+		System.out.println("Last url: "+urlLast);
 		String code = request.getParameter("code");
 
 		if (code == null || code.isEmpty()) {
@@ -57,7 +53,7 @@ public class Login extends HttpServlet {
 				System.out.println(kh);
 				session.setAttribute("user", kh);
 				request.setAttribute("email", username);
-				request.getRequestDispatcher(urlLast).forward(request, response);
+				  response.sendRedirect(urlLast);
 			} else {
 				request.setAttribute("email", username);
 				request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -80,7 +76,7 @@ public class Login extends HttpServlet {
 		    	customer = khd.findByEmail(googlePojo.getEmail(),1);
 		    }
 		    session.setAttribute("user", customer);
-		    request.getRequestDispatcher(urlLast).forward(request, response);
+		    response.sendRedirect(urlLast);
 		}
 //		request.getRequestDispatcher("shop-detail.jsp").forward(request, response);
 		

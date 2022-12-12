@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 
 
 import dao.ProductDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.OrderDetail;
 import model.Orders;
 import model.Product;

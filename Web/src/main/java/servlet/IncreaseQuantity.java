@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import cart.ShoppingCart;
 import cart.ShoppingCartItem;
 import dao.ProductDAO;
-import dao.UrlDAO;
+import dao.HistoryUrl;
 import model.Product;
 
 /**
@@ -62,8 +62,8 @@ public class IncreaseQuantity extends HttpServlet {
 			request.setAttribute("addProduct", product);
 			System.out.println("Add to cart OK!");
 		}
-		UrlDAO urlDAO = (UrlDAO)getServletContext().getAttribute("urlDAO");
-		String urlLast = urlDAO.getUrlLast();
+		HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
+		String urlLast = historyUrl.getUrlLast();
 		if(urlLast==null) {
 			urlLast="index.jsp";
 		}else {

@@ -44,7 +44,7 @@
 <body>
 	<!-- Start Main Top -->
 	<jsp:include page="header.jsp"></jsp:include>
-		
+
 	<div class=" shop-detail-box-main invoice">
 		<div class="container">
 			<div class="row">
@@ -52,39 +52,55 @@
 					<div class="title-left">
 						<h2 style="font-weight: 500">Thông tin đơn hàng</h2>
 					</div>
-					<iframe src="showPdf?invoice=${invoice}" width="100%" height="600px"> </iframe>
-			
-			</div>
+					<iframe src="showPdf?invoice=${invoice}" width="100%"
+						height="600px"> </iframe>
+
+				</div>
 				<div class="col-sm-6 col-lg-6 mb-3">
-				<div class="title-left">
+					<div class="title-left">
 						<h2 style="font-weight: 500">Xác thực</h2>
 					</div>
-					<form id="upload-form" class="needs-validation" action="handle-authentication" enctype="multipart/form-data" method="post">
-							<div class="mb-3">
-								<label for="file1">Hoá đơn mã hoá</label>
-								<div class="input-group">
-									<input type="file" class="form-control" id="file1" name="file-encrypt"
-										placeholder="" required>							
-								</div>
+					<form id="upload-form" class="needs-validation"
+						action="handle-authentication" enctype="multipart/form-data"
+						method="post">
+						<div class="mb-3">
+							<label for="file1">Hoá đơn mã hoá</label>
+							<div class="input-group">
+								<input type="file" class="form-control" id="file1"
+									name="file-encrypt" placeholder="" required>
 							</div>
-							<input type="hidden" name="invoice" value="${invoice}">
-							<div class="mb-3">
-								<label for="file2">Public key</label>
-								<c:if test="${ errorKey!=null}">
-								 <label id="pass-validate" class="mb-0" style="color: red; display: block">${errorKey}</label></c:if>
-								
-								<div class="input-group">
-								
-									<input type="text" class="form-control" id="public-key" name="public-key"
-										placeholder="" required>
-								
-								</div>
+						</div>
+						<input type="hidden" name="invoice" value="${invoice}">
+						<div class="mb-3">
+							<label for="file2">Public key   <select
+								class="form-select form-select-sm"
+								aria-label=".form-select-sm example" id="publickey-select" onchange="switchType()">
+									<option value ="0" selected>Base 64</option>
+									<option value="1">File</option>
+									
+							</select>
+
+							</label>
+							<c:if test="${ errorKey!=null}">
+								<label id="pass-validate" class="mb-0"
+									style="color: red; display: block">${errorKey}</label>
+							</c:if>
+
+							<div class="input-group" id="pk-box">
+
+								<input type="text" class="form-control" id="public-key"
+									name="pk-base64" placeholder="" required>
+
 							</div>
-							 <div class="col-12 d-flex shopping-box"><button type="submit" class="ml-auto btn hvr-hover" >Xác thực</button> </div>
-							</form>
+						</div>
+						<div class="col-12 d-flex shopping-box">
+							<button type="submit" class="ml-auto btn hvr-hover">Xác
+								thực</button>
+						</div>
+					</form>
 				</div>
 			</div>
-	</div>
+		</div>
 	</div>
 
 
@@ -110,7 +126,17 @@
 	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
 		async defer></script>
 	<script>
-	
+			function switchType() {
+				var type =  $("#publickey-select").val();
+				if(type == '0'){
+					console.log('dmm');
+					$("#pk-box").html("<input type='text' class='form-control' id='public-key' name='pk-base64' placeholder='' required>");
+				}else{
+					console.log('sv');
+					$("#pk-box").html("<input type='file' class='form-control' id='public-key'  name='file-encrypt' placeholder='' required>");
+				}
+				
+			}
 	</script>
 
 </body>
