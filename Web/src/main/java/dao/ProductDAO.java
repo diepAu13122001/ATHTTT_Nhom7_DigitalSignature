@@ -38,19 +38,17 @@ public class ProductDAO {
 		conn = db.getConnection();
 	}
 
-	public boolean insertProduct(String id, String name, String des, double price, String linkI, String idCato,
-			String linkL) {
+	public boolean insertProduct(String name, String des, double price, int categoryId, String image) {
 		boolean result = true;
 		try {
-
-			PreparedStatement ps = conn.prepareStatement("insert into products values(?,?,?,?,?,?,?)");
-			ps.setString(1, id);
-			ps.setString(2, name);
-			ps.setString(3, des);
-			ps.setDouble(4, price);
-			ps.setString(5, linkI);
-			ps.setString(6, idCato);
-			ps.setString(7, linkL);
+			PreparedStatement ps = conn.prepareStatement(
+					"INSERT INTO `freshop_db`.`products` (`product_name`, `desciption`, `prices`, `category_id`, `image`) "
+							+ "VALUES (?, ?, ?, ?, ?);");
+			ps.setString(1, name);
+			ps.setString(2, des);
+			ps.setDouble(3, price);
+			ps.setInt(4, categoryId);
+			ps.setString(5, image);
 			ps.executeUpdate();
 			//
 
@@ -61,13 +59,12 @@ public class ProductDAO {
 		return result;
 	}
 
-	public boolean updateOrder(int id,String status) {
+	public boolean updateOrder(int id, String status) {
 		try {
-			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE orders SET status = ?,date_modified = ?"
-							+ " where id = ? ");
+			PreparedStatement ps = conn
+					.prepareStatement("UPDATE orders SET status = ?,date_modified = ?" + " where id = ? ");
 			ps.setString(1, status);
-			ps.setString(2, WritePDF.formatDate(LocalDateTime.now()));		
+			ps.setString(2, WritePDF.formatDate(LocalDateTime.now()));
 			ps.setInt(3, id);
 			ps.executeUpdate();
 			return true;
@@ -442,10 +439,10 @@ public class ProductDAO {
 					"select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
 							+ " from products inner join categories on products.category_id = categories.id where categories.id = ? or products.product_name like ? or categories.category_name like ?");
 			String search1 = "";
-			if (search != "") {
-				search1 = "%" + search + " %";
+			if (!search.equals("")) {
+				search1 = "%" + search + "%";
 			}
-
+			System.out.println(search1);
 			ps.setString(1, search);
 			ps.setString(2, search1);
 			ps.setString(3, search1);
@@ -465,6 +462,7 @@ public class ProductDAO {
 				product.setCategory_name(rs.getString(6).trim());
 				resultList.add(product);
 			}
+			System.out.println("Kq: " + resultList.size());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -504,10 +502,111 @@ public class ProductDAO {
 		return resultList;
 	}
 
-	public int getTotalProduct() {
-		try {
+	public List<Product> filterProduct(int index, int quantity, String search, int category, double minPrice,
+			double maxPrice) {
 
-			PreparedStatement ps = conn.prepareStatement("select COUNT(*) from products");
+		List<Product> resultList = new ArrayList<Product>();
+		try {
+			PreparedStatement ps = null;
+			if (search != null) {
+				String sql = "select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
+						+ " from products inner join categories on products.category_id = categories.id "
+						+ "where products.product_name like ? or categories.category_name like ?"
+						+ "order by products.id\r\n" + "limit ?,?";
+				String search1 = "";
+				if (!search.equals("")) {
+					search1 = "%" + search + "%";
+				}
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, search1);
+				ps.setString(2, search1);
+				ps.setInt(3, index * quantity);
+				ps.setInt(4, quantity);
+			} else {
+				if (category > 0) {
+					String sql = "select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
+							+ " from products inner join categories on products.category_id = categories.id "
+							+ "where products.category_id = ? " + "order by products.id\r\n" + "limit ?,?";
+
+					ps = conn.prepareStatement(sql);
+					ps.setInt(1, category);
+					ps.setInt(2, index * quantity);
+					ps.setInt(3, quantity);
+				} else {
+					if (minPrice >= 0 && maxPrice >= 0) {
+						String sql = "select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
+								+ " from products inner join categories on products.category_id = categories.id "
+								+ "where products.price >= ? and product.price <= ? " + "order by products.id\r\n"
+								+ "limit ?,?";
+
+						ps = conn.prepareStatement(sql);
+						ps.setDouble(1, maxPrice);
+						ps.setDouble(index, maxPrice);
+						ps.setInt(3, index * quantity);
+						ps.setInt(4, quantity);
+					} else {
+						String sql = "select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
+								+ " from products inner join categories on products.category_id = categories.id "
+								+ "order by products.id \r\n" + "limit ?,?";
+						System.out.println("DM tao đay");
+						ps = conn.prepareStatement(sql);
+						ps.setInt(1, index * quantity);
+						ps.setInt(2, quantity);
+					}
+				}
+			}
+
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				int ids = rs.getInt("id");
+				String name = rs.getString("product_name").trim();
+				String description = rs.getString("desciption").trim();
+				double price = Double.parseDouble(rs.getString("prices"));
+				String linkImage = rs.getString("image").trim();
+				Product product = new Product();
+				product.setIdProduct(ids);
+				product.setDescription(description);
+				product.setNameProduct(name);
+				product.setPrice(price);
+				product.setImage(linkImage);
+				product.setCategory_name(rs.getString("category_name").trim());
+				resultList.add(product);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return resultList;
+	}
+
+	public int getTotalProduct(String search, int categoryId, double minPrice, double maxPrice) {
+		try {
+			PreparedStatement ps = null;
+			if (search != null) {
+				String sql = "select COUNT(*)\r\n"
+						+ " from products inner join categories on products.category_id = categories.id "
+						+ "where products.product_name like ? or categories.category_name like ?";						
+				String search1 = "";
+				if (!search.equals("")) {
+					search1 = "%" + search + "%";
+				}
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, search1);
+				ps.setString(2, search1);
+			} else {
+
+				if (categoryId >= 0) {
+					ps = conn.prepareStatement("select COUNT(*) from products where category_id = ?");
+					ps.setInt(1, categoryId);
+				} else {
+					if (minPrice >= 0 && maxPrice >= 0) {
+						ps = conn.prepareStatement("select COUNT(*) from products where price >= ? and price <=?");
+						ps.setDouble(1, minPrice);
+						ps.setDouble(2, maxPrice);
+					} else {
+						ps = conn.prepareStatement("select COUNT(*) from products");
+					}
+				}
+			}
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				return rs.getInt(1);

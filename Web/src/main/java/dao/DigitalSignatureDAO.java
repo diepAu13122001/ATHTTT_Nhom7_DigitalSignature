@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 
 public class DigitalSignatureDAO {
 	DBConnect db;
@@ -41,6 +43,19 @@ public class DigitalSignatureDAO {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	public boolean checkExistKey(int userId) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("select * from key_user where user_id = ?");
+			ps.setInt(1, userId);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	public static void main(String[] args) throws SQLException {
 		DigitalSignatureDAO digitalSignatureDAO = new DigitalSignatureDAO();

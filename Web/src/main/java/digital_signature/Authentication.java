@@ -38,8 +38,7 @@ import model.Customer;
 		maxRequestSize = 1024 * 1024 * 50) // 50MB
 public class Authentication extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static byte[][] byteUpload= new byte[2][];
-
+	private static byte[][] byteUpload = new byte[2][];
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -66,10 +65,11 @@ public class Authentication extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
+		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
 		HttpSession session = request.getSession();
 		String filePublicKey = request.getParameter("pk-base64");
 		String invoice = request.getParameter("invoice");
+		String digitalSignature = request.getParameter("signature");
 		int index = 0;
 		for (Part part : request.getParts()) {
 			InputStream inputStream = part.getInputStream();
@@ -83,33 +83,29 @@ public class Authentication extends HttpServlet {
 		try {
 			RSACipher rsaCipher = new RSACipher();
 			PublicKey publicKey;
-			if(filePublicKey!=null) {
+			if (filePublicKey != null) {
 				publicKey = rsaCipher.publicKeyType(filePublicKey);
-			}else {
+			} else {
 				publicKey = rsaCipher.publicKeyFile(byteUpload[1]);
-			}	
-			String decryptHash = rsaCipher.decrypt(byteUpload[0], publicKey);
-			
-			DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO) getServletContext()
-					.getAttribute("digitalSignatureDAO");
-
-			Customer customer = (Customer) session.getAttribute("user");
+			}
+			String decryptHash = rsaCipher.decryptText(digitalSignature, publicKey);
+			String hashInvoice = new Hash().hashByte(byteUpload[0]);
+			// Customer customer = (Customer) session.getAttribute("user");
 			String split[] = invoice.split("_");
-			int idOrder = Integer.parseInt(split[split.length-1]); 
-			String hashString = digitalSignatureDAO.getHashString(customer.getId(), idOrder);
-			System.out.println("Hash: " + hashString);		
-			if (hashString.equals(decryptHash)) {
+			int idOrder = Integer.parseInt(split[split.length - 1]);
+			System.out.println("Hash: " + hashInvoice);
+			if (hashInvoice.equals(decryptHash)) {
 				productDAO.updateStatus(idOrder, "NP");
-				response.sendRedirect("payment.jsp");
-			}else {
+				request.setAttribute("authenticateSuccess", "Xác thực thành công");
+				request.getRequestDispatcher("payment.jsp").forward(request, response);
+			} else {
 				response.sendRedirect("authentication-fail.jsp");
 			}
-		} catch (NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException
-				| NoSuchAlgorithmException |InvalidKeyException | InvalidKeySpecException | IllegalArgumentException e) {
+		} catch (NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException
+				| InvalidKeyException | InvalidKeySpecException | IllegalArgumentException e) {
 			e.printStackTrace();
 			response.sendRedirect("authentication-fail.jsp");
-		} 
-		
+		}
 
 	}
 

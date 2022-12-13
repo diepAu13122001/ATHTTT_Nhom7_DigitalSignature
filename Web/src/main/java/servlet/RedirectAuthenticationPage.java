@@ -59,6 +59,7 @@ public class RedirectAuthenticationPage extends HttpServlet {
 					request.getRequestDispatcher("authentication.jsp").forward(request, response);
 				} else {
 					if (orders.getStatus().equals("NP")) {
+						request.setAttribute("authenticateSuccess", "Xác thực thành công");
 						request.getRequestDispatcher("payment.jsp").forward(request, response);
 					}
 

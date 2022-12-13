@@ -25,7 +25,29 @@ function addToCart(id) {
 			)
 		}
 	})
+};
+function generateKey(){
+	var keySize = $("#keySize").val();
+	$.ajax({
+		type: "GET",
+		url: "create-key",
+		data: { keySize: keySize },
+		success: function(responseJson) {
+			showSuccessGenerateKey();
+			console.log(responseJson);
+			$("#publicKey").text(responseJson[0].keyString);
+			$("#privateKey").text(responseJson[1].keyString);
+			$("#download-privatekey").attr("href","./download?filename="+responseJson[1].urlDownload);
+			$("#download-publickey").attr("href","./download?filename="+ responseJson[0].urlDownload);
+			
+		},
+		 error: function (request, status, error) {
+        	showErrorToast();
+    	}
+	})
+	
 }
+
 function formatCurrent(value) {
 	return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 }
@@ -37,11 +59,18 @@ function showSuccessToast() {
 		duration: 3000
 	});
 }
-
+function showSuccessGenerateKey() {
+	toast({
+		title: "Thành công!",
+		message: "Tạo khoá thành công",
+		type: "success",
+		duration: 3000
+	});
+}
 function showErrorToast() {
 	toast({
 		title: "Thất bại!",
-		message: "Có lỗi xảy ra, vui lòng liên hệ quản trị viên.",
+		message: "Cố lỗi, tạo khoá thất bại",
 		type: "error",
 		duration: 3000
 	});

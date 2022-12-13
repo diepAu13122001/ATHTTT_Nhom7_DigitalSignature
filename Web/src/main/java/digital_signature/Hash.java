@@ -14,6 +14,7 @@ public class Hash {
 	private String hash;
 
 	public Hash() {
+		
 		this.hash = "SHA-256";
 	}
 
@@ -45,6 +46,12 @@ public class Hash {
 		final BigInteger bigInteger = new BigInteger(1, dis.getMessageDigest().digest());
 		dis.close();
 		return bigInteger.toString(16);
+	}
+	public String hashByte(final byte[] bytes) throws NoSuchAlgorithmException, IOException {
+		this.md = MessageDigest.getInstance(this.hash);
+		final byte[] out = this.md.digest(bytes);
+		final BigInteger bi = new BigInteger(1, out);
+		return bi.toString(16);
 	}
 
 	public static void main(final String[] args) {

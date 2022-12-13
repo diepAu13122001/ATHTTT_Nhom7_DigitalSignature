@@ -1,10 +1,14 @@
 package io;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.text.NumberFormat;
@@ -198,4 +202,17 @@ public class WritePDF {
 
 		return formatter.format(price);
 	}
+	public static void writeByte(final String desFile, final byte[] inputBytes) throws IOException {
+		String fullPath = PATH+desFile;
+        final BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(fullPath));
+        bos.write(inputBytes);
+        bos.close();
+    }
+    public static byte[] readBytes(String fileName) throws IOException {
+    	String fullPath = PATH+fileName;
+    	BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fullPath));
+    	byte[] bytes = bis.readAllBytes();
+    	bis.close();
+    	return bytes;
+    }
 }

@@ -47,82 +47,73 @@ public class Shop extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//Get list product
-				ServletContext context = getServletContext();
-				HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
-				ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
-				List<Category> listCategory = productDAO.getListCategories();//Danh sach ten danh muc
-				//Tinh so trang
-				int page = 15;
-				int numberOfProduct = productDAO.getTotalProduct();
-				int numberOfPage;
-				if(numberOfProduct%page==0) {
-					numberOfPage= numberOfProduct/page;
-				}else {
-					numberOfPage= numberOfProduct/page +1;
-				}
-				//Phan trang
-				String pageNumber = request.getParameter("page-number");
+		int productOfPage = 15;
+		String argument = "";
+		String params ="";
+		String search = request.getParameter("search");
+		String cateString =request.getParameter("category_id") ;
+		int categoryId = cateString!=null ? Integer.parseInt(cateString) : -1;
+		// Lay khoang gia
+		String minString = request.getParameter("min-price");
+		String maxString = request.getParameter("max-price");
+		double minPrice = minString!=null?Double.parseDouble(minString):-1;
+		double maxPrice = maxString!=null?Double.parseDouble(maxString):-1;
+		//
+		String pageString = request.getParameter("page");
+		int page = pageString!=null?Integer.parseInt(pageString):1;
 
-				if(pageNumber==null) {
-					pageNumber="1";
-				}
-				int indexPage = Integer.parseInt(pageNumber);
-				List<Product> pagings = productDAO.pagdingProduct(indexPage-1,page);
+		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
+		System.out.println(search+" "+categoryId+ " "+ minPrice+ " "+maxPrice);
+		List<Product> results = productDAO.filterProduct(page-1, productOfPage, search, categoryId, minPrice, maxPrice);
+		List<Category> categories = productDAO.getListCategories();
+		int totalProduct = productDAO.getTotalProduct(search, categoryId, minPrice, maxPrice);
+		String sortBy = request.getParameter("sort");
+		String sort = "";
+		System.out.println(sortBy);
+		if(sortBy==null) {
+			sortBy="random";
+			sort="Không sắp xếp";
+		}
+		if(sortBy.equals("random")) {
+			sort="Không sắp xếp";
+		}if(sortBy.equals("high-to-low")) {
+			Collections.sort(results, new SortPriceDESC());
+			sort="Giá cao → Giá thấp";
 		
-				List<Product> pagingsClone = new ArrayList<Product>();
-				for(Product p : pagings) {
-					pagingsClone.add(p);
+		}if(sortBy.equals("low-to-high")) {
+			Collections.sort(results, new SortPriceASC());
+			sort="Giá thấp → Giá cao";
+		}
+		if(sortBy.equals("popularty")) {
+			Collections.sort(results, new SortPopular());
+			sort="Phổ biến nhất";
+		}
+		if(cateString!=null) {
+			params = "category_id";
+			argument = cateString;
+		}else {
+			if(search!=null) {
+				params = "search";
+				argument = search;
+			}else {
+				if(minString!= null && maxString!=null) {
+					params = "min-price="+minString+"&max-price="+maxString;
 				}
-				
-				context.setAttribute("tag", indexPage);
-				context.setAttribute("numberOfPage", numberOfPage);
-				context.setAttribute("listCategory", listCategory);
-				//Sap xep
-				String sortBy = request.getParameter("sort");
-				String sort = "";
-				System.out.println(sortBy);
-				if(sortBy==null) {
-					sortBy="random";
-					sort="Không sắp xếp";
-				}
-				if(sortBy.equals("random")) {
-					pagings= pagingsClone;
-					sort="Không sắp xếp";
-				}if(sortBy.equals("high-to-low")) {
-					Collections.sort(pagings, new SortPriceDESC());
-					sort="Giá cao → Giá thấp";
-				
-				}if(sortBy.equals("low-to-high")) {
-					Collections.sort(pagings, new SortPriceASC());
-					sort="Giá cao → Giá thấp";
-				}
-				if(sortBy.equals("popularty")) {
-					Collections.sort(pagings, new SortPopular());
-					sort="Phổ biến nhất";
-				}
-				context.setAttribute("sortby", sortBy);
-				context.setAttribute("sortTitle", sort);
-				context.setAttribute("pagings", pagings);
+			}
+		}
+		//Lay duong dan cuoi cung
+		HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
+	    historyUrl.saveHistoryUrl(request);
+//	    System.out.println(urlDAO.getUrlLast());
 		
-				historyUrl.saveHistoryUrl(request);
-	    		request.getRequestDispatcher("shop.jsp").forward(request, response);
-	    
-		//Search
-		
-//		String url = request.getParameter("url");
-//		if(url==null) {
-//			url="shop";
-//		}
-//		if(url.equals("shop")) {
-//			
-////			response.sendRedirect("shop");
-//		}
-//		if(url.equals("shopdetail")) {
-//			request.getRequestDispatcher("shop-detail.jsp").forward(request, response);
-//		}
-//		if(url.equals("SearchProduct")) {
-//			request.getRequestDispatcher("search-product.jsp").forward(request, response);
-//		}
+		request.setAttribute("sortTitle", sort);
+		request.setAttribute("argument", argument);
+		request.setAttribute("params", params);
+		request.setAttribute("categories", categories);
+		request.setAttribute("response", results);
+		request.setAttribute("pageCurrent", page);
+		request.setAttribute("numberOfPage", (int) Math.floor(totalProduct/productOfPage)+1);
+		request.getRequestDispatcher("shop.jsp").forward(request, response);
 		
 	}
 

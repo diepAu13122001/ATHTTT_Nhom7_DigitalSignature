@@ -88,6 +88,7 @@
 										style="position: absolute; color: #000">
 										<li><a class="dropdown-item" href="#!">Thông tin cá nhân</a></li>
 										<li><a class="dropdown-item" href="./orders">Đơn hàng</a></li>
+										<li><a class="dropdown-item" href="./create-key.jsp">Tạo khoá</a></li>
 										<li><hr class="dropdown-divider" /></li>
 										<li><a class="dropdown-item" href="./logout">Đăng
 												xuất</a></li>
