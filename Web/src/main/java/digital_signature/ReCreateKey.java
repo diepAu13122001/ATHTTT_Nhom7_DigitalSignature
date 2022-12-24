@@ -1,4 +1,4 @@
-package servlet_admin;
+package digital_signature;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -8,19 +8,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import dao.HistoryUrl;
+import model.Customer;
 
 /**
- * Servlet implementation class LogoutAmin
+ * Servlet implementation class ReCreateKey
  */
-@WebServlet("/logout-admin")
-public class LogoutAmin extends HttpServlet {
+@WebServlet("/ReCreateKey")
+public class ReCreateKey extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LogoutAmin() {
+    public ReCreateKey() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,9 +29,14 @@ public class LogoutAmin extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		session.invalidate();
-		response.sendRedirect("login-admin.jsp");
+		HttpSession session = request.getSession();
+		String authCode = (String) session.getAttribute("authCode");
+		Customer customer = (Customer) session.getAttribute("user");
+		if(authCode!=null && customer!=null) {			
+			request.getRequestDispatcher("re-createkey.jsp").forward(request, response);
+		}else {
+			response.sendRedirect("createKey");
+		}
 		
 	}
 

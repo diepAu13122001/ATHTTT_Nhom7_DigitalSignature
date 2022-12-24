@@ -29,6 +29,19 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
+	public boolean inserKeyUser(int userId,String publicKey) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("INSERT INTO `freshop_db`.`key_user` (`user_id`, `public_key`, `active`) VALUES (?, ?, ?);");
+			ps.setInt(1, userId);
+			ps.setString(2, publicKey);
+			ps.setInt(3, 1);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	public String getHashString(int userId,int ordersId) {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select hash_string from digital_signature where user_id = ? and order_id = ?");

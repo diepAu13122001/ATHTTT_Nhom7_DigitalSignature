@@ -8,6 +8,8 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
 	integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
 	crossorigin="anonymous" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 <style>
 .login-box .dropdown-toggle::after {
 	top: 20px;
@@ -86,9 +88,11 @@
 									<ul class="dropdown-menu dropdown-menu-end"
 										aria-labelledby="navbarDropdown"
 										style="position: absolute; color: #000">
-										<li><a class="dropdown-item" href="#!">Thông tin cá nhân</a></li>
+										<li><a class="dropdown-item" href="#!">Thông tin cá
+												nhân</a></li>
 										<li><a class="dropdown-item" href="./orders">Đơn hàng</a></li>
-										<li><a class="dropdown-item" href="./create-key.jsp">Tạo khoá</a></li>
+										<li><a class="dropdown-item" href="./createKey">Tạo
+												khoá</a></li>
 										<li><hr class="dropdown-divider" /></li>
 										<li><a class="dropdown-item" href="./logout">Đăng
 												xuất</a></li>
@@ -227,7 +231,29 @@
 		</div>
 	</div>
 </div>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+</body>
 <script>
+	function showSwal(type, text, messageError) {
+		'use strict';
+		if (type === 'success-message') {
+			swal({
+				title : 'Thành công!',
+				text : text,
+				type : 'success',
+				button : {
+					text : "Continue",
+					value : true,
+					visible : true,
+					className : "btn btn-primary"
+				}
+			})
+
+		} else {
+			swal(messageError);
+		}
+	}
 	function showDropdown() {
 		let drop = document.querySelector('.dropdown-menu.dropdown-menu-end');
 		drop.classList.toggle('show');

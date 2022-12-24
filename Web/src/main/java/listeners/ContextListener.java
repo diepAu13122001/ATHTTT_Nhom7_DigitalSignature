@@ -2,6 +2,7 @@ package listeners;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,9 +27,17 @@ public final class ContextListener implements ServletContextListener {
 //		  scheduler = Executors.newSingleThreadScheduledExecutor();
 //		  Runnable commad = new TimerExample();
 //		  long initialDelay = 10;
-//		  TimeUnit unit = TimeUnit.SECONDS;
+
 //		  long period = 2;
 //		  scheduler.scheduleAtFixedRate(commad, initialDelay, period,unit);
+
+//		scheduler = Executors.newSingleThreadScheduledExecutor();
+//		Runnable commad = new TimerExample(context);
+//		TimeUnit unit = TimeUnit.SECONDS;
+//		scheduler.schedule(commad, 10, unit);
+
+		
+
 		try {
 
 			CustomerDAO khachHangDAO = new CustomerDAO();

@@ -66,6 +66,7 @@ public class Authentication extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
+		DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO)getServletContext().getAttribute("digitalSignatureDAO");
 		HttpSession session = request.getSession();
 		String filePublicKey = request.getParameter("pk-base64");
 		String invoice = request.getParameter("invoice");
@@ -86,14 +87,14 @@ public class Authentication extends HttpServlet {
 			if (filePublicKey != null) {
 				publicKey = rsaCipher.publicKeyType(filePublicKey);
 			} else {
-				publicKey = rsaCipher.publicKeyFile(byteUpload[1]);
+				publicKey = rsaCipher.publicKeyFile(byteUpload[0]);
 			}
 			String decryptHash = rsaCipher.decryptText(digitalSignature, publicKey);
-			String hashInvoice = new Hash().hashByte(byteUpload[0]);
-			// Customer customer = (Customer) session.getAttribute("user");
+			
+			Customer customer = (Customer) session.getAttribute("user");
 			String split[] = invoice.split("_");
 			int idOrder = Integer.parseInt(split[split.length - 1]);
-			System.out.println("Hash: " + hashInvoice);
+			String hashInvoice = digitalSignatureDAO.getHashString(customer.getId(), idOrder);
 			if (hashInvoice.equals(decryptHash)) {
 				productDAO.updateStatus(idOrder, "NP");
 				request.setAttribute("authenticateSuccess", "Xác thực thành công");

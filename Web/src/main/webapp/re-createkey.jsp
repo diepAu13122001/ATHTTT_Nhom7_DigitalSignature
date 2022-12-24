@@ -38,7 +38,13 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+<style>
+	.color-main{
+		background-color: #b0b435;
+		    border-color: #b0b435;
+		    color:#fff!important;
+	}
+</style>
 </head>
 
 <body>
@@ -47,58 +53,67 @@
 
 	<div class=" shop-detail-box-main invoice">
 		<div class="container">
-			<div class="row">
-				<div class="col-sm-6 col-lg-6 mb-3">
-					<div class="title-left">
-						<h2 style="font-weight: 500">Thông tin đơn hàng</h2>
-					</div>
-					<iframe src="showPdf?invoice=${invoice}" width="100%"
-						height="600px"> </iframe>
+			<div class="title-left">
+				<h2 style="font-weight: 500">Tạo khoá</h2>
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="col-8">
 
-				</div>
-				<div class="col-sm-6 col-lg-6 mb-3">
-					<div class="title-left">
-						<h2 style="font-weight: 500">Xác thực</h2>
-					</div>
-					<form id="upload-form" class="needs-validation"
-						action="handle-authentication" enctype="multipart/form-data"
-						method="post">
-						<div class="mb-3">
-							<label for="signature">Chữ ký (Base64)</label>
-							<div class="input-group">
-								<textarea class="form-control" id="signature"
-									name="signature" required rows="4"></textarea>
-							</div>
-						</div>
-						<input type="hidden" name="invoice" value="${invoice}">
-						<div class="mb-3">
-							<label for="file2">Public key   <select
-								class="form-select form-select-sm"
-								aria-label=".form-select-sm example" id="publickey-select" onchange="switchType()">
-									<option value ="0" selected>Base 64</option>
-									<option value="1">File</option>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="row">
+									<div class="col-md-12 col-sm-12 col-xs-12">
 									
-							</select>
+											<div class="form-group">
+												<label for="keySize">Chọn kích thước khoá</label> <select
+													class="form-control input-lg ng-valid ng-dirty ng-valid-parse ng-touched"
+												 id="keySize" name="keySize">											
+													<option value="1024">1024 bit</option>
+													<option value="2048">2048 bit</option>							
+												</select>
+											</div>
+											<div class="form-group">
+												<button class="btn btn-primary color-main"  onclick="generateKey()"
+													><i class="fa fa-key"></i> Tạo khoá</button>
+											</div>
+										
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-12">
+								<h3>Public Key</h3>
+							
+									<div class="form-group">
+										<textarea id="publicKey"
+											class="form-control input-lg ng-pristine ng-valid ng-touched"
+											rows="5" name="publicKey" spellcheck="false"></textarea>
+									</div>
+									<div class="form-group">
+										<a class="btn btn-primary color-main" id="download-publickey"  ><i class="fa fa-download"></i>  Tải xuống</a>
+									</div>
+							
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-12 vertical-line">
+								<h3>Private Key</h3>
 
-							</label>
-							<c:if test="${ errorKey!=null}">
-								<label id="pass-validate" class="mb-0"
-									style="color: red; display: block">${errorKey}</label>
-							</c:if>
+									<div class="form-group">
+										<textarea id="privateKey"
+											class="form-control input-lg ng-pristine ng-valid ng-touched"
+											rows="5" name="privateKey" spellcheck="false"></textarea>
+									</div>
+									<div class="form-group">
+										<a class="btn btn-primary color-main" id="download-privatekey"  ><i class="fa fa-download"></i>  Tải xuống</a>
+									</div>
 
-							<div class="input-group" id="pk-box">
-
-								<input type="text" class="form-control" id="public-key"
-									name="pk-base64" placeholder="" required>
-
+					
 							</div>
 						</div>
-						<div class="col-12 d-flex shopping-box">
-							<button type="submit" class="ml-auto btn hvr-hover">Xác
-								thực</button>
-						</div>
-					</form>
+
+					</div>
+					<div class="col-4">col-4</div>
 				</div>
+		
 			</div>
 		</div>
 	</div>
@@ -108,6 +123,7 @@
 	<jsp:include page="footer.jsp"></jsp:include>
 
 	<!-- ALL JS FILES -->
+		<script src="js/addcart.js"></script>
 	<script src="js/jquery-3.2.1.min.js"></script>
 	<script src="js/popper.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
@@ -126,17 +142,7 @@
 	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
 		async defer></script>
 	<script>
-			function switchType() {
-				var type =  $("#publickey-select").val();
-				if(type == '0'){
-					console.log('dmm');
-					$("#pk-box").html("<input type='text' class='form-control' id='public-key' name='pk-base64' placeholder='' required>");
-				}else{
-					console.log('sv');
-					$("#pk-box").html("<input type='file' class='form-control' id='public-key'  name='file-encrypt' placeholder='' required>");
-				}
-				
-			}
+		
 	</script>
 
 </body>

@@ -22,11 +22,11 @@
 <link
 	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
 	rel="stylesheet">
-<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="../css/bootstrap.min.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+
 
 <style>
 <
@@ -96,7 +96,8 @@ style type ="text /css ">#datatablesSimple td:nth-child(6) a {
 															</thead>
 															<tbody>
 																<c:forEach items="${products}" var="product">
-																	<tr>
+																	<tr id="info-${product.idProduct}">
+																	
 																		<td class="align-middle">
 																			<div
 																				class="custom-control custom-control-inline custom-checkbox custom-control-nameless m-0 align-top">
@@ -106,29 +107,30 @@ style type ="text /css ">#datatablesSimple td:nth-child(6) a {
 																			</div>
 																		</td>
 
-																		<td class="text-center align-middle">${product.idProduct}</td>
+																		<td class="text-center align-middle" >${product.idProduct}</td>
 
-																		<td class="text-wrap align-middle">${product.nameProduct}</td>
-																		<td class="text-nowrap align-middle">${product.category_name}</td>
+																		<td class="text-wrap align-middle" id="info-name">${product.nameProduct}</td>
+																		<td class="text-nowrap align-middle" id="info-category">${product.category_name}</td>
 																		<td class="align-middle text-center">
 																			<div
 																				class="bg-light d-inline-flex justify-content-center align-items-center align-top"
 																				style="width: 35px; height: 35px; border-radius: 3px;">
-																				<img src="${product.image }" style="width: 100%">
+																				<img src="${product.image }" id="info-image" style="width: 100%">
 																			</div>
 																		</td>
-																		<td class="text-center align-middle"><fmt:formatNumber
+																		<td class="text-center align-middle" id="info-price"><fmt:formatNumber
 																				type="number" maxFractionDigits="3"
 																				value="${product.price}" /></td>
 																		<td class="text-center align-middle">
 																			<div class="btn-group align-top">
+																				<input type="hidden" value="${product.description}" id="info-description">
 																				<button
 																					class="btn btn-sm btn-outline-secondary badge"
 																					type="button" data-toggle="modal"
-																					data-target="#user-form-modal">Edit</button>
+																					data-target="#user-form-modal" onclick="showProduct(${product.idProduct})">Edit</button>
 																				<button
 																					class="btn btn-sm btn-outline-secondary badge"
-																					type="button">
+																					type="button" onclick="deleteProduct(${product.idProduct})">
 																					<i class="fa fa-trash"></i>
 																				</button>
 																			</div>
@@ -167,8 +169,8 @@ style type ="text /css ">#datatablesSimple td:nth-child(6) a {
 											<div class="card-body">
 												<div class="text-center px-xl-3">
 													<button class="btn btn-success btn-block" type="button"
-														data-toggle="modal" data-target="#user-form-modal">Thêm
-														sản phẩm mới</button>
+														data-toggle="modal" data-target="#user-form-modal"
+														onclick="refeshInput()">Thêm sản phẩm mới</button>
 												</div>
 												<hr class="my-3">
 												<div class="e-navlist e-navlist--active-bold">
@@ -250,21 +252,23 @@ style type ="text /css ">#datatablesSimple td:nth-child(6) a {
 															<div class="mb-3">
 																<label for="name-product" class="form-label">Tên
 																	sản phẩm</label> <input type="text" class="form-control"
-																	required="required" id="name-product"
+																	required="required" id="name-product" 
 																	placeholder="Nhập tên sản phẩm">
+																<div class="invalid-feedback" id>Vui lòng nhập tên sản phẩm</div>
 															</div>
 															<div class="mb-3">
 																<label for="description" class="form-label">Mô
 																	tả</label>
-																<textarea class="form-control" required="required"
+																<textarea class="form-control" required="required" 
 																	id="description" rows="3"></textarea>
+																	<div class="invalid-feedback" id>Vui lòng nhập mô tả</div>
 															</div>
 															<div class="mb-3">
 																<label for=category-id class="form-label">Loại
 																	sản phẩm</label> <select class="form-select"
-																	aria-label="Default select example" id="category-id">
+																	aria-label="Default select example" id="category-id" >
 																	<c:forEach var="cate" items="${categories}">
-																		<option value="${cate.idCate}">${cate.nameCate}</option>
+																		<option value="${cate.idCate}" >${cate.nameCate}</option>
 																	</c:forEach>
 																</select>
 															</div>
@@ -272,10 +276,11 @@ style type ="text /css ">#datatablesSimple td:nth-child(6) a {
 																<label for="price" class="form-label">Giá</label>
 																<div class="input-group">
 																	<input type="number" required="required"
-																		class="form-control" id="price"
+																		class="form-control" id="price" 
 																		aria-label="VND amount (with dot and two decimal places)">
 																	<span class="input-group-text">VND</span> <span
 																		class="input-group-text">0.00</span>
+																		<div class="invalid-feedback" id>Vui lòng nhập giá</div>
 																</div>
 															</div>
 
@@ -284,8 +289,10 @@ style type ="text /css ">#datatablesSimple td:nth-child(6) a {
 															<div class="mb-3">
 																<label for="formFile" class="form-label">Ảnh đại
 																	diện</label> <input class="form-control" required="required"
-																	name="image" type="text" id="url-image"
-																	onchange="loadImage()"> <img alt="" src=""
+																	name="image" type="text" id="url-image" 
+																	onchange="loadImage()">
+																		<div class="invalid-feedback" id>Vui lòng url ảnh</div>
+																	 <img alt="" src=""
 																	id="preview-image"
 																	style="width: 100%; margin-top: 10px; border: 1px solid #ced4da;">
 
@@ -318,49 +325,115 @@ style type ="text /css ">#datatablesSimple td:nth-child(6) a {
 			var url = $("#url-image").val();
 			$("#preview-image").attr("src", url);
 		}
-		function addProduct() {
+		function refeshInput() {
+			$(".modal-title").text("Thêm sản phẩm");
+			$("#name-product").val(null);
+			$("#description").val(null);
+			$("#price").val(null);
+			$("#url-image").val(null);
+			$("#preview-image").attr("src", null);
+			$(".col.d-flex.justify-content-end").html("<button class='btn btn-primary' onclick='addProduct()'>Lưu thay đổi </button>");
+		};
+		function cssDefault() {
+			$("#name-product").css("border","1px solid #ced4da");
+			$("#name-product").parent().children().get( 2 ).style.display = "none";
+			$("#description").css("border","1px solid #ced4da");
+			$("#description").parent().children().get( 2 ).style.display = "none";
+			$("#price").css("border","1px solid #ced4da");
+			$("#price").parent().children().get( 3 ).style.display = "none";
+			$("#url-image").css("border","1px solid #ced4da");
+			$("#url-image").parent().children().get( 2 ).style.display = "none";
+		}
+		function validate(nameProduct,description,categoryId,price,image) {			
+			var isvalid = true;
+			if(nameProduct==""){
+				$("#name-product").css("border-color","#dc3545");
+				$("#name-product").parent().children().get( 2 ).style.display = "block";
+				return false;
+			}else{			
+				$("#name-product").css("border","1px solid #ced4da");
+				$("#name-product").parent().children().get( 2 ).style.display = "none";
+				
+			}
+			if(description==""){
+				$("#description").css("border-color","#dc3545");
+				$("#description").parent().children().get( 2 ).style.display = "block";
+				return false;
+			}else{
+				$("#description").css("border","1px solid #ced4da");
+				$("#description").parent().children().get( 2 ).style.display = "none";
+			
+			}
+			if(price==""){
+				$("#price").css("border-color","#dc3545");
+				$("#price").parent().children().get( 3 ).style.display = "block";
+				return false;
+			}else{
+				$("#price").css("border","1px solid #ced4da");
+				$("#price").parent().children().get( 3 ).style.display = "none";
+				
+			}
+			if(image==""){
+				$("#url-image").css("border-color","#dc3545");
+				$("#url-image").parent().children().get( 2 ).style.display = "block";
+				return false;
+			}
+			else{
+				$("#url-image").css("border","1px solid #ced4da");
+				$("#url-image").parent().children().get( 2 ).style.display = "none";
+				
+			}
+			return true;
+		}
+		function addProduct() {	
 			var nameProduct = $("#name-product").val();
 			var description = $("#description").val();
 			var categoryId = $("#category-id").val();
 			var price = $("#price").val();
 			var image = $("#url-image").val();
+			var isValid = validate(nameProduct,description,categoryId,price,image);
+			console.log(isValid)
+			if(isValid){
+				$.ajax({
+					type : "GET",
+					url : "./add-product",
+					data : {
+						nameProduct : nameProduct,
+						description : description,
+						categoryId : categoryId,
+						price : price,
+						image : image
+					},
+					success : function(response) {
+						console.log(response)
+						if (response == 'true') {
+							showSwal('success-message','Thêm sản phẩm thành công');
+							setTimeout(reload, 2000);
+						} else {
+							showSwal('error');
+						}
 
-			$.ajax({
-				type : "GET",
-				url : "./add-product",
-				data : {
-					nameProduct : nameProduct,
-					description : description,
-					categoryId : categoryId,
-					price : price,
-					image : image
-				},
-				success : function(response) {
-					if (response == 'true') {
-						showSwal('success-message');
-						setTimeout(reload, 2000);
-					} else {
-						showSwal('error');
+					},
+					error : function(request) {
+						showSwal('error','','Có lỗi xảy ra');
 					}
-
-				},
-				error : function(request) {
-					showSwal('error');
 				}
-			}
 
-			)
+				)
+				
+			}
+			
 		};
 		function reload() {
 			location.reload();
 		}
 
-		function showSwal(type) {
+		function showSwal(type, text, messageError) {
 			'use strict';
 			if (type === 'success-message') {
 				swal({
 					title : 'Thành công!',
-					text : 'Thêm sản phẩm thành công',
+					text : text,
 					type : 'success',
 					button : {
 						text : "Continue",
@@ -371,8 +444,132 @@ style type ="text /css ">#datatablesSimple td:nth-child(6) a {
 				})
 
 			} else {
-				swal("Error occured !");
+				swal(messageError);
 			}
+		}
+		function showProduct(id) {
+			$(".modal-title").text("Sửa - #"+id);
+			cssDefault();
+			var infoName = $("#info-"+id+" #info-name").text();
+			var infoDes = $("#info-"+id+" #info-description").val();
+			var infoPrice = $("#info-"+id+" #info-price").text();
+			var infoImage = $("#info-"+id+" #info-image").attr("src");
+			$("#name-product").val(infoName);
+			$("#description").val(infoDes);
+			$("#price").val(infoPrice);
+			$("#url-image").val(infoImage);
+			loadImage();
+			var cate =  $("#info-"+id+" #info-category").text();
+			setSelect(cate);
+			$(".col.d-flex.justify-content-end").html("<button class='btn btn-primary' onclick='updateProduct("+id+")'>Lưu thay đổi </button>");
+		}
+		function setSelect(category){
+			var options = $("#category-id option");
+			for(o of options){
+				var c = o.text;
+				console.log(c +" "+ category)
+				if(c === category){
+					o.setAttribute("selected","selected");
+					break;
+				}
+				
+			}
+		}
+		function isChange(infoName,infoDes,infoPrice,infoImage,cate) {
+			if(infoName != $("#name-product").val()){
+				return true;
+			}
+			if(infoDes !=$("#description").val()){
+				return true;
+			}
+			if(infoPrice != $("#price").val()){
+				return true;
+			}
+			if(infoImage != $("#url-image").val()){
+				return true;
+			}
+			if(cate !=  $('#category-id').find(":selected").text()){
+				return true;
+			}
+			return false;
+		}
+		function updateProduct(id) {
+			var infoName = $("#info-"+id+" #info-name").text();
+			var infoDes = $("#info-"+id+" #info-description").val();
+			var infoPrice = $("#info-"+id+" #info-price").text();
+			var infoImage = $("#info-"+id+" #info-image").attr("src");
+			var cate =  $("#info-"+id+" #info-category").text();
+			var change =  isChange(infoName,infoDes,infoPrice,infoImage,cate);
+			if(change){
+				var nameProduct = $("#name-product").val();
+				var description = $("#description").val();
+				var categoryId = $("#category-id").val();
+				var price = $("#price").val();
+				var image = $("#url-image").val();
+				$.ajax({
+					type : "GET",
+					url : "./update-product",
+					data : {
+						id: id,
+						nameProduct : nameProduct,
+						description : description,
+						categoryId : categoryId,
+						price : price,
+						image : image
+					},
+					success : function(response) {
+						console.log(response)
+						if (response == 'true') {
+							showSwal('success-message','Cập nhật thành công');
+							setTimeout(reload, 4000);
+						} else {
+							showSwal('error','','Có lỗi xảy ra');
+						}
+					},
+					error : function(request) {
+						showSwal('error','','Có lỗi xảy ra');
+					}
+				})						
+			}else{
+				showSwal('error','','Không có thay đổi');
+			}
+		
+		}
+		function deleteProduct(id) {
+			$.confirm({
+			    title: 'Xác nhận!',
+			    content: 'Bạn có muốn xoá sản phẩm này không ?',
+			    buttons: {
+			        confirm: function () {			        	
+			        	requestDelete(id);
+			        },
+			        cancel: function () {
+			           
+			        },
+			    }
+			});
+					
+		}
+		function requestDelete(id) {
+			$.ajax({
+				type : "GET",
+				url : "./detele-product",
+				data : {
+					id: id,				
+				},
+				success : function(response) {
+					console.log(response)
+					if (response == 'true') {
+						showSwal('success-message','Xoá thành công');
+						setTimeout(reload, 4000);
+					} else {
+						showSwal('error','','Có lỗi xảy ra');
+					}
+				},
+				error : function(request) {
+					showSwal('error','','Có lỗi xảy ra');
+				}
+			})
 		}
 	</script>
 	<script src="js/bootstrap.min.js"></script>
@@ -396,5 +593,8 @@ style type ="text /css ">#datatablesSimple td:nth-child(6) a {
 	<script src="../js/popper.min.js"></script>
 	<script src="../js/bootstrap.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 </body>
 </html>

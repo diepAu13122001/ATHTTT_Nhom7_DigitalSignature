@@ -1,4 +1,4 @@
-package servlet_admin;
+package digital_signature;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -8,21 +8,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import dao.CustomerDAO;
 import model.Customer;
-import utitls.Role;
 
 /**
- * Servlet implementation class LoginAdmin
+ * Servlet implementation class VerificateCode
  */
-@WebServlet("/login-admin")
-public class LoginAdmin extends HttpServlet {
+@WebServlet("/verificate-code")
+public class VerificateCode extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public LoginAdmin() {
+	public VerificateCode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -33,23 +31,20 @@ public class LoginAdmin extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		HttpSession session = request.getSession(true);
-		session.setMaxInactiveInterval(300);
-		String username = request.getParameter("userName");
-		String pass = request.getParameter("password");
-		CustomerDAO khd = (CustomerDAO) getServletContext().getAttribute("khachHangDAO");
-		Customer user = khd.findByEmail(username,0);
-		String role =user!=null?khd.getRole(user.getId()):"";
-		boolean isLogSuccess = false;
-		boolean isAuthor = role.equals(Role.ADMIN) || role.equals(Role.EMPLOYEE);
-		if (khd.checkLogin(username, pass) && isAuthor)   {
-				session.setAttribute("userAdmin", user);
-				isLogSuccess = true;
+		HttpSession session = request.getSession();
+		session.setMaxInactiveInterval(60);
+		Customer customer = (Customer) session.getAttribute("user");
+		String authCode = (String) session.getAttribute("authCode");
+		String code = authCode != null ? authCode : "";
+		String userCode = request.getParameter("userCode");
+		System.out.println("Giong nhau ko: "+authCode+" "+userCode);
+		if (code.equals(userCode)) {
+			response.sendRedirect("ReCreateKey");
+		}else {
+			request.setAttribute("email", customer.getEmail());
+			request.setAttribute("verificateStatus", "Mã xác nhận không đúng");
+			request.getRequestDispatcher("verificate-createkey.jsp").forward(request, response);
 		}
-		 response.setContentType("application/json");
-	     response.setCharacterEncoding("UTF-8");
-	     response.getWriter().print(isLogSuccess);
 		
 	}
 

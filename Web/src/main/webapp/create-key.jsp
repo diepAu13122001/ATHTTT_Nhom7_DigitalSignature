@@ -57,6 +57,16 @@
 				<h2 style="font-weight: 500">Tạo khoá</h2>
 			</div>
 			<div class="container">
+			<c:if test="${isFirst==false}">
+			<div class="col-md-6 col-sm-6 col-xs-12">
+								<h3>Bạn đã tạo khoá lần đầu rồi, để tạo lại vui lòng nhấn gửi mã xác nhận. </h3>
+									<div class="form-group">
+										<a class="btn btn-primary color-main" id="download-publickey" href="./sennd-code-verificate"> Gửi mã xác nhận</a>
+									</div>
+							
+							</div>
+			</c:if>
+				<c:if test="${isFirst==true}">
 				<div class="row">
 					<div class="col-8">
 
@@ -113,6 +123,7 @@
 					</div>
 					<div class="col-4">col-4</div>
 				</div>
+				</c:if>
 			</div>
 		</div>
 	</div>

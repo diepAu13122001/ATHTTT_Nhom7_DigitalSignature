@@ -17,9 +17,11 @@ import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
 
 import cart.ShoppingCart;
+import dao.DigitalSignatureDAO;
 import dao.HistoryUrl;
 import dao.ProductDAO;
 import io.WritePDF;
+import model.Customer;
 import model.Key;
 import model.Product;
 
@@ -44,12 +46,11 @@ public class CreateKey extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
 		HistoryUrl historyUrl = (HistoryUrl)getServletContext().getAttribute("urlDAO");
-		String urlLast = historyUrl.getUrlLast();
-		if(urlLast==null) {
-			urlLast="index.jsp";
-		}else {
-			urlLast=urlLast.substring(1);
-		}
+		DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO)getServletContext().getAttribute("digitalSignatureDAO");
+		HttpSession session = request.getSession();
+		Customer customer =(Customer) session.getAttribute("user");
+		
+		historyUrl.saveHistoryUrl(request);
 		String keySize = request.getParameter("keySize");
 		System.out.println("Key Size: "+keySize);
 		RSACipher rsaCipher = new RSACipher();
@@ -80,11 +81,15 @@ public class CreateKey extends HttpServlet {
 		responseJsons.add(publicKey);
 		responseJsons.add(privaKey);
 		
-		
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        String json = new Gson().toJson(responseJsons);
-        response.getWriter().write(json);
+		 response.setContentType("application/json");
+	        response.setCharacterEncoding("UTF-8");
+		boolean isInsert = digitalSignatureDAO.inserKeyUser(customer.getId(), encodePublicKey);
+		if(isInsert) {
+			String json = new Gson().toJson(responseJsons);
+	        response.getWriter().write(json);
+		}
+       
+        
 	}
 
 	/**

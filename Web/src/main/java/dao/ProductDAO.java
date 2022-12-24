@@ -42,8 +42,8 @@ public class ProductDAO {
 		boolean result = true;
 		try {
 			PreparedStatement ps = conn.prepareStatement(
-					"INSERT INTO `freshop_db`.`products` (`product_name`, `desciption`, `prices`, `category_id`, `image`) "
-							+ "VALUES (?, ?, ?, ?, ?);");
+					"INSERT INTO `freshop_db`.`products` (`product_name`, `desciption`, `prices`, `category_id`, `image`,`isDelete`) "
+							+ "VALUES (?, ?, ?, ?, ?, 0);");
 			ps.setString(1, name);
 			ps.setString(2, des);
 			ps.setDouble(3, price);
@@ -58,7 +58,44 @@ public class ProductDAO {
 		}
 		return result;
 	}
+	public boolean updateProduct(String name, String des, double price, int categoryId, String image, int id) {
+		boolean result = true;
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"UPDATE products set product_name = ?, desciption = ?, prices= ?, category_id = ?, image = ?  "
+					+ " where id = ?");
+							
+			ps.setString(1, name);
+			ps.setString(2, des);
+			ps.setDouble(3, price);
+			ps.setInt(4, categoryId);
+			ps.setString(5, image);
+			ps.setInt(6, id);
+			ps.executeUpdate();
+			//
 
+		} catch (SQLException e) {
+			result = false;
+			e.printStackTrace();
+		}
+		return result;
+	}
+	public boolean deleteProduct(int id) {
+		boolean result = true;
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"UPDATE products set isDelete = 1 "
+					+ " where id = ?");							
+			ps.setInt(1, id);
+			ps.executeUpdate();
+			//
+
+		} catch (SQLException e) {
+			result = false;
+			e.printStackTrace();
+		}
+		return result;
+	}
 	public boolean updateOrder(int id, String status) {
 		try {
 			PreparedStatement ps = conn
@@ -476,8 +513,7 @@ public class ProductDAO {
 
 			PreparedStatement ps = conn.prepareStatement(
 					"select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
-							+ " from products inner join categories on products.category_id = categories.id order by products.id\r\n"
-							+ "limit ?,?");
+							+ " from products inner join categories on products.category_id = categories.id  where products.isDelete = 0 order by products.id limit ?,?");
 			ps.setInt(1, index * quantity);
 			ps.setInt(2, quantity);
 			ResultSet rs = ps.executeQuery();
@@ -511,8 +547,8 @@ public class ProductDAO {
 			if (search != null) {
 				String sql = "select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
 						+ " from products inner join categories on products.category_id = categories.id "
-						+ "where products.product_name like ? or categories.category_name like ?"
-						+ "order by products.id\r\n" + "limit ?,?";
+						+ "where (products.product_name like ? or categories.category_name like ?) and products.isDelete = 0 "
+						+ "order by products.id limit ?,?";
 				String search1 = "";
 				if (!search.equals("")) {
 					search1 = "%" + search + "%";
@@ -525,8 +561,9 @@ public class ProductDAO {
 			} else {
 				if (category > 0) {
 					String sql = "select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
-							+ " from products inner join categories on products.category_id = categories.id "
-							+ "where products.category_id = ? " + "order by products.id\r\n" + "limit ?,?";
+							+ " from products inner join categories on products.category_id = categories.id  "
+							+ "where products.category_id = ? and products.isDelete = 0 " 
+							+ "order by products.id\r\n" + "limit ?,?";
 
 					ps = conn.prepareStatement(sql);
 					ps.setInt(1, category);
@@ -536,7 +573,8 @@ public class ProductDAO {
 					if (minPrice >= 0 && maxPrice >= 0) {
 						String sql = "select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
 								+ " from products inner join categories on products.category_id = categories.id "
-								+ "where products.price >= ? and product.price <= ? " + "order by products.id\r\n"
+								+ "where products.price >= ? and product.price <= ? and products.isDelete = 0 " 
+								+ "order by products.id\r\n"
 								+ "limit ?,?";
 
 						ps = conn.prepareStatement(sql);
@@ -546,7 +584,7 @@ public class ProductDAO {
 						ps.setInt(4, quantity);
 					} else {
 						String sql = "select products.id,products.product_name, products.desciption, products.prices, products.image, categories.category_name\r\n"
-								+ " from products inner join categories on products.category_id = categories.id "
+								+ " from products inner join categories on products.category_id = categories.id where products.isDelete = 0 "
 								+ "order by products.id \r\n" + "limit ?,?";
 						System.out.println("DM tao đay");
 						ps = conn.prepareStatement(sql);
@@ -584,7 +622,7 @@ public class ProductDAO {
 			if (search != null) {
 				String sql = "select COUNT(*)\r\n"
 						+ " from products inner join categories on products.category_id = categories.id "
-						+ "where products.product_name like ? or categories.category_name like ?";						
+						+ "where (products.product_name like ? or categories.category_name like ?) and products.isDelete = 0";						
 				String search1 = "";
 				if (!search.equals("")) {
 					search1 = "%" + search + "%";
@@ -595,15 +633,15 @@ public class ProductDAO {
 			} else {
 
 				if (categoryId >= 0) {
-					ps = conn.prepareStatement("select COUNT(*) from products where category_id = ?");
+					ps = conn.prepareStatement("select COUNT(*) from products where category_id = ? and products.isDelete = 0");
 					ps.setInt(1, categoryId);
 				} else {
 					if (minPrice >= 0 && maxPrice >= 0) {
-						ps = conn.prepareStatement("select COUNT(*) from products where price >= ? and price <=?");
+						ps = conn.prepareStatement("select COUNT(*) from products where price >= ? and price <=? and products.isDelete = 0");
 						ps.setDouble(1, minPrice);
 						ps.setDouble(2, maxPrice);
 					} else {
-						ps = conn.prepareStatement("select COUNT(*) from products");
+						ps = conn.prepareStatement("select COUNT(*) from products where products.isDelete = 0");
 					}
 				}
 			}
@@ -780,6 +818,7 @@ public class ProductDAO {
 
 	public static void main(String[] args) throws SQLException {
 		ProductDAO productDAO = new ProductDAO();
-		productDAO.updateFileInvoice(3, "invoice_2022-12-11_000003_1000_3");
+		int a = productDAO.getTotalProduct(null, -1, -1, -1);
+		System.out.println(a);
 	}
 }

@@ -52,7 +52,7 @@ public class LoginCustomerFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String url = httpRequest.getRequestURI();
-		String[] urls = { "checkout.jsp", "authentication.jsp", "payment.jsp", "orders", "create-key.jsp" };
+		String[] urls = { "checkout.jsp", "authentication.jsp", "payment.jsp", "orders", "createKey","verificate-code" };
 		List<String> list = Arrays.asList(urls);
 		String split[] = url.split("/");
 		String last = split[split.length - 1];

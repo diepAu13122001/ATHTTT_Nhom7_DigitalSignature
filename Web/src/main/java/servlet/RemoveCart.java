@@ -59,11 +59,6 @@ public class RemoveCart extends HttpServlet {
 
 		HistoryUrl historyUrl = (HistoryUrl) getServletContext().getAttribute("urlDAO");
 		String urlLast = historyUrl.getUrlLast();
-		if (urlLast == null) {
-			urlLast = "index.jsp";
-		} else {
-			urlLast = urlLast.substring(1);
-		}
 		response.sendRedirect(urlLast);
 
 	}

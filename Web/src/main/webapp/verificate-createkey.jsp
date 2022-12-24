@@ -33,7 +33,13 @@
 <link rel="stylesheet" href="css/responsive.css">
 <!-- Custom CSS -->
 <link rel="stylesheet" href="css/custom.css">
-
+<style type="text/css">
+.color-main {
+	background-color: #b0b435;
+	border-color: #b0b435;
+	color: #fff !important;
+}
+</style>
 <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -47,59 +53,26 @@
 
 	<div class=" shop-detail-box-main invoice">
 		<div class="container">
-			<div class="row">
-				<div class="col-sm-6 col-lg-6 mb-3">
-					<div class="title-left">
-						<h2 style="font-weight: 500">Thông tin đơn hàng</h2>
-					</div>
-					<iframe src="showPdf?invoice=${invoice}" width="100%"
-						height="600px"> </iframe>
 
+			<form class="col-sm-4" style="margin: 0 auto">
+				<div class="form-group">
+					<label for="exampleInputEmail1">Mã xác nhận</label> <input
+						type="text" class="form-control" id="exampleInputEmail1"
+						name="userCode" aria-describedby="emailHelp" placeholder="">
+					<small id="emailHelp" class="form-text text-muted">Chúng
+						tôi đã gữi mã xác nhận qua email <a href="">${user.email}</a>
+					</small>
 				</div>
-				<div class="col-sm-6 col-lg-6 mb-3">
-					<div class="title-left">
-						<h2 style="font-weight: 500">Xác thực</h2>
-					</div>
-					<form id="upload-form" class="needs-validation"
-						action="handle-authentication" enctype="multipart/form-data"
-						method="post">
-						<div class="mb-3">
-							<label for="signature">Chữ ký (Base64)</label>
-							<div class="input-group">
-								<textarea class="form-control" id="signature"
-									name="signature" required rows="4"></textarea>
-							</div>
-						</div>
-						<input type="hidden" name="invoice" value="${invoice}">
-						<div class="mb-3">
-							<label for="file2">Public key   <select
-								class="form-select form-select-sm"
-								aria-label=".form-select-sm example" id="publickey-select" onchange="switchType()">
-									<option value ="0" selected>Base 64</option>
-									<option value="1">File</option>
-									
-							</select>
-
-							</label>
-							<c:if test="${ errorKey!=null}">
-								<label id="pass-validate" class="mb-0"
-									style="color: red; display: block">${errorKey}</label>
-							</c:if>
-
-							<div class="input-group" id="pk-box">
-
-								<input type="text" class="form-control" id="public-key"
-									name="pk-base64" placeholder="" required>
-
-							</div>
-						</div>
-						<div class="col-12 d-flex shopping-box">
-							<button type="submit" class="ml-auto btn hvr-hover">Xác
-								thực</button>
-						</div>
-					</form>
+				<c:if test="${verificateStatus!=null}">
+					<div class="alert alert-danger" role="alert">
+						${verificateStatus}</div>
+				</c:if>
+				<div class="form-group">
+					<button type="submit" class="btn btn-primary color-main"
+						style="display: block">Xác nhận</button>
 				</div>
-			</div>
+
+			</form>
 		</div>
 	</div>
 
@@ -126,17 +99,7 @@
 	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
 		async defer></script>
 	<script>
-			function switchType() {
-				var type =  $("#publickey-select").val();
-				if(type == '0'){
-					console.log('dmm');
-					$("#pk-box").html("<input type='text' class='form-control' id='public-key' name='pk-base64' placeholder='' required>");
-				}else{
-					console.log('sv');
-					$("#pk-box").html("<input type='file' class='form-control' id='public-key'  name='file-encrypt' placeholder='' required>");
-				}
-				
-			}
+		
 	</script>
 
 </body>
