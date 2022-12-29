@@ -1,6 +1,9 @@
 package filter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -49,19 +52,17 @@ public class LoginCustomerFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String url = httpRequest.getRequestURI();
-		String[] split = url.split("/");
+		String[] urls = { "checkout.jsp", "authentication.jsp", "payment.jsp", "orders", "createKey","verificate-code" };
+		List<String> list = Arrays.asList(urls);
+		String split[] = url.split("/");
 		String last = split[split.length - 1];
-		if (last.equals("checkout.jsp") || last.equals("authentication.jsp")
-				|| last.equals("payment.jsp") || last.equals("orders")) {
+		if (list.contains(last)) {
 			HttpSession session = httpRequest.getSession(true);
 			Customer customer = (Customer) session.getAttribute("user");
-
 			if (customer == null) {
 				httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
 			} else {
-
 				chain.doFilter(httpRequest, httpResponse);
-
 			}
 
 		} else {

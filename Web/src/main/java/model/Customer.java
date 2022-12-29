@@ -9,7 +9,13 @@ public class Customer {
 	int numberReviews;
 	boolean isLogin;
 	int accountGoogle;
-	
+	String roleName;
+	public String getRoleName() {
+		return roleName;
+	}
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
 	public int getAccountGoogle() {
 		return accountGoogle;
 	}

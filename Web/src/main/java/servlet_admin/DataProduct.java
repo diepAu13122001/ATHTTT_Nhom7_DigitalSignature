@@ -35,12 +35,17 @@ public class DataProduct extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		String pageString = request.getParameter("page");
+		int page =pageString!=null?Integer.parseInt(pageString):1 ;
 		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
-		int totalProduct = productDAO.getTotalProduct();
-		List<Product> listProducts = productDAO.pagdingProduct(0, totalProduct);
+		int totalProduct = productDAO.getTotalProduct(null,-1,-1,-1);
+		List<Product> listProducts = productDAO.pagdingProduct(page-1, 16);
+		List<Category> categories = productDAO.getListCategories();
 		
-		ServletContext context = getServletContext();
-		context.setAttribute("products", listProducts);
+		request.setAttribute("categories", categories);
+		request.setAttribute("pageCurrent", page);
+		request.setAttribute("totalPage", totalProduct/16 +1);
+		request.setAttribute("products", listProducts);
 		//context.setAttribute("productsCate", lisProductCategories);
 		request.getRequestDispatcher("table-product.jsp").forward(request, response);		
 	}

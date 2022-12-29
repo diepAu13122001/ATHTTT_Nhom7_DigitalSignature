@@ -67,7 +67,7 @@ public class CheckOut extends HttpServlet {
 		double grandTotal = subTotal + discount+ ship;
 		String shippingType = shipping.getType();  	
 		Customer customer = (Customer)session.getAttribute("user");
-		int idOrder = productDAO.insertOrders(customer.getId(), name, phoneNum, email, address, desAddres, dateIssue, cart.getCartItems(), discount, Integer.parseInt(shippingOption), grandTotal,"NA","");
+		int idOrder = productDAO.insertOrders(customer.getId(), name, phoneNum, email, address, desAddres, dateIssue, cart.getCartItems(), discount, Integer.parseInt(shippingOption), grandTotal,"NA","",customer.getId());
 		if(idOrder > 0) {
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
 	        String formatDateTime = dateIssue.format(formatter);

@@ -20,6 +20,7 @@ import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.itextpdf.text.xml.simpleparser.NewLineHandler;
 
 import model.Customer;
+import model.OrderDetail;
 import model.Orders;
 
 public class CustomerDAO {
@@ -41,8 +42,19 @@ public class CustomerDAO {
 			ps.setString(4, customer.getEmail());
 			ps.setString(5, customer.getPassword());
 			ps.setInt(6, accountGoogle);
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-			ps.executeUpdate();
+			ps.execute();
+			ps = conn.prepareStatement(" SELECT LAST_INSERT_ID()");
+			ResultSet rs = ps.executeQuery();
+			int lastId = 0;
+			if (rs.next()) {
+				lastId = rs.getInt(1);
+				ps = conn.prepareStatement("insert into role_user(user_id, role_name) values(?,?)");
+				ps.setInt(1, lastId);
+				ps.setString(2, "USER");
+				ps.execute();
+				
+			}
+			
 		} catch (SQLException e) {
 			result = false;
 			e.printStackTrace();
@@ -134,7 +146,7 @@ public class CustomerDAO {
 
 	public Customer getCustomerById(int id) {
 		try {
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM users inner join role_user on users.id = role_user.user_id  where users.id = ?");
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -144,7 +156,9 @@ public class CustomerDAO {
 				String emails = rs.getString("email").trim();
 				String pass = rs.getString("password").trim();
 				int accountGoogle = rs.getInt("account_google");
+				String roleName = rs.getString("role_name");
 				Customer customer = new Customer();
+				customer.setRoleName(roleName);
 				customer.setId(ids);
 				customer.setEmail(emails);
 				customer.setLastName(lastName);
@@ -163,22 +177,26 @@ public class CustomerDAO {
 
 	public Customer findByEmail(String email, int ag) {
 		try {
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE email = ? and account_google = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM users inner join role_user on users.id = role_user.user_id where users.email = ? and users.account_google = ?");
 			ps.setString(1, email);
 			ps.setInt(2, ag);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				int ids = rs.getInt(1);
-				String lastName = rs.getString(2).trim();
-				String firstName = rs.getString(3).trim();
-				String emails = rs.getString(4).trim();
-				String pass = rs.getString(5).trim();
+				int ids = rs.getInt("id");
+				String lastName = rs.getString("last_name").trim();
+				String firstName = rs.getString("first_name").trim();
+				String emails = rs.getString("email").trim();
+				String pass = rs.getString("password").trim();
+				int accountGoogle = rs.getInt("account_google");
+				String roleName = rs.getString("role_name");
 				Customer customer = new Customer();
+				customer.setRoleName(roleName);
 				customer.setId(ids);
 				customer.setEmail(emails);
 				customer.setLastName(lastName);
 				customer.setFirstName(firstName);
 				customer.setPassword(pass);
+				customer.setAccountGoogle(accountGoogle);			
 				return customer;
 			}
 		} catch (SQLException e) {

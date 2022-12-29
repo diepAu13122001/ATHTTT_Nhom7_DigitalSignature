@@ -17,6 +17,7 @@ import dao.ProductDAO;
 import model.Customer;
 import model.OrderDetail;
 import model.Orders;
+import utitls.Role;
 
 /**
  * Servlet implementation class OrderDetailAdmin
@@ -39,6 +40,8 @@ public class OrderDetailAdmin extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
 		CustomerDAO customerDAO = (CustomerDAO)getServletContext().getAttribute("khachHangDAO");
+		HttpSession session = request.getSession();
+		Customer admin =(Customer) session.getAttribute("userAdmin");
 		int orderId = Integer.parseInt(request.getParameter("id"));
 		Orders orders = productDAO.getOrderById(orderId);
 		Customer customer = customerDAO.getCustomerById(orders.getUserId());
@@ -51,7 +54,9 @@ public class OrderDetailAdmin extends HttpServlet {
 		HttpSession context = request.getSession();
 		context.setAttribute("order", orders);
 		context.setAttribute("statusOrdes", map);
-		
+		if(admin.getRoleName().equals(Role.ADMIN)) {
+			request.setAttribute("role", admin.getRoleName());
+		}
 		request.getRequestDispatcher("order-detail.jsp").forward(request, response);		
 	}
 

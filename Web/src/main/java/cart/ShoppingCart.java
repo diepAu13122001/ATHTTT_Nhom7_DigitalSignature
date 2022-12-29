@@ -25,6 +25,11 @@ public class ShoppingCart<ID, T extends Item> {
         }
         numberOfItems++;
     }
+    public synchronized void updateQuantity(ID id, int quantiy) { 
+            ShoppingCartItem<T> scitem = items.get(id);
+            scitem.setQuantity(quantiy);     
+            numberOfItems= getNumberOfItems();
+    }
 
     public synchronized void remove(String bookId) {
         if (items.containsKey(bookId)) {

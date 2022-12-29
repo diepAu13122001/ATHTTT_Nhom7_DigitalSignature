@@ -104,16 +104,16 @@
 								</ul>
 							</div>
 						</div>
-						<c:if test="${listSearch.isEmpty()}">
+						<c:if test="${response.isEmpty()}">
 						<h2 style="text-align: center;margin-top:30px;margin-bottom:30px">Không tìm thấy sản phẩm nào</h2>
 						</c:if>
-						<c:if test="${!listSearch.isEmpty()}">
+						<c:if test="${!response.isEmpty()}">
 						<div class="product-categorie-box">
 							<div class="tab-content">
 								<div role="tabpanel" class="tab-pane fade show active"
 									id="grid-view">
 									<div class="row">
-										<c:forEach var="product" items="${listSearch}">
+										<c:forEach var="product" items="${response}">
 											<a href="shop"></a>
 											<div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
 											<c:url var="url" value="/shopdetail">
@@ -164,7 +164,7 @@
 									</div>
 								</div>
 								<div role="tabpanel" class="tab-pane fade" id="list-view">
-									<c:forEach var="product" items="${listSearch}">
+									<c:forEach var="product" items="${response}">
 										<div class="list-view-box">
 											<c:url var="url" value="/shopdetail">
 													<c:param name="idProduct" value="${product.idProduct}"></c:param>
@@ -237,7 +237,7 @@
 					<div class="product-categori">
 						<div class="search-product">
 							<form action="SearchProduct">
-								<input class="form-control" placeholder="Search here..." name="seach-product"
+								<input class="form-control" placeholder="Search here..." name="search"
 									type="text">
 								<button type="submit">
 									<i class="fa fa-search"></i>
@@ -251,10 +251,10 @@
 							<div
 								class="list-group list-group-collapse list-group-sm list-group-tree"
 								id="list-group-men" data-children=".sub-men">
-								<c:forEach var="category" items="${listCategory}"> 
+								<c:forEach var="category" items="${categories}"> 
 								<div class="list-group-collapse sub-men">
 								<c:url var="urlSearch" value="/SearchProduct">
-									<c:param name="seach-category" value="${category.getIdCate()}"></c:param>
+									<c:param name="category" value="${category.getIdCate()}"></c:param>
 								</c:url>
 									<a class="list-group-item list-group-item-action"
 										href="${urlSearch}" 

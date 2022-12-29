@@ -46,48 +46,21 @@ public class SearchProduct extends HttpServlet {
 		// TODO Auto-generated method stub
 		String argument = "";
 		String params ="";
-		String searchProduct = request.getParameter("seach-product");
-		String searchCategory = request.getParameter("seach-category");
+		String search = request.getParameter("seach");
+		String cateString =request.getParameter("category_id") ;
+		int categoryId = cateString!=null ? Integer.parseInt(cateString) : -1;
 		// Lay khoang gia
-		String priceFilter = request.getParameter("price-filter");
-		double priceStart = -1;
-		double priceEnd = -1;
+		String minString = request.getParameter("min-price");
+		String maxString = request.getParameter("max-price");
+		double minPrice = minString!=null?Double.parseDouble(minString):-1;
+		double maxPrice = maxString!=null?Double.parseDouble(maxString):-1;
+		//
+		String pageString = request.getParameter("page");
+		int page = pageString!=null?Integer.parseInt(pageString):-1;
 
-		if (priceFilter != null) {
-			String[] split = priceFilter.split("-");
-			priceStart = Double.parseDouble(split[0].trim().substring(0,split[0].trim().length()-1));
-			priceEnd = Double.parseDouble(split[1].trim().substring(0,split[1].trim().length()-1));
-			
-		}
-		
-		System.out.println(priceStart+" "+ priceEnd);
-
-		//Tim kiem ket qua
-		String search = "";
-		if (searchProduct != null) {
-			search = searchProduct;
-			params="seach-product";
-			argument= searchProduct;
-		}
-		if (searchCategory != null) {
-			search = searchCategory;
-			params="seach-category";
-			argument = searchCategory;
-		}
-		
-		if(priceFilter!=null) {
-			argument = priceFilter;
-			params="price-filter";
-		}
 		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
-		List<Product> listProduct = productDAO.getListSearch(search, priceStart, priceEnd);
-		List<Category> listCategory = productDAO.getListCategories();
-
-		List<Product> pagingsClone = new ArrayList<Product>();
-		for(Product p : listProduct) {
-			pagingsClone.add(p);
-		}
-		
+		List<Product> results = productDAO.filterProduct(page, 16, search, categoryId, minPrice, maxPrice);
+		List<Category> categories = productDAO.getListCategories();
 		String sortBy = request.getParameter("sort");
 		String sort = "";
 		System.out.println(sortBy);
@@ -96,18 +69,17 @@ public class SearchProduct extends HttpServlet {
 			sort="Không sắp xếp";
 		}
 		if(sortBy.equals("random")) {
-			listProduct= pagingsClone;
 			sort="Không sắp xếp";
 		}if(sortBy.equals("high-to-low")) {
-			Collections.sort(listProduct, new SortPriceDESC());
+			Collections.sort(results, new SortPriceDESC());
 			sort="Giá cao → Giá thấp";
 		
 		}if(sortBy.equals("low-to-high")) {
-			Collections.sort(listProduct, new SortPriceASC());
+			Collections.sort(results, new SortPriceASC());
 			sort="Giá thấp → Giá cao";
 		}
 		if(sortBy.equals("popularty")) {
-			Collections.sort(listProduct, new SortPopular());
+			Collections.sort(results, new SortPopular());
 			sort="Phổ biến nhất";
 		}
 		//Lay duong dan cuoi cung
@@ -115,13 +87,12 @@ public class SearchProduct extends HttpServlet {
 	    historyUrl.saveHistoryUrl(request);
 //	    System.out.println(urlDAO.getUrlLast());
 		
-		
-		ServletContext context = getServletContext();
-		context.setAttribute("sortTitle", sort);
-		context.setAttribute("argument", argument);
-		context.setAttribute("params", params);
-		context.setAttribute("listSearch", listProduct);
-		context.setAttribute("listCategory", listCategory);
+			
+		request.setAttribute("sortTitle", sort);
+		request.setAttribute("argument", argument);
+		request.setAttribute("params", params);
+		request.setAttribute("categories", categories);
+		request.setAttribute("response", results);
 		request.getRequestDispatcher("search-product.jsp").forward(request, response);
 	}
 

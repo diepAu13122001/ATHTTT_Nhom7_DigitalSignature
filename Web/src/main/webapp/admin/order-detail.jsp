@@ -17,6 +17,7 @@
 	rel="stylesheet" />
 <link href="../admin/css/styles.css" rel="stylesheet" />
 <link href="../admin/css/mystyle.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/bootstrap.min.css">
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
 	crossorigin="anonymous"></script>
@@ -58,7 +59,7 @@
 						<nav class="navbar navbar-light bg-light ">
 							<div class="container-fluid end-flex">
 								<button type="submit" class="btn btn-success">
-									<i class="fas fa-paper-plane"></i> Cập nhật
+									<i class="fas fa-paper-plane"></i> Duyệt đơn hàng
 								</button>
 							</div>
 						</nav>
@@ -85,31 +86,31 @@
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Tên
 																				người nhận</strong></label> <input type="text" class="form-control"
-																			required="required" id="name" name="name-receiver" disabled="disabled"
+																			required="required" id="name" name="name-receiver"
 																			value="${order.nameReceiver }">
 																	</div>
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Số
 																				điện thoại người nhận</strong></label> <input type="number"
 																			class="form-control" required="required" id="name"
-																			name="phone-num" value="${order.phoneNum }" disabled="disabled">
+																			name="phone-num" value="${order.phoneNum }">
 																	</div>
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Email</strong></label>
 																		<input type="text" class="form-control"
-																			required="required" id="name" name="email" disabled="disabled"
+																			required="required" id="name" name="email"
 																			value="${order.email }">
 																	</div>
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Địa
 																				chỉ</strong></label> <input type="text" class="form-control"
-																			required="required" id="name" name="address" disabled="disabled"
+																			required="required" id="name" name="address"
 																			value="${order.address }">
 																	</div>
 																	<div class="mb-3">
 																		<label for="name" class="form-label"><strong>Mô
 																				tả địa chỉ</strong></label> <input type="text" class="form-control"
-																			required="required" id="name" name="address-detail" disabled="disabled"
+																			required="required" id="name" name="address-detail"
 																			value="${order.addressDetail}">
 																	</div>
 																</div>
@@ -157,11 +158,17 @@
 
 																			<c:forEach begin="0"
 																				end="${order.orderDetails.size()-1}" var="i">
-																				<tr
-																					onclick="productDetail(${order.orderDetails.get(i).product.idProduct})"
-																					style="cursor: pointer;">
-																					<td>${order.orderDetails.get(i).product.nameProduct }</td>
-																					<td class="text-center">${order.orderDetails.get(i).quantity}</td>
+																				<tr style="cursor: pointer;">
+
+																					<td><a
+																						href="../shopdetail?idProduct=${order.orderDetails.get(i).product.idProduct}"
+																						style="text-decoration: none">
+																							${order.orderDetails.get(i).product.nameProduct }</a></td>
+																					<td class="text-center"><input type="hidden"
+																						name="id-product"
+																						value="${order.orderDetails.get(i).product.idProduct}"><input
+																						type="number" class="form-control" name="quantity"  <c:if test="${!role.equals('ADMIN')}">disabled="disabled"</c:if>
+																						value="${order.orderDetails.get(i).quantity}"></td>
 																					<td class="text-center"><fmt:formatNumber
 																							type="number" groupingUsed="true"
 																							value="${order.orderDetails.get(i).product.price}" /></td>
@@ -225,63 +232,67 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-4">
-								<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">Tài khoản</h4>
-								<div class="row" style="padding-top: 1rem">
-									<div class="col-lg-6" style="width: 30%">
-										<!-- col-lg-6 start here -->
-										<div class="invoice-logo">
+							<div class="col-4 ">
+								<div class="row flex-column ">
+									<div class="col border-bottom">
+										<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">Tài khoản</h4>
+										<div class="row mx-2" style="padding-top: 1rem">
+											<div class="col-lg-6" style="width: 30%">
+												<!-- col-lg-6 start here -->
+												<div class="invoice-logo">
 
-											<c:if test="${order.customer.accountGoogle == 0}">
-												<img width="100"
-													src="https://bootdey.com/img/Content/avatar/avatar7.png"
-													alt="Invoice logo">
-											</c:if>
-											<c:if test="${order.customer.accountGoogle == 1}">
-												<img width="100" src="../images/google.png"
-													alt="Invoice logo">
-											</c:if>
+													<c:if test="${order.customer.accountGoogle == 0}">
+														<img width="100"
+															src="https://bootdey.com/img/Content/avatar/avatar7.png"
+															alt="Invoice logo">
+													</c:if>
+													<c:if test="${order.customer.accountGoogle == 1}">
+														<img width="100" src="../images/google.png"
+															alt="Invoice logo">
+													</c:if>
 
-										</div>
-									</div>
-									<!-- col-lg-6 end here -->
-									<div class="col-lg-6" style="width: 70%">
-										<!-- col-lg-6 start here -->
-										<div class="invoice-from">
-											<ul class="list-unstyled text-right">
-												<li><strong>ID: </strong>${order.customer.id}</li>
-												<li><strong>Email: </strong>${order.customer.email}</li>
-												<li><strong>Loại TK: </strong> <c:if
-														test="${order.customer.accountGoogle == 0}">
+												</div>
+											</div>
+											<!-- col-lg-6 end here -->
+											<div class="col-lg-6" style="width: 70%">
+												<!-- col-lg-6 start here -->
+												<div class="invoice-from">
+													<ul class="list-unstyled text-right">
+														<li><strong>ID: </strong>${order.customer.id}</li>
+														<li><strong>Email: </strong>${order.customer.email}</li>
+														<li><strong>Loại TK: </strong> <c:if
+																test="${order.customer.accountGoogle == 0}">
 													Thường
 												</c:if> <c:if test="${order.customer.accountGoogle == 1}">
 													Google
 												</c:if></li>
-												<li>
-													<ul class="list-unstyled text-right">
-														<li><strong>Trạng thái đơn hàng: </strong></li>
-
-
-														<li class="mg-li"><select class="form-select"
-															name="status-order">
-																<c:forEach items="${statusOrdes.entrySet()}" var="entry">
-																	<c:if test="${ order.status.equals(entry.getKey())}">
-																		<option value="${entry.getKey()}" selected="selected">${entry.getValue()}</option>
-																	</c:if>
-																	<c:if test="${!order.status.equals(entry.getKey())}">
-																		<option value="${entry.getKey()}">${entry.getValue()}</option>
-																	</c:if>
-
-																</c:forEach>
-
-
-														</select></li>
+														<li></li>
 													</ul>
-												</li>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col mt-2">
+										<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">Xác thực</h4>
+										<div class="row mx-2">
+											<ul class="list-unstyled text-right">
+												<li class="mg-li"><select class="form-select"
+													name="status-order">
+														<c:forEach items="${statusOrdes.entrySet()}" var="entry">
+															<c:if test="${ order.status.equals(entry.getKey())}">
+																<option value="${entry.getKey()}" selected="selected">${entry.getValue()}</option>
+															</c:if>
+															<c:if test="${!order.status.equals(entry.getKey())}">
+																<option value="${entry.getKey()}">${entry.getValue()}</option>
+															</c:if>
+
+														</c:forEach>
+												</select></li>
 											</ul>
 										</div>
 									</div>
 								</div>
+
 
 							</div>
 						</div>
@@ -305,7 +316,7 @@
 			}
 		};
 		function productDetail(id) {
-			window.location.href = "../shopdetail?idProduct="+id;
+			window.location.href = "../shopdetail?idProduct=" + id;
 		}
 	</script>
 	<script src="https://kit.fontawesome.com/c31e7889db.js"

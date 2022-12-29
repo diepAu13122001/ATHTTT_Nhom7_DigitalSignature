@@ -97,13 +97,13 @@
 											class="fa fa-caret-down" aria-hidden="true"></i>
 
 										<ul class="subnav-sort">
-											<li><a href="shop?page-number=${tag}&sort=random">Không
+											<li><a href="shop?page=${pageCurrent}&${params}=${argument}&sort=random">Không
 													sắp xếp</a></li>
-											<li><a href="shop?page-number=${tag}&sort=high-to-low">Giá
+											<li><a href="shop?page=${pageCurrent}&${params}=${argument}&sort=high-to-low">Giá
 													cao → Giá thấp</a></li>
-											<li><a href="shop?page-number=${tag}&sort=low-to-high">Giá
+											<li><a href="shop?page=${pageCurrent}&${params}=${argument}&sort=low-to-high">Giá
 													thấp → Giá cao</a></li>
-											<li><a href="shop?page-number=${tag}&sort=popularty">Phổ
+											<li><a href="shop?page=${pageCurrent}&${params}=${argument}&sort=popularty">Phổ
 													biến</a></li>
 
 										</ul>
@@ -122,13 +122,15 @@
 								</ul>
 							</div>
 						</div>
-
+					<c:if test="${response.isEmpty()}">
+						<h2 style="text-align: center;margin-top:30px;margin-bottom:30px">Không tìm thấy sản phẩm nào</h2>
+						</c:if>
 						<div class="product-categorie-box">
 							<div class="tab-content">
 								<div role="tabpanel" class="tab-pane fade show active"
 									id="grid-view">
 									<div class="row">
-										<c:forEach var="product" items="${pagings}">
+										<c:forEach var="product" items="${response}">
 											<a href="shop"></a>
 											<div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
 												<c:url var="url" value="/shopdetail">
@@ -176,7 +178,7 @@
 									</div>
 								</div>
 								<div role="tabpanel" class="tab-pane fade" id="list-view">
-									<c:forEach var="product" items="${pagings}">
+									<c:forEach var="product" items="${response}">
 										<div class="list-view-box">
 											<c:url var="url" value="/shopdetail">
 												<c:param name="idProduct" value="${product.idProduct}"></c:param>
@@ -237,13 +239,16 @@
 					<div class="paging">
 
 						<a><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
-						<c:forEach begin="1" end="${numberOfPage }" var="i">
-							<c:url var="urlPage" value="shop">
-								<c:param name="page-number" value="${i}"></c:param>
-							</c:url>
-							<a class="${tag==i ? " btn hvr-hover active":"btn
-								hvr-hover" }"  href="${urlPage}" style="color: #fff">${i}</a>
-
+						<c:forEach begin="1" end="${numberOfPage}" var="i">
+						<c:if test="${pageCurrent.equals(i)}">
+						<a class=" btn hvr-hover active" href="./shop?page=${i}&${params}=${argument}" style="color: #fff">${i}</a>
+						
+						</c:if>
+						<c:if test="${!pageCurrent.equals(i)}">
+						<a class=" btn hvr-hover" href="./shop?page=${i}&${params}=${argument}" style="color: #fff">${i}</a>
+						
+						</c:if>
+							
 						</c:forEach>
 						<a><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
 					</div>
@@ -252,9 +257,12 @@
 				<div class="col-xl-3 col-lg-3 col-sm-12 col-xs-12 sidebar-shop-left">
 					<div class="product-categori">
 						<div class="search-product">
-							<form action="SearchProduct">
+							<form action="shop">
+								<input class="form-control" 
+									name="page" type="hidden" value="1">
 								<input class="form-control" placeholder="Search here..."
-									name="seach-product" type="text">
+									name="search" type="text">
+								
 								<button type="submit">
 									<i class="fa fa-search"></i>
 								</button>
@@ -267,14 +275,11 @@
 							<div
 								class="list-group list-group-collapse list-group-sm list-group-tree"
 								id="list-group-men" data-children=".sub-men">
-								<c:forEach var="category" items="${listCategory}">
+								<c:forEach var="category" items="${categories}">
 									<div class="list-group-collapse sub-men">
-										<c:url var="urlSearch" value="/SearchProduct">
-											<c:param name="seach-category"
-												value="${category.getIdCate()}"></c:param>
-										</c:url>
+			
 										<a class="list-group-item list-group-item-action"
-											href="${urlSearch}">${category.getNameCate()} <small
+											href="./shop?page=1&category_id=${category.idCate}">${category.getNameCate()} <small
 											class="text-muted">(${category.getNumOfProduct()})</small>
 										</a>
 									</div>
@@ -315,7 +320,6 @@
 								<div id="slider-range"></div>
 								<form action="SearchProduct">
 									<div class="demo">
-
 										<p>
 											<input type="text" id="amount" readonly
 												style="border: 0; color: #fbb714; font-weight: bold;"

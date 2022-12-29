@@ -23,7 +23,7 @@ public class Orders {
 	Shipping shipping;
 	String status;
 	String statusName;
-
+	int parent;
 	List<OrderDetail> orderDetails;
 	public double totalPrice() {
 		double result=0;
@@ -31,6 +31,12 @@ public class Orders {
 			result+=orderDetail.quantity*orderDetail.product.price;
 		}
 		return result;
+	}
+	public int getParent() {
+		return parent;
+	}
+	public void setParent(int parent) {
+		this.parent = parent;
 	}
 	public String getStatusName() {
 		return statusName;

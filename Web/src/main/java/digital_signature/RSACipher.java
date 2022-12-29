@@ -94,8 +94,8 @@ public class RSACipher {
 		this.privateKey = keyPair.getPrivate();
 	}
 
-	public byte[] encrypt(byte[] input, PrivateKey privateKey) throws NoSuchAlgorithmException,
-			NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+	public byte[] encrypt(byte[] input, PrivateKey privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
+			InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
 		final byte[] bytes = cipher.doFinal(input);
@@ -107,6 +107,15 @@ public class RSACipher {
 		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 		cipher.init(Cipher.DECRYPT_MODE, publicKey);
 		final byte[] bytes = cipher.doFinal(input);
+		return new String(bytes);
+	}
+
+	public String decryptText(String input, PublicKey publicKey) throws InvalidKeyException, NoSuchAlgorithmException,
+			NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
+		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+		cipher.init(Cipher.DECRYPT_MODE, publicKey);
+		byte[] decodeByte = Base64.getDecoder().decode(input);
+		byte[] bytes = cipher.doFinal(decodeByte);
 		return new String(bytes);
 	}
 
@@ -131,6 +140,7 @@ public class RSACipher {
 		return publicKey;
 
 	}
+
 	public PublicKey publicKeyFile(byte[] bytes) throws InvalidKeySpecException, NoSuchAlgorithmException {
 		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");

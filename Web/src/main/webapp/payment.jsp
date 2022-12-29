@@ -43,22 +43,24 @@
 	margin: 0;
 	padding: 0
 }
-*root{
-	--maincolor: #b0b435;
+
+*root { -
+	-maincolor: #b0b435;
 }
 
 body {
 	overflow-x: hidden;
 	background: #eee
 }
-.btn-success{
+
+.btn-success {
 	background-color: #b0b435;
-    border-color: #b0b435;
-}
-.top-highlight,.active1{
-	color: #b0b435 !important;
+	border-color: #b0b435;
 }
 
+.top-highlight, .active1 {
+	color: #b0b435 !important;
+}
 
 #bg-div {
 	margin: 0;
@@ -252,7 +254,12 @@ input:focus+label {
 
 
 	<div class="row justify-content-center">
+		
 		<div class="col-lg-9 col-12">
+		<c:if test="${authenticateSuccess!=null}">
+			<div class="alert alert-success" role="alert" style="text-align: center; font-size: 22px;">
+				${authenticateSuccess}</div>
+		</c:if>
 			<div class="card card0">
 				<div class="d-flex" id="wrapper">
 					<!-- Sidebar -->

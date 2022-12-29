@@ -64,10 +64,10 @@
 						action="handle-authentication" enctype="multipart/form-data"
 						method="post">
 						<div class="mb-3">
-							<label for="file1">Hoá đơn mã hoá</label>
+							<label for="signature">Chữ ký (Base64)</label>
 							<div class="input-group">
-								<input type="file" class="form-control" id="file1"
-									name="file-encrypt" placeholder="" required>
+								<textarea class="form-control" id="signature"
+									name="signature" required rows="4"></textarea>
 							</div>
 						</div>
 						<input type="hidden" name="invoice" value="${invoice}">

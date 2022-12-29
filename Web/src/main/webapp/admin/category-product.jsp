@@ -16,6 +16,8 @@
 	rel="stylesheet" />
 <link href="../admin/css/styles.css" rel="stylesheet" />
 <link href="../admin/css/mystyle.css" rel="stylesheet" />
+<!-- Bootstrap CSS -->
+
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
 	crossorigin="anonymous"></script>
@@ -134,7 +136,7 @@
 															onclick="edit('${cate. getNameCate()}','${cate.getIdCate()}')">
 															<i class="fa-solid fa-pen"></i>
 														</td>
-														<td><input type="checkbox" class="form-check-input"
+														<td><input type="checkbox" class="form-check-input" style="margin-left: 0"
 															value="${cate.idCate}" name="delete-cate"></td>
 													</tr>
 

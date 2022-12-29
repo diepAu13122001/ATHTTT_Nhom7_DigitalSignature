@@ -33,5 +33,9 @@
     <filter-name>filter3</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  
+<error-page>
+    <!-- Missing resource -->
+    <error-code>404</error-code>
+    <location>/notfound.jsp</location>
+</error-page>
 </web-app>

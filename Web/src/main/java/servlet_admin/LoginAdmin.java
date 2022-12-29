@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import dao.CustomerDAO;
 import model.Customer;
+import utitls.Role;
 
 /**
  * Servlet implementation class LoginAdmin
@@ -35,19 +36,21 @@ public class LoginAdmin extends HttpServlet {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession(true);
 		session.setMaxInactiveInterval(300);
-		String username = request.getParameter("emailAdmin");
-		String pass = request.getParameter("passAdmin");
+		String username = request.getParameter("userName");
+		String pass = request.getParameter("password");
 		CustomerDAO khd = (CustomerDAO) getServletContext().getAttribute("khachHangDAO");
 		Customer user = khd.findByEmail(username,0);
 		String role =user!=null?khd.getRole(user.getId()):"";
-		if (khd.checkLogin(username, pass) && role.equals("ADMIN")) {
+		boolean isLogSuccess = false;
+		boolean isAuthor = role.equals(Role.ADMIN) || role.equals(Role.EMPLOYEE);
+		if (khd.checkLogin(username, pass) && isAuthor)   {
 				session.setAttribute("userAdmin", user);
-				request.setAttribute("emailAdmin", username);
-				response.sendRedirect("admin/");
-		} else {
-			request.setAttribute("emailAdmin", username);
-			request.getRequestDispatcher("login-admin.jsp").forward(request, response);
+				isLogSuccess = true;
 		}
+		 response.setContentType("application/json");
+	     response.setCharacterEncoding("UTF-8");
+	     response.getWriter().print(isLogSuccess);
+		
 	}
 
 	/**

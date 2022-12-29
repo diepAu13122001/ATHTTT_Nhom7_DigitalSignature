@@ -35,7 +35,7 @@ public class CancelOrder extends HttpServlet {
 		if(orders.getStatus().equals("CO")){
 			request.setAttribute("message", "Huỷ đơn hàng thành công");
 		}else {
-			boolean isUpdate = productDAO.updateOrder(idOrder, "CO");
+			boolean isUpdate = productDAO.updateStatus(idOrder, "CO");
 			if(isUpdate) {
 				request.setAttribute("message", "Huỷ đơn hàng thành công");
 				
