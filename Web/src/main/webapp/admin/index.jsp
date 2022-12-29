@@ -34,9 +34,7 @@
 			<main>
 				<div class="container-fluid px-4">
 					<h1 class="mt-4">Bảng điều khiển</h1>
-					<ol class="breadcrumb mb-4">
-						<li class="breadcrumb-item active">Bảng điều khiển</li>
-					</ol>
+					
 					<div class="row">
 						<div class="col-lg-6 col-xl-3 mb-4">
 							<div class="card bg-primary text-white h-100">

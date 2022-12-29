@@ -6,21 +6,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import dao.ProductDAO;
-import model.Orders;
+import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class CancelOrder
+ * Servlet implementation class VerifyMail
  */
-@WebServlet("/cancel-order")
-public class CancelOrder extends HttpServlet {
+@WebServlet("/verify-mail")
+public class VerifyMail extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CancelOrder() {
+    public VerifyMail() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,21 +27,18 @@ public class CancelOrder extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
-		int idOrder = Integer.parseInt(request.getParameter("id-order")); 
-		Orders orders = productDAO.getOrderById(idOrder);
-		if(orders.getStatus().equals("CO")){
-			request.setAttribute("message", "Huỷ đơn hàng thành công");
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/plain");
+		String code = request.getParameter("code");
+		HttpSession session = request.getSession();
+		String mailCode = (String)session.getAttribute("mailCode");
+		String status = "";
+		if(mailCode.equals(code)) {
+			status = "OK";
 		}else {
-			boolean isUpdate = productDAO.updateStatus(idOrder, "CO");
-			if(isUpdate) {
-				request.setAttribute("message", "Huỷ đơn hàng thành công");
-				
-			}else {
-				request.setAttribute("message", "Huỷ đơn hàng thất bại");
-			}
+			status="NOT";
 		}
-		request.getRequestDispatcher("cancel-order.jsp").forward(request, response);
+		response.getWriter().print(status);
 	}
 
 	/**

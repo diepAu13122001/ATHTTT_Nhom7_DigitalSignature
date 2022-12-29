@@ -102,14 +102,14 @@
 								</a>
                                     </td>
                                     <td class="price-pr">
-                                        <p class="price"><fmt:formatNumber type = "number" 
-         														maxFractionDigits = "3" value = "${cart.getCartItems().get(index).getItem().price}" /> ₫</p>
+                                        <p class="price-${cart.getCartItems().get(index).getItem().idProduct}"><span><fmt:formatNumber type = "number" 
+         														maxFractionDigits = "3" value = "${cart.getCartItems().get(index).getItem().price}" /> </span>₫</p>
                                     </td>
                                     <c:set var="quantity" value="${ cart.getCartItems().get(index).getQuantity()}" scope="session"></c:set>
                                     <td class="quantity-box"><input type="number" size="4" id="quantily-${index }" value="${cart.getCartItems().get(index).getQuantity()}"
-                                     min="1" step="1" class="c-input-text qty text" onchange="addCart('${cart.getCartItems().get(index).getItem().idProduct}',${index });"></td>
+                                     min="1" step="1" class="c-input-text qty text" onchange="updateCart(${cart.getCartItems().get(index).getItem().idProduct},this,${cart.getCartItems().get(index).getQuantity()})" ></td>
                                     <td class="total-pr">                                
-                                        <p class="total-price-${index} "><fmt:formatNumber type = "number" 
+                                        <p class="total-price-${cart.getCartItems().get(index).getItem().idProduct} "><fmt:formatNumber type = "number" 
          														maxFractionDigits = "3" value = "${cart.getCartItems().get(index).totalPrice()}" /> ₫</p>
                                     </td>
                                     <td class="remove-pr">
@@ -163,7 +163,7 @@
                         <div class="d-flex">
                             <h4>Tổng giá</h4>
                             <c:set var="totalGrand" value="${cart.getTotal()}" scope="session"></c:set>
-                            <div class="ml-auto font-weight-bold grand-total" > <fmt:formatNumber type = "number" 
+                            <div class="ml-auto font-weight-bold grand-total" id = "total-price"> <fmt:formatNumber type = "number" 
          														maxFractionDigits = "3" value = "${cart.getTotal()}" /> VND</div>
                         </div>
                         
@@ -179,7 +179,7 @@
                         <hr>
                         <div class="d-flex gr-total">
                             <h5>Thành tiền</h5>
-                            <div class="ml-auto h5 grand-total"> <fmt:formatNumber type = "number" 
+                            <div class="ml-auto h5 grand-total" id="grand-price"> <fmt:formatNumber type = "number" 
          														maxFractionDigits = "3" value = "${cart.getTotal()}" /> VND </div>
                         </div>
                         <hr> </div>
@@ -195,6 +195,7 @@
 	<jsp:include page="footer.jsp"></jsp:include>
 
     <!-- ALL JS FILES -->
+    <script src="js/addcart.js"></script>
     <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -212,6 +213,22 @@
     <script src="js/custom.js"></script>
       <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
     <script type="text/javascript">
+    function updateCart(id,e,valueOld) {
+    	var maxQuantity = 50;
+    	console.log(e.value);
+    	if(e.value>maxQuantity || e.value<1){
+    		showErrorToast("Số lượng phải <= 50 và >=1");
+    		e.value = valueOld;
+    	}else{
+    		updateCarts(id,e.value);
+    		var price = $('.price-'+id+' span').text();
+    		var priceformat = price.replace('.','')
+			var total = e.value*priceformat;
+    		console.log(total)
+    		$('.total-price-'+id).html(formatCurrent(total));
+    	}
+    	
+	}
     function calTotal(price, index, length){
        var q = document.querySelector('#quantily-'+index).value;
        var total = document.querySelector('.total-price-'+index);     
@@ -222,17 +239,7 @@
        grandToatal(length);
     
     }
-    function addCart(id,index){
-    	 var q = document.querySelector('#quantily-'+index).value;
-    	
-    	 if(Number(q)>=100){
-    		 showErrorToast();
-    	 }else{
-    		 window.location="increase?id="+id+"&quantity="+q;
-    	 }
-    	 
-    	
-    }
+
     function removeCart(id,index){
    	 var q = document.querySelector('#quantily-'+index).value;
    	 window.location="remove?id="+id+"&quantity="+q;

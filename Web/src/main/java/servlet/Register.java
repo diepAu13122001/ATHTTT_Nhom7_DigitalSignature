@@ -1,19 +1,26 @@
 package servlet;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
+import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import com.mysql.cj.Session;
+
 import dao.CustomerDAO;
+import email.Constants;
+import email.EmailUtility;
 import model.Customer;
 import model.IDRandom;
-
-
 
 /**
  * Servlet implementation class Register
@@ -38,37 +45,28 @@ public class Register extends HttpServlet {
 			throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
-		CustomerDAO khd = (CustomerDAO)getServletContext().getAttribute("khachHangDAO");
+		response.setContentType("text/plain");
+		CustomerDAO khd = (CustomerDAO) getServletContext().getAttribute("khachHangDAO");
 		String firstName = request.getParameter("firstname");
 		String lastName = request.getParameter("lastname");
 		String email = request.getParameter("email");
 		String pass = request.getParameter("pass");
+		String status = "";
 		if (firstName != null || lastName != null || email != null || pass != null) {
 			Customer kh = new Customer();
 			kh.setFirstName(firstName);
 			kh.setLastName(lastName);
 			kh.setEmail(email);
 			kh.setPassword(pass);
-			boolean isExitsEmail = false;
-			boolean isSuccess = false;	
-				if(khd.isEmailExist(email)) {
-					isExitsEmail= true;
-					request.setAttribute("isExitsEmail", isExitsEmail);
-					request.getRequestDispatcher("register.jsp").forward(request, response);
-				}else {
-					
-					if(khd.insertCustomer(kh,0)) {
-						Customer customer = khd.findByEmail(email,0);
-						khd.insertRole("USER", customer.getId());
-						isSuccess=true;
-						request.setAttribute("isSuccess", isSuccess);
-						request.getRequestDispatcher("login.jsp").forward(request, response);		
-					}
-					
-				}
-				
+
+			if (khd.insertCustomer(kh, 0)) {
+				status = "RegisterOk";
+			} else {
+				status = "RegisterFail";
 			}
-		request.getRequestDispatcher("register.jsp").forward(request, response);
+		}
+
+		response.getWriter().print(status);
 	}
 
 	/**

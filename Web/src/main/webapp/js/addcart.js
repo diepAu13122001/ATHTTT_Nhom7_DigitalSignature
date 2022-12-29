@@ -8,7 +8,7 @@ function addToCart(id) {
 		data: { id: id },
 		success: function(responseJson) {
 			console.log(responseJson)
-			showSuccessToast();
+			showSuccessToast("Thêm giỏ hàng thành công");
 			$('.badge').html(responseJson.numberOfItems);
 			$('.cart-list').html('')
 			let total = 0;
@@ -23,6 +23,34 @@ function addToCart(id) {
 			$('.cart-list').append('<li class="total"><a href="cart" class="btn btn-default hvr-hover btn-cart">Giỏ hàng</a>' +
 				'<span class="float-right"><strong>Tổng :' + formatCurrent(total) + '</strong></span></li>'
 			)
+		}
+	})
+};
+function updateCarts(id,quantity) {
+	$.ajax({
+		type: "GET",
+		url: "udpate-cart",
+		data: { id: id,
+				quantity: quantity },
+		success: function(responseJson) {
+			showSuccessToast("Cập nhật giỏ hàng thành công");
+			$('.badge').html(responseJson.numberOfItems);
+			$('.cart-list').html('');
+			
+			let total = 0;
+			$.each(responseJson.items, function(key, value) {
+				total += value.item.price * value.quantity;
+				$('.cart-list').append(
+					'<li> <a href="" class="photo"><img src="' + value.item.image + '" class="cart-thumb" alt="" /></a>'
+					+ '<h6><a href="">' + value.item.nameProduct + '</a></h6>' +
+					'<p>' + value.quantity + 'x- <span class="price">' + formatCurrent(value.item.price) + '</span></p></li>'
+				)
+			});
+			$('.cart-list').append('<li class="total"><a href="cart" class="btn btn-default hvr-hover btn-cart">Giỏ hàng</a>' +
+				'<span class="float-right"><strong>Tổng :' + formatCurrent(total) + '</strong></span></li>'
+			)
+			$('#total-price').html(formatCurrent(total));
+			$('#grand-price').html(formatCurrent(total));
 		}
 	})
 };
@@ -51,10 +79,10 @@ function generateKey(){
 function formatCurrent(value) {
 	return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 }
-function showSuccessToast() {
+function showSuccessToast(message) {
 	toast({
 		title: "Thành công!",
-		message: "Bạn đã thêm sản phẩm vào giỏ hàng.",
+		message: message,
 		type: "success",
 		duration: 3000
 	});
@@ -67,10 +95,10 @@ function showSuccessGenerateKey() {
 		duration: 3000
 	});
 }
-function showErrorToast() {
+function showErrorToast(message) {
 	toast({
 		title: "Thất bại!",
-		message: "Cố lỗi, tạo khoá thất bại",
+		message: message,
 		type: "error",
 		duration: 3000
 	});
@@ -120,3 +148,22 @@ function toast({ title = "", message = "", type = "info", duration = 3000 }) {
     main.appendChild(toast);
   }
 }
+function showSwal(type, text, messageError) {
+			'use strict';
+			if (type === 'success-message') {
+				swal({
+					title : 'Thành công!',
+					text : text,
+					type : 'success',
+					button : {
+						text : "Continue",
+						value : true,
+						visible : true,
+						className : "btn btn-primary"
+					}
+				})
+
+			} else {
+				swal(messageError);
+			}
+		}

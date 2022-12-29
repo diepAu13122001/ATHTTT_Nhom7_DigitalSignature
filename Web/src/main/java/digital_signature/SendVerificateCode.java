@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -49,7 +50,7 @@ public class SendVerificateCode extends HttpServlet {
 				EmailUtility.sendEmail(Constants.HOST, Constants.PORT, Constants.USER, Constants.PASS, email, subject, message);
 				response.sendRedirect("verificate-code");
 			} catch (MessagingException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Lỗi mail cmmnr");
 				e.printStackTrace();
 			}
 			

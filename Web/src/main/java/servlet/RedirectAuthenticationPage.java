@@ -68,6 +68,7 @@ public class RedirectAuthenticationPage extends HttpServlet {
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				request.getRequestDispatcher("notfound.jsp").forward(request, response);
 			}
 		} else {

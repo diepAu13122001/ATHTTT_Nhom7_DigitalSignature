@@ -70,7 +70,7 @@
 					<div class="login-box">
 						<c:if test="${user.email == null}">
 							<div class="login__btn">
-								<a href="./register" class="">Đăng ký</a>
+								<a href="./register.jsp" class="">Đăng ký</a>
 							</div>
 							<div class="login__btn">
 								<a href="./login" class="">Đăng nhập</a>
