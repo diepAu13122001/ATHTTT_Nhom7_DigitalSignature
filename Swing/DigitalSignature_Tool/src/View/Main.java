@@ -765,12 +765,12 @@ public class Main extends JFrame {
 	private void createKeyBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		try {
 			RSA_Algorithm rsa = new RSA_Algorithm(Integer.parseInt((String) this.jComboBox1.getSelectedItem()));
-			try ( FileOutputStream fos = new FileOutputStream("public.key")) {
-                fos.write(rsa.getPublicKey_code().getEncoded());
-            }
-			try ( FileOutputStream fos = new FileOutputStream("private_key.pem")) {
-                fos.write(rsa.getPrivateKey_code().getEncoded());
-            }
+			try (FileOutputStream fos = new FileOutputStream("public.key")) {
+				fos.write(rsa.getPublicKey_code().getEncoded());
+			}
+			try (FileOutputStream fos = new FileOutputStream("private_key.pem")) {
+				fos.write(rsa.getPrivateKey_code().getEncoded());
+			}
 			this.publickeyField.setText(rsa.getPublicKey());
 			this.privatekeyField.setText(rsa.getPrivateKey());
 		} catch (Exception e) {
@@ -794,18 +794,15 @@ public class Main extends JFrame {
 	private void signBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		try {
 			String path = this.inputPathField.getText();
-			DAO dao = new DAO();
 			SHA512_Hashing hash = new SHA512_Hashing();
 			RSA_Algorithm rsa = new RSA_Algorithm(Integer.parseInt((String) this.jComboBox1.getSelectedItem()));
 			String hashFile = hash.hashFile(path);
 
 			if (this.privatekeyField.getText().contains(File.separator)) {
-				dao.insertTextTXT("\n" + rsa.encryptString(hashFile, this.privatekeyField.getText()), this.inputPathField.getText());
-            } else {
-            	dao.insertTextTXT("\n" + rsa.encryptString(hashFile, "private_key.pem"), this.inputPathField.getText());
-            }
-			
-			this.billAfterSignArea.setText(dao.readFileTXT(path));
+				this.billAfterSignArea.setText(rsa.encryptString(hashFile, this.privatekeyField.getText()));
+			} else {
+				this.billAfterSignArea.setText("\n" + rsa.encryptString(hashFile, "private_key.pem"));
+			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
