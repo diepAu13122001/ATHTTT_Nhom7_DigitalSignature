@@ -38,11 +38,17 @@ public class VerificateCode extends HttpServlet {
 		String code = authCode != null ? authCode : "";
 		String userCode = request.getParameter("userCode");
 		System.out.println("Giong nhau ko: "+authCode+" "+userCode);
+		String status =  "";
 		if (code.equals(userCode)) {
 			response.sendRedirect("ReCreateKey");
 		}else {
+			if(userCode==null || userCode.equals("")) {
+				status = "";
+			}else {
+				status = "Mã xác nhận không đúng";
+			}
 			request.setAttribute("email", customer.getEmail());
-			request.setAttribute("verificateStatus", "Mã xác nhận không đúng");
+			request.setAttribute("verificateStatus",status);
 			request.getRequestDispatcher("verificate-createkey.jsp").forward(request, response);
 		}
 		

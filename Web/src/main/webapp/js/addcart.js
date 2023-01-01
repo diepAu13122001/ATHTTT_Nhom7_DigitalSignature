@@ -73,7 +73,7 @@ function generateKey(){
         	showErrorToast();
     	}
 	})
-	
+	$('#createKey').attr("disabled","disabled");
 }
 
 function formatCurrent(value) {

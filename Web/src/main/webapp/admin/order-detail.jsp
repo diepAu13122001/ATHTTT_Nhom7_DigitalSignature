@@ -11,23 +11,40 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
 <meta name="author" content="" />
-<title>Dashboard - SB Admin</title>
+<title>Trang quản trị</title>
 <link
 	href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css"
 	rel="stylesheet" />
 <link href="../admin/css/styles.css" rel="stylesheet" />
 <link href="../admin/css/mystyle.css" rel="stylesheet" />
-<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
 	crossorigin="anonymous"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
 <style type="text/css">
 .pb-1 {
 	padding-bottom: 1rem !important;
 }
 
-.mg-li {
-	margin: 10px 0;
+.btn-label {
+	position: relative;
+	left: -12px;
+	display: inline-block;
+	padding: 6px 12px;
+	background: rgba(0, 0, 0, 0.15);
+	border-radius: 3px 0 0 3px;
+}
+
+.btn-labeled {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.btn {
+	
 }
 </style>
 </head>
@@ -55,18 +72,56 @@
 							bại</div>
 					</c:if>
 					<form action="update-order" method="get">
-						<input type="hidden" value="${order.id}" name="id-order">
+						<input type="hidden" value="${order.id}" name="id-order"
+							id="id-order"> <input type="hidden"
+							value="${order.parent}" name="parent" id="parent"> <input
+							type="hidden" value="${order.userId}" name="userId" id="userId">
 						<nav class="navbar navbar-light bg-light ">
 							<div class="container-fluid end-flex">
-								<button type="submit" class="btn btn-success">
-									<i class="fas fa-paper-plane"></i> Duyệt đơn hàng
-								</button>
+								<div class="row mx-2">
+									<ul class="list-unstyled text-right mb-0">
+										<li class="mg-li"><select class="form-select"
+											id="status-order" name="status-order">
+												<c:forEach items="${statusOrdes.entrySet()}" var="entry">
+													<c:if test="${ order.status.equals(entry.getKey())}">
+														<option value="${entry.getKey()}" selected="selected">${entry.getValue()}</option>
+													</c:if>
+													<c:if test="${!order.status.equals(entry.getKey())}">
+														<option value="${entry.getKey()}">${entry.getValue()}</option>
+													</c:if>
+												</c:forEach>
+										</select></li>
+									</ul>
+								</div>
+								<a class="btn btn-success" onclick="updateStatus()"> <i
+									class="fas fa-paper-plane"></i> Cập nhật trạng thái
+								</a>
 							</div>
 						</nav>
 						<div class="row">
 							<div class="col-8">
-								<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">Thông tin người
-									nhận</h4>
+								<div class="row ">
+									<div class="col">
+										<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">Thông tin người
+											gửi</h4>
+									</div>
+									<div class="col">
+										<button style="display: none" type="submit"
+											class="btn btn-primary my-2 " id="update-order"
+											style="float: right; margin-right: 25px">
+											<i class="fas fa-pencil-alt"></i> Cập nhật hoá đơn
+										</button>
+										<c:if test="${order.status.equals('PR') || order.status.equals('NA') || order.status.equals('NP')}">
+										<a class="btn btn-primary my-2 " onclick="submitUpdate()"
+											style="float: right; margin-right: 25px"> <i
+											class="fas fa-pencil-alt"></i> Cập nhật hoá đơn
+										</a>
+										</c:if>
+										
+									</div>
+
+								</div>
+
 								<div class="container bootdey">
 									<div class="row invoice row-printable">
 										<div class="col-md-10" style="width: 100%">
@@ -87,31 +142,31 @@
 																		<label for="name" class="form-label"><strong>Tên
 																				người nhận</strong></label> <input type="text" class="form-control"
 																			required="required" id="name" name="name-receiver"
-																			value="${order.nameReceiver }">
+																			required value="${order.nameReceiver }">
 																	</div>
 																	<div class="mb-3">
-																		<label for="name" class="form-label"><strong>Số
+																		<label for="phone" class="form-label"><strong>Số
 																				điện thoại người nhận</strong></label> <input type="number"
-																			class="form-control" required="required" id="name"
+																			class="form-control" required="required" id="phone"
 																			name="phone-num" value="${order.phoneNum }">
 																	</div>
 																	<div class="mb-3">
-																		<label for="name" class="form-label"><strong>Email</strong></label>
+																		<label for="email" class="form-label"><strong>Email</strong></label>
 																		<input type="text" class="form-control"
-																			required="required" id="name" name="email"
+																			required="required" id="email" name="email"
 																			value="${order.email }">
 																	</div>
 																	<div class="mb-3">
-																		<label for="name" class="form-label"><strong>Địa
+																		<label for="address" class="form-label"><strong>Địa
 																				chỉ</strong></label> <input type="text" class="form-control"
-																			required="required" id="name" name="address"
+																			required="required" id="address" name="address"
 																			value="${order.address }">
 																	</div>
 																	<div class="mb-3">
-																		<label for="name" class="form-label"><strong>Mô
+																		<label for="address-detail" class="form-label"><strong>Mô
 																				tả địa chỉ</strong></label> <input type="text" class="form-control"
-																			required="required" id="name" name="address-detail"
-																			value="${order.addressDetail}">
+																			required="required" id="address-detail"
+																			name="address-detail" value="${order.addressDetail}">
 																	</div>
 																</div>
 															</div>
@@ -167,7 +222,8 @@
 																					<td class="text-center"><input type="hidden"
 																						name="id-product"
 																						value="${order.orderDetails.get(i).product.idProduct}"><input
-																						type="number" class="form-control" name="quantity"  <c:if test="${!role.equals('ADMIN')}">disabled="disabled"</c:if>
+																						type="number" class="form-control" name="quantity"
+																						<c:if test="${!role.equals('ADMIN')}">disabled="disabled"</c:if>
 																						value="${order.orderDetails.get(i).quantity}"></td>
 																					<td class="text-center"><fmt:formatNumber
 																							type="number" groupingUsed="true"
@@ -213,13 +269,7 @@
 																	</table>
 																</div>
 															</div>
-															<div class="invoice-footer mt25">
-																<p class="text-center">
-																	Generated on Monday, October 08th, 2015 <a href="#"
-																		class="btn btn-default ml15"><i
-																		class="fa fa-print mr5"></i> Print</a>
-																</p>
-															</div>
+															
 														</div>
 														<!-- col-lg-12 end here -->
 													</div>
@@ -272,67 +322,189 @@
 											</div>
 										</div>
 									</div>
-									<div class="col mt-2">
+									<div class="col mt-2 ">
 										<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">Xác thực</h4>
-										<div class="row mx-2">
-											<ul class="list-unstyled text-right">
-												<li class="mg-li"><select class="form-select"
-													name="status-order">
-														<c:forEach items="${statusOrdes.entrySet()}" var="entry">
-															<c:if test="${ order.status.equals(entry.getKey())}">
-																<option value="${entry.getKey()}" selected="selected">${entry.getValue()}</option>
-															</c:if>
-															<c:if test="${!order.status.equals(entry.getKey())}">
-																<option value="${entry.getKey()}">${entry.getValue()}</option>
-															</c:if>
+										<div class="row border-bottom">
+											<div class="form-group mb-3">
+												<label for="exampleFormControlTextarea1">Chữ ký</label>
+												<textarea class="form-control" id="signature" rows="3">${signature}</textarea>
+											</div>
 
-														</c:forEach>
-												</select></li>
-											</ul>
+											<div class="form-group mb-3">
+												<label for="exampleFormControlTextarea1">Public key</label>
+												<textarea class="form-control" id="publickey" rows="3">${publickey}</textarea>
+											</div>
+											<div class="form-group mb-3">
+												<c:if
+													test="${statusDS.equals('SUCCESS')}">
+													<div class="alert alert-success" role="alert">Xác
+														thực thành công</div>
+												</c:if>
+												<c:if
+													test="${!statusDS.equals('SUCCESS')}">
+													<a class="btn btn-primary" onclick="checkSignature()">Kiểm
+														tra</a>
+												</c:if>
+
+											</div>
+
+
+										</div>
+										<div class="col mt-2 border-bottom">
+											<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap ">Thông báo</h4>
+											<div class="row ">
+												<div class="form-group mb-3">
+													<label for="exampleFormControlTextarea1">Nội dung</label>
+													<textarea class="form-control" id="message" rows="3">${order.note}</textarea>
+												</div>
+
+												<div class="form-group mb-3">
+												<c:if test="${order.status.equals('NA') || order.status.equals('NP') || order.status.equals('PR')}">
+												<a class="btn btn-primary" onclick="sendMessage()">Gửi</a>
+												</c:if>
+													
+												</div>
+
+											</div>
 										</div>
 									</div>
+
+
 								</div>
-
-
 							</div>
-						</div>
 					</form>
 
 				</div>
 			</main>
 		</div>
 	</div>
-	<script>
-		// Hien thi hinh anh
-		var previews = document.querySelectorAll('.preview-image');
-		var btns = document.querySelectorAll("input[type='file']");
-		console.log(previews);
-		console.log(btns);
-		var loadFile = function(index, event) {
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+	<script src="../js/addcart.js"></script>
+</body>
+<script>
+	// Hien thi hinh anh
+	var previews = document.querySelectorAll('.preview-image');
+	var btns = document.querySelectorAll("input[type='file']");
+	console.log(previews);
+	console.log(btns);
+	var loadFile = function(index, event) {
 
-			previews[index].src = URL.createObjectURL(event.target.files[0]);
-			btn[index].onload = function() {
-				URL.revokeObjectURL(previews[index].src) // free memory
-			}
-		};
-		function productDetail(id) {
-			window.location.href = "../shopdetail?idProduct=" + id;
+		previews[index].src = URL.createObjectURL(event.target.files[0]);
+		btn[index].onload = function() {
+			URL.revokeObjectURL(previews[index].src) // free memory
 		}
-	</script>
-	<script src="https://kit.fontawesome.com/c31e7889db.js"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-		crossorigin="anonymous"></script>
-	<script src="../admin/js/scripts.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
-		crossorigin="anonymous"></script>
-	<script src="../admin/assets/demo/chart-area-demo.js"></script>
-	<script src="../admin/assets/demo/chart-bar-demo.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest"
-		crossorigin="anonymous"></script>
-	<script src="../admin/js/datatables-simple-demo.js"></script>
+	};
+	function productDetail(id) {
+		window.location.href = "../shopdetail?idProduct=" + id;
+	}
+	function enableType() {
+		$('#name').attr('disabled', 'disabled')
+	}
+	function submitUpdate() {
+		$.confirm({
+			title : 'Xác nhận!',
+			content : 'Bạn có cập nhật không ?',
+			buttons : {
+				confirm : function() {
+					document.querySelector('#update-order').click();
+				},
+				cancel : function() {
+
+				},
+			}
+		});
+	}
+	function updateStatus() {
+		var idOrder = $('#id-order').val();
+		var statusOrder = $('#status-order').val();
+		$.ajax({
+			type : "GET",
+			url : "./UpdateStatusOrder",
+			data : {
+				idOrder : idOrder,
+				statusOrder : statusOrder
+			},
+			success : function(responseJson) {
+				if (responseJson == 'updateOK') {
+					showSwal('success-message', 'Cập nhật thành công');
+					setTimeout(function(){location.reload()}, 1500);
+				} else {
+					showSwal('error', '', 'Cập nhật lỗi')
+				}
+
+			},
+			error : function(request, status, error) {
+				showSwal('error', '', 'Cập nhật lỗi')
+			}
+		})
+	}
+	function checkSignature() {
+		var parent = $('#parent').val();
+		var userId = $('#userId').val();
+		$.ajax({
+			type : "GET",
+			url : "../CheckSignature",
+			data : {
+				parent : parent,
+				userId : userId
+			},
+			success : function(responseJson) {
+				if (responseJson == 'OK') {
+					showSwal('success-message', 'Xác thực thành công');
+				} else {
+					showSwal('error', '', 'Xác thực thất bại')
+				}
+
+			},
+			error : function(request, status, error) {
+				showSwal('error', '', 'Lỗi')
+			}
+		})
+	}
+	function sendMessage() {
+		var message = $('#message').val();
+		var idOrder = $('#id-order').val();
+		if(message == ''){
+			showSwal('error', '', 'Chưa nhập nội dung')
+		}else{
+			$.ajax({
+				type : "GET",
+				url : "./SendMessage",
+				data : {
+					message : message,
+					idOrder : idOrder
+				},
+				success : function(response) {
+					if (response == 'OK') {
+						showSwal('success-message', 'Gửi thành công');
+					} else {
+						showSwal('error', '', 'Gửi thất bại')
+					}
+				}
+			})
+		}
+	
+	}
+</script>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/c31e7889db.js"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+	crossorigin="anonymous"></script>
+<script src="../admin/js/scripts.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
+	crossorigin="anonymous"></script>
+<script src="../admin/assets/demo/chart-area-demo.js"></script>
+<script src="../admin/assets/demo/chart-bar-demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest"
+	crossorigin="anonymous"></script>
+<script src="../admin/js/datatables-simple-demo.js"></script>
 </body>
 
 </html>

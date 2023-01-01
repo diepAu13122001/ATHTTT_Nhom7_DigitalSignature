@@ -1,6 +1,8 @@
 package servlet;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -42,7 +44,14 @@ public class OrdersCustomer extends HttpServlet {
 		HttpSession session = request.getSession();
 		Customer customer = (Customer)session.getAttribute("user");
 		List<Orders> orders = productDAO.getOrdersByUser(customer.getId());
+		LocalDateTime now = LocalDateTime.now();
 		for(Orders order: orders) {
+			String str =order.getCancelTime();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); 
+			LocalDateTime dateTime = LocalDateTime.parse(str, formatter);		
+			if(now.isAfter(dateTime) && order.getStatus().equals("NA") ) {
+				productDAO.updateStatus(order.getId(), "CO");
+			}
 			List<OrderDetail> orderDetails = productDAO.getOrderDetails(order.getId());
 			order.setOrderDetails(orderDetails);
 		}

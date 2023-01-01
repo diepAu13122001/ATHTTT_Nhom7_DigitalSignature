@@ -84,12 +84,13 @@
 														<th>Tổng giá trị (VND)</th>
 														<th>Trạng thái</th>
 														<th>Chi tiết</th>
+														<th>Hoá đơn</th>
 													</tr>
 												</thead>
 												<tbody>
 													<c:forEach items="${orders}" var="order">
 														<tr>
-															<td class="align-middle">${order.id}</td>
+															<td class="align-middle">${order.parent}</td>
 															<td class="align-middle text-center">
 																${order.dateCreate }</td>
 															<td class="text-nowrap align-middle">${order.phoneNum }</td>
@@ -110,6 +111,15 @@
 
 																</div>
 															</td>
+															<td><div class="btn-group align-top">
+
+																	<button class="btn btn-sm btn-outline-secondary badge"
+																		type="button">
+																		<i class="fas fa-file-alt"></i>
+																	</button>
+
+
+																</div></td>
 														</tr>
 													</c:forEach>
 
@@ -135,7 +145,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-12 col-lg-3 mb-3">
+						<!-- <div class="col-12 col-lg-3 mb-3">
 							<div class="card">
 								<div class="card-body">
 									<div class="text-center px-xl-3">
@@ -196,7 +206,7 @@
 									</div>
 								</div>
 							</div>
-						</div>
+						</div> -->
 					</div>
 
 					<!-- User Form Modal -->
@@ -217,7 +227,13 @@
 										<div id="layoutSidenav_content">
 											<nav class="navbar navbar-light bg-light ">
 												<div class="container-fluid end-flex"
-													style="justify-content: flex-end;">
+													style="justify-content: space-between;">
+													<div class="row">
+														<a  style="color: #fff"
+															class="btn btn-primary my-2 " id="update-order" href="">
+															<i class="fas fa-pencil-alt"></i> Sửa đơn hàng
+														</a>
+													</div>
 													<div class="row">
 														<div class="col-sm" id="cancel-order"></div>
 														<div class="col-sm" id="status-order"></div>
@@ -227,10 +243,16 @@
 
 												</div>
 											</nav>
-											
+
 											<nav class="navbar navbar-light  ">
 												<div class="row">
-
+													<span style="font-weight: 500; color: #b0b435">Thông
+														báo từ BQT: </span>
+													<div>
+														<p id="note" class="mx-2" style="color: red"></p>
+													</div>
+												</div>
+												<div class="row">
 													<div class="title-left">
 														<h2 style="font-weight: 500">Thông tin người nhận</h2>
 													</div>
@@ -332,13 +354,7 @@
 																					</table>
 																				</div>
 																			</div>
-																			<div class="invoice-footer mt25">
-																				<p class="text-center">
-																					Generated on Monday, October 08th, 2015 <a href="#"
-																						class="btn btn-default ml15"><i
-																						class="fa fa-print mr5"></i> Print</a>
-																				</p>
-																			</div>
+
 																		</div>
 																		<!-- col-lg-12 end here -->
 																	</div>
@@ -350,36 +366,36 @@
 														<!-- col-lg-12 end here -->
 
 													</div>
-
-
 												</div>
 											</nav>
-
-
-
-
 										</div>
 
 									</div>
 								</div>
 							</div>
 						</div>
-			
-						<div class="modal fade modal-child" id="exampleModal" tabindex="-1"
-							role="dialog" aria-labelledby="exampleModalLabel"
+
+						<div class="modal fade modal-child" id="exampleModal"
+							tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 							aria-hidden="true">
-							<input id ="id-order" type="hidden" value="">
-							<div class="modal-dialog" role="document" style="margin-top: 200px;">
-								<div class="modal-content" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);  ">
+							<input id="id-order" type="hidden" value="">
+							<div class="modal-dialog" role="document"
+								style="margin-top: 200px;">
+								<div class="modal-content"
+									style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
 									<div class="modal-header">
 										<h3 class="modal-title" id="exampleModalLabel">Thông báo</h3>
-										
+
 									</div>
-									<div class="modal-body"><h2 class="modal-title" id="exampleModalLabel">Bạn có muốn huỷ đơn hàng không ?</h2></div>
+									<div class="modal-body">
+										<h2 class="modal-title" id="exampleModalLabel">Bạn có
+											muốn huỷ đơn hàng không ?</h2>
+									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" onclick="closeModalChild()"
-											>Không</button>
-										<button type="button" class="btn btn-primary" onclick="cancelOrder()">Chắc chắn</button>
+										<button type="button" class="btn btn-secondary"
+											onclick="closeModalChild()">Không</button>
+										<button type="button" class="btn btn-primary"
+											onclick="cancelOrder()">Chắc chắn</button>
 									</div>
 								</div>
 							</div>
@@ -420,8 +436,27 @@
 			url: "orderDetail",
 			data: { id: id },
 			success: function(responseJson) {
-				console.log(responseJson.orderDetails[0].quantity);
-				$(".modal-title span").html("#"+responseJson.dateCreate+"-"+responseJson.id);
+				console.log(responseJson.note);
+				if(responseJson.status =='CO' ||responseJson.status =='SP'||responseJson.status =='HS' ){
+					$("#update-order").css('display','none')
+				}else{
+					$("#update-order").css('display','block')
+				}
+				$("#update-order").attr("href","./order-detail?id="+id);
+				$(".modal-title span").html("#"+responseJson.dateCreate+"-"+responseJson.parent);
+				if(responseJson.note==undefined){
+					$('#note').html("");
+				}else{
+					$('#note').html(responseJson.note);
+				}
+	
+				if(responseJson.status == "PR"){
+					$('#user-form-modal #status-order').html("<a class='btn btn-labeled btn-warning' style='color: #fff'> "
+					+"<span class='btn-label'><i class='fas fa-user-warning'></i></span>&nbsp;&nbsp;Đang xử lý</a>");
+					
+					$('#user-form-modal #cancel-order').html("<a class='btn btn-labeled btn-danger' style='color: #fff' onclick='showModalChild("+responseJson.id+")'> "
+					+"<span class='btn-label'><i class='fa fa-trash'></i></span>&nbsp;&nbsp;Huỷ đơn</a>");
+				}
 				if(responseJson.status == "NA"){
 					$('#user-form-modal #status-order').html("<a class='btn btn-labeled btn-warning' style='color: #fff'> "
 					+"<span class='btn-label'><i class='fas fa-user-check'></i></span>&nbsp;&nbsp;Xác thực</a>");

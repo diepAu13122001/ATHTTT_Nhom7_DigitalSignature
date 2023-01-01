@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import dao.CustomerDAO;
 import dao.DigitalSignatureDAO;
 import dao.ProductDAO;
+import model.Orders;
 import dao.HistoryUrl;
 import timer.TimerExample;
 
@@ -24,17 +25,6 @@ public final class ContextListener implements ServletContextListener {
 
 	public void contextInitialized(ServletContextEvent event) {
 		context = event.getServletContext();
-//		  scheduler = Executors.newSingleThreadScheduledExecutor();
-//		  Runnable commad = new TimerExample();
-//		  long initialDelay = 10;
-
-//		  long period = 2;
-//		  scheduler.scheduleAtFixedRate(commad, initialDelay, period,unit);
-
-//		scheduler = Executors.newSingleThreadScheduledExecutor();
-//		Runnable commad = new TimerExample(context);
-//		TimeUnit unit = TimeUnit.SECONDS;
-//		scheduler.schedule(commad, 10, unit);
 
 		
 
@@ -65,5 +55,10 @@ public final class ContextListener implements ServletContextListener {
 		context.removeAttribute("productDAO");
 		HistoryUrl historyUrl = (HistoryUrl) context.getAttribute("urlDAO");
 		context.removeAttribute("urlDAO");
+	}
+	public void cancelOrderExpried(ProductDAO productDAO) {
+		LocalDateTime now = LocalDateTime.now();
+		Orders orders = productDAO.getOrderById(0);
+		
 	}
 }
