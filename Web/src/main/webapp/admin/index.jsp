@@ -224,7 +224,7 @@
 	</div>
 	<script>
 	 function orderDetail(id) {
-		window.location.href = "./order-detail?id="+id;
+		window.location.href = "./order-detail-ad?id="+id;
 	}
 	 </script>
 	<script

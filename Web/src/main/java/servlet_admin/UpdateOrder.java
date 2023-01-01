@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import dao.DigitalSignatureDAO;
 import dao.ProductDAO;
 import io.WritePDF;
 import model.Customer;
@@ -45,6 +46,8 @@ public class UpdateOrder extends HttpServlet {
 		int idOrder = Integer.parseInt(request.getParameter("id-order"));
 		String status = request.getParameter("status-order");
 		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
+		DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO) getServletContext()
+				.getAttribute("digitalSignatureDAO");
 		HttpSession session = request.getSession();
 		Customer customer = (Customer) session.getAttribute("userAdmin");
 		if (customer != null) {
@@ -81,6 +84,7 @@ public class UpdateOrder extends HttpServlet {
 			if (update > -1) {
 				double subTotal = grandTotal - orders.getShipping().getPrice();
 				productDAO.updateStatus(update, "NA");
+				digitalSignatureDAO.updateStatus(orders.getUserId(), orders.getParent(), "FAIL");
 				WritePDF.updateInvoicePDF(nameReciver, phoneNum, email, address, addressDetail,
 						orders.getShipping().getType(), "", orders.getDateCreate(), orderDetails, subTotal,
 						orders.getDiscount(), orders.getShipping().getPrice(), grandTotal,

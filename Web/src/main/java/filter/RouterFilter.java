@@ -46,7 +46,7 @@ public class RouterFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String  url = httpRequest.getServletPath();
 		String []  urls = {"header.jsp","footer.jsp","bills.jsp","shop.jsp","search-product.jsp",
-				"search-detail.jsp","cart.jsp","re-createkey.jsp"};
+				"search-detail.jsp","cart.jsp","re-createkey.jsp","payment.jsp","order-detail.jsp"};
 		List<String> list = Arrays.asList(urls);
 		String split[] = url.split("/");
 		String last = split[split.length - 1];

@@ -24,7 +24,7 @@ import utitls.Role;
 /**
  * Servlet implementation class OrderDetailAdmin
  */
-@WebServlet("/admin/order-detail")
+@WebServlet("/admin/order-detail-ad")
 public class OrderDetailAdmin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -44,24 +44,25 @@ public class OrderDetailAdmin extends HttpServlet {
 			throws ServletException, IOException {
 		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
 		CustomerDAO customerDAO = (CustomerDAO) getServletContext().getAttribute("khachHangDAO");
-		DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO)getServletContext().getAttribute("digitalSignatureDAO");
+		DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO) getServletContext()
+				.getAttribute("digitalSignatureDAO");
 		HttpSession session = request.getSession();
 		Customer admin = (Customer) session.getAttribute("userAdmin");
 		int orderId = Integer.parseInt(request.getParameter("id"));
-		
+
 		Orders orders = productDAO.getOrderById(orderId);
-		Customer customer = customerDAO.getCustomerById(orders.getUserId());		
+		Customer customer = customerDAO.getCustomerById(orders.getUserId());
 		orders.setCustomer(customer);
 		List<OrderDetail> orderDetails = productDAO.getOrderDetails(orderId);
 		orders.setOrderDetails(orderDetails);
-		DigitalSignature digitalSignature = digitalSignatureDAO.getDigitalSignature(orders.getUserId(), orders.getParent());
-		if(digitalSignature!=null) {
+		DigitalSignature digitalSignature = digitalSignatureDAO.getDigitalSignature(orders.getUserId(),
+				orders.getParent());
+		if (digitalSignature != null) {
 			request.setAttribute("statusDS", digitalSignature.getStatus());
 			request.setAttribute("signature", digitalSignature.getSignture());
 			request.setAttribute("publickey", digitalSignature.getPublicKey());
 		}
-		
-		
+
 		Map<String, String> map = productDAO.getStutusOrder();
 		String status = orders.getStatus();
 		if (status.equals("SP")) {
@@ -85,23 +86,26 @@ public class OrderDetailAdmin extends HttpServlet {
 			map.remove("NA");
 			map.remove("PR");
 		}
-		if(status.equals("NA")) {
+		if (status.equals("NA")) {
 			map.remove("NP");
 			map.remove("SP");
 			map.remove("HS");
 			map.remove("PR");
 		}
-		if(status.equals("PR")) {
+		if (status.equals("PR")) {
 			map.remove("HS");
-		
+
 		}
-		
+		if (status.equals("SP")) {
+			map.remove("NP");
+			map.remove("NA");
+			map.remove("PR");
+		}
+
 		HttpSession context = request.getSession();
 		request.setAttribute("order", orders);
 		request.setAttribute("statusOrdes", map);
-	
-	
-		
+
 		if (admin.getRoleName().equals(Role.ADMIN)) {
 			request.setAttribute("role", admin.getRoleName());
 		}

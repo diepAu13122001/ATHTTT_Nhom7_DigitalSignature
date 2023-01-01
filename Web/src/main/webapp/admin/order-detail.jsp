@@ -103,7 +103,7 @@
 								<div class="row ">
 									<div class="col">
 										<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">Thông tin người
-											gửi</h4>
+											nhận</h4>
 									</div>
 									<div class="col">
 										<button style="display: none" type="submit"
@@ -112,7 +112,7 @@
 											<i class="fas fa-pencil-alt"></i> Cập nhật hoá đơn
 										</button>
 										<c:if test="${order.status.equals('PR') || order.status.equals('NA') || order.status.equals('NP')}">
-										<a class="btn btn-primary my-2 " onclick="submitUpdate()"
+										<a class="btn btn-primary my-2 " onclick="submitUpdate('${userAdmin.roleName}')"
 											style="float: right; margin-right: 25px"> <i
 											class="fas fa-pencil-alt"></i> Cập nhật hoá đơn
 										</a>
@@ -401,7 +401,8 @@
 	function enableType() {
 		$('#name').attr('disabled', 'disabled')
 	}
-	function submitUpdate() {
+	function submitUpdate(role) {
+		if(role == 'ADMIN'){
 		$.confirm({
 			title : 'Xác nhận!',
 			content : 'Bạn có cập nhật không ?',
@@ -414,6 +415,9 @@
 				},
 			}
 		});
+		}else{
+			showSwal('error', '', 'Không có quyền sửa')
+		}
 	}
 	function updateStatus() {
 		var idOrder = $('#id-order').val();
@@ -430,7 +434,7 @@
 					showSwal('success-message', 'Cập nhật thành công');
 					setTimeout(function(){location.reload()}, 1500);
 				} else {
-					showSwal('error', '', 'Cập nhật lỗi')
+					showSwal('error', '', 'Cập nhật lỗi');
 				}
 
 			},

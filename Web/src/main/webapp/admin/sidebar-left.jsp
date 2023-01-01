@@ -39,10 +39,14 @@
                                 </nav>
                             </div>
                             
-                            <div class="sb-sidenav-menu-heading">Thông tin khách hàng</div>
+                            <div class="sb-sidenav-menu-heading">Người dùng</div>
                             <a class="nav-link" href="./customer">
                                 <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                                 Khách hàng
+                            </a>
+                             <a class="nav-link" href="tables.html">
+                                <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                                Quản lý khoá
                             </a>
                             <a class="nav-link" href="tables.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-comment-alt"></i></div>

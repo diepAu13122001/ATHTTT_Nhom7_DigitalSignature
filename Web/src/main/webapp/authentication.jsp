@@ -79,7 +79,7 @@
 							<label for="file2">Public key <select
 								class="form-select form-select-sm"
 								aria-label=".form-select-sm example" id="publickey-select"
-								onchange="switchType()">
+								onchange="switchType('${pk}')">
 									<option value="0" selected>Base 64</option>
 									<option value="1">File</option>
 
@@ -94,7 +94,7 @@
 							<div class="input-group" id="pk-box">
 
 								<input type="text" class="form-control" id="public-key"
-									name="pk-base64" placeholder="" required>
+									name="pk-base64" placeholder="" required value="${pk}">
 
 							</div>
 						</div>
@@ -103,6 +103,18 @@
 								thực</button>
 						</div>
 					</form>
+					<div class="ml-3 mt-3">
+					<div class="row"><strong>Hướng dẫn xác thực</strong></div>
+					<div class="row ml-2"><ul>
+							<li>1.  Tải hoá đơn về</li>
+								<li>2. Tạo chữ ký bằng tool (Tải tool tại <a  href="#">đây </a>)</li>
+									<li>3. Upload chữ ký và public key lên  (Nếu chưa có khoá tạo tại  <a  href="createKey">đây </a>)</li>
+										<li>4.  Xác nhận và chờ BQT xử lý trong 24h</li>
+										<li>5.  Theo dõi trạng thái đơn hàng tại  <a  href="orders">đây </a> </li>
+						</ul></div>
+						
+					</div>
+						<div class="row ml-2"><p style="color:red">#Lưu ý: Sau 24h nếu không xác thực thì đơn hàng sẽ bị huỷ</p></div>
 				</div>
 			</div>
 		</div>
@@ -131,13 +143,13 @@
 	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
 		async defer></script>
 	<script>
-		function switchType() {
+		function switchType(pk) {
 			var type = $("#publickey-select").val();
 			if (type == '0') {
 				console.log('dmm');
 				$("#pk-box")
 						.html(
-								"<input type='text' class='form-control' id='public-key' name='pk-base64' placeholder='' required>");
+								"<input type='text' class='form-control' id='public-key' name='pk-base64' placeholder='' required value='"+pk+"'>");
 			} else {
 				console.log('sv');
 				$("#pk-box")
