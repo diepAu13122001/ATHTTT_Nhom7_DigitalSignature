@@ -1,0 +1,7 @@
+Bill 0079
+1	Trà sữa trân châu	35.000VND
+2	Milo dầm Full Topping	45.000VND
+3	Bánh tráng phơi sương	103.000VND
+4	Bún bò Huế		52.000VND
+5	takoyaki Hải sản/ 10 viên	85.000VND		
+TỔNG:	5 món	320.000VND
