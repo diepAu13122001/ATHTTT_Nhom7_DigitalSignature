@@ -107,7 +107,7 @@ public class Authentication extends HttpServlet {
 			}
 
 			if (isInsert) {
-				productDAO.updateStatus2(idOrder, "public", "PR");
+				productDAO.updateStatusOrder(idOrder, "public", "PR");
 				response.sendRedirect("process-order.jsp");
 			}
 

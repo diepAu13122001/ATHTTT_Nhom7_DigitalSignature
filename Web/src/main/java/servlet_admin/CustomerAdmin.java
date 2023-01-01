@@ -35,10 +35,8 @@ public class CustomerAdmin extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		CustomerDAO customerDAO = (CustomerDAO)getServletContext().getAttribute("khachHangDAO");
-		List<Customer> customers = customerDAO.getCustomers();
-		
-		ServletContext context = getServletContext();
-		context.setAttribute("customers", customers);
+		List<Customer> customers = customerDAO.getCustomers();		
+		request.setAttribute("customers", customers);
 		//context.setAttribute("productsCate", lisProductCategories);
 		request.getRequestDispatcher("customer.jsp").forward(request, response);		
 	}

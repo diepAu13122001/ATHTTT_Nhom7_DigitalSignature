@@ -111,15 +111,16 @@
 
 																</div>
 															</td>
-															<td><div class="btn-group align-top">
-
-																	<button class="btn btn-sm btn-outline-secondary badge"
+															<td>
+															<c:if test="${order.status.equals('HS')}">
+																<div class="btn-group align-top">
+																	<button class="btn btn-sm btn-outline-secondary badge" onclick="showInvoice('${order.fileInvoice}')"
 																		type="button">
 																		<i class="fas fa-file-alt"></i>
 																	</button>
-
-
-																</div></td>
+																</div>
+															</c:if>
+															</td>
 														</tr>
 													</c:forEach>
 
@@ -467,7 +468,7 @@
 				if(responseJson.status == "NP"){
 					$('#user-form-modal #status-order').html("<a class='btn btn-labeled btn-primary' style='color: #fff'> "
 							+"<span class='btn-label'><i class='fa fa-credit-card' aria-hidden='true'></i></span>&nbsp;&nbsp;Thanh toán</a>");
-							$('#user-form-modal #status-order a').attr("href","payment.jsp");
+							$('#user-form-modal #status-order a').attr("href","payments?id="+responseJson.parent);
 							$('#user-form-modal #cancel-order').html("<a class='btn btn-labeled btn-danger' style='color: #fff' onclick='showModalChild("+responseJson.id+")'> "
 							+"<span class='btn-label'><i class='fa fa-trash'></i></span>&nbsp;&nbsp;Huỷ đơn</a>");
 				}
@@ -536,7 +537,9 @@
 	function cancelOrder(){
 		window.location.href= "./cancel-order?id-order="+	$("#id-order").val();
 	}
-	
+	function showInvoice(invoice) {
+		window.location.href='./showPdf?invoice='+invoice;
+	}
 	</script>
 
 </body>

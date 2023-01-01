@@ -265,26 +265,26 @@ input:focus+label {
 					<!-- Sidebar -->
 					<div class="bg-light border-right" id="sidebar-wrapper">
 						<div class="sidebar-heading pt-5 pb-4">
-							<strong>PAY WITH</strong>
+							<strong>Thanh toán</strong>
 						</div>
 						<div class="list-group list-group-flush">
 							<a data-toggle="tab" href="#menu1" id="tab1"
 								class="tabs list-group-item bg-light">
 								<div class="list-div my-2">
 									<div class="fa fa-home"></div>
-									&nbsp;&nbsp; Bank
+									&nbsp;&nbsp; TK Ngân hàng
 								</div>
 							</a> <a data-toggle="tab" href="#menu2" id="tab2"
 								class="tabs list-group-item active1">
 								<div class="list-div my-2">
 									<div class="fa fa-credit-card"></div>
-									&nbsp;&nbsp; Card
+									&nbsp;&nbsp; Thẻ ghi nợ/tín dụng
 								</div>
 							</a> <a data-toggle="tab" href="#menu3" id="tab3"
 								class="tabs list-group-item bg-light">
 								<div class="list-div my-2">
 									<div class="fa fa-qrcode"></div>
-									&nbsp;&nbsp;&nbsp; Visa QR <span id="new-label">NEW</span>
+									&nbsp;&nbsp;&nbsp; Momo <span id="new-label">Mới</span>
 								</div>
 							</a>
 						</div>
@@ -302,28 +302,29 @@ input:focus+label {
 							<div class="col-8">
 								<div class="row justify-content-right">
 									<div class="col-12">
-										<p class="mb-0 mr-4 mt-4 text-right">customer@email.com</p>
+										<p class="mb-0 mr-4 mt-4 text-right">Mã đơn hàng: ${orders.parent}</p>
 									</div>
 								</div>
 								<div class="row justify-content-right">
 									<div class="col-12">
 										<p class="mb-0 mr-4 text-right">
-											Pay <span class="top-highlight">$ 100</span>
+											Tổng thanh toán <span class="top-highlight"><fmt:formatNumber
+																	type="number" groupingUsed="true"
+																	value="${orders.grandPrice}" /></span>
 										</p>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="row justify-content-center">
-							<div class="text-center" id="test">Pay</div>
+							<div class="text-center" id="test">Thanh toán</div>
 						</div>
 						<div class="tab-content">
 							<div id="menu1" class="tab-pane">
 								<div class="row justify-content-center">
 									<div class="col-11">
 										<div class="form-card">
-											<h3 class="mt-0 mb-4 text-center">Enter bank details to
-												pay</h3>
+											<h3 class="mt-0 mb-4 text-center">Thông tin thẻ</h3>
 											<form onsubmit="event.preventDefault()">
 												<div class="row">
 													<div class="col-12">
@@ -371,15 +372,14 @@ input:focus+label {
 								<div class="row justify-content-center">
 									<div class="col-11">
 										<div class="form-card">
-											<h3 class="mt-0 mb-4 text-center">Enter your card
-												details to pay</h3>
+											<h3 class="mt-0 mb-4 text-center">Thông tin thẻ</h3>
 											<form onsubmit="event.preventDefault()">
 												<div class="row">
 													<div class="col-12">
 														<div class="input-group">
 															<input type="text" id="cr_no"
 																placeholder="0000 0000 0000 0000" minlength="19"
-																maxlength="19"> <label>CARD NUMBER</label>
+																maxlength="19"> <label>Số thẻ</label>
 														</div>
 													</div>
 												</div>
@@ -388,7 +388,7 @@ input:focus+label {
 														<div class="input-group">
 															<input type="text" name="exp" id="exp"
 																placeholder="MM/YY" minlength="5" maxlength="5">
-															<label>CARD EXPIRY</label>
+															<label>Ngày hết hạn</label>
 														</div>
 													</div>
 													<div class="col-6">
@@ -401,14 +401,14 @@ input:focus+label {
 												</div>
 												<div class="row">
 													<div class="col-md-12">
-														<input type="submit" value="Pay $ 100"
-															class="btn btn-success placeicon">
+														<a  href="./CompletePayment?parent=${orders.parent }"
+															class="btn btn-success placeicon">Thanh toán </a>
 													</div>
 												</div>
 												<div class="row">
 													<div class="col-md-12">
 														<p class="text-center mb-5" id="below-btn">
-															<a href="#">Use a test card</a>
+															<a href="#"></a>
 														</p>
 													</div>
 												</div>

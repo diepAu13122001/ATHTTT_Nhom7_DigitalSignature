@@ -10,6 +10,14 @@ public class Customer {
 	boolean isLogin;
 	int accountGoogle;
 	String roleName;
+	String phoneNum;
+	
+	public String getPhoneNum() {
+		return phoneNum;
+	}
+	public void setPhoneNum(String phoneNum) {
+		this.phoneNum = phoneNum;
+	}
 	public String getRoleName() {
 		return roleName;
 	}

@@ -5,11 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 import io.WritePDF;
 import model.DigitalSignature;
+import model.PublicKey;
 
 public class DigitalSignatureDAO {
 	DBConnect db;
@@ -49,7 +52,18 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
-
+	public boolean updateActive(int userId) {
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"update key_user set active = 0 where user_id = ? ");
+			ps.setInt(1, userId);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	public boolean inserDigitalSignature(int userId, int idOrder, String signature, String publicKey) {
 		try {
 			PreparedStatement ps = conn.prepareStatement(
@@ -66,6 +80,7 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
+	
 	public boolean updateDigitalSignature(int userId, int idOrder, String signature, String publicKey) {
 		try {
 			PreparedStatement ps = conn.prepareStatement(
@@ -149,7 +164,42 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
-
+	public List<PublicKey> getPublicKey(int userId) {
+		List<PublicKey> publicKeys = new ArrayList<>();
+		try {
+			PreparedStatement ps = conn.prepareStatement("select * from key_user where user_id = ?");
+			ps.setInt(1, userId);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				PublicKey publicKey = new PublicKey();
+				publicKey.setId(rs.getInt("id"));
+				publicKey.setIdUser(rs.getInt("user_id"));
+				publicKey.setPublicKeyBase64(rs.getString("public_key"));
+				publicKey.setActive(rs.getInt("active"));
+				publicKey.setDate_create(rs.getString("date_create"));
+				publicKeys.add(publicKey);
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return publicKeys ;
+	}
+	public String publicKeyBase64(int userId) {
+		String publicKey = "";
+		try {
+			PreparedStatement ps = conn.prepareStatement("select * from key_user where user_id = ? and active = 1");
+			ps.setInt(1, userId);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				publicKey = rs.getString("public_key");
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return publicKey ;
+	}
 	public static void main(String[] args) throws SQLException {
 		DigitalSignatureDAO digitalSignatureDAO = new DigitalSignatureDAO();
 		System.out.println(digitalSignatureDAO.getDigitalSignature(1000, 63).getStatus());

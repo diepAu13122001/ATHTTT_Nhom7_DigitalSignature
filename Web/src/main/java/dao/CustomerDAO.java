@@ -96,7 +96,7 @@ public class CustomerDAO {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select users.id, users.last_name, users.first_name,users.email\r\n"
 					+ "from users inner join role_user on users.id = role_user.user_id \r\n"
-					+ "where role_user.role_name = 'USER'");
+					);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt("id"); 
@@ -112,7 +112,7 @@ public class CustomerDAO {
 			
 			}
 			ps = conn.prepareStatement("select user_id, count(user_id) as number_orders\r\n"
-					+ "from orders\r\n"
+					+ "from orders where status_active = 'public'\r\n"
 					+ "group by user_id;");
 			ResultSet rs2 = ps.executeQuery();
 
@@ -143,7 +143,47 @@ public class CustomerDAO {
 		}
 		return resultList;
 	}
-
+	public Customer getInfo(int idUser) {
+		Customer customer = new Customer();
+		try {
+			PreparedStatement ps = conn.prepareStatement("select * from users inner join role_user on users.id = role_user.user_id  where users.id = ?");
+			ps.setInt(1, idUser);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				int id = rs.getInt("id");
+				String lastName = rs.getString("last_name").trim();
+				String firstName = rs.getString("first_name").trim();
+				String emails = rs.getString("email").trim();
+				int accountGoogle = rs.getInt("account_google");
+				String roleName = rs.getString("role_name");
+				String phoneNum  = rs.getString("phone_num");
+				customer.setId(id);
+				customer.setLastName(lastName);
+				customer.setFirstName(firstName);
+				customer.setEmail(emails);
+				customer.setAccountGoogle(accountGoogle);
+				customer.setRoleName(roleName);
+				customer.setPhoneNum(phoneNum);
+			
+			}
+			ps = conn.prepareStatement("select count(*) as num_orders from orders where user_id = ? and status_active = 'public'");
+			ps.setInt(1, idUser);
+			ResultSet rs2 = ps.executeQuery();
+			if (rs2.next()) {
+				customer.setNumberOrders(rs2.getInt("num_orders"));											
+			}
+			ps = conn.prepareStatement("select count(*) as num_reviews from reviews where user_id = ?");
+			ps.setInt(1, idUser);
+			ResultSet rs3 = ps.executeQuery();
+			if (rs3.next()) {
+				customer.setNumberReviews(rs3.getInt("num_reviews"));											
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return customer;
+	}
+	
 	public Customer getCustomerById(int id) {
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM users inner join role_user on users.id = role_user.user_id  where users.id = ?");

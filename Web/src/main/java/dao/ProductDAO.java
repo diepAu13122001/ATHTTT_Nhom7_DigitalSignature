@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.impl.NoConnectionReuseStrategy;
+import org.eclipse.jdt.internal.compiler.IDebugRequestor;
 
 import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
@@ -346,7 +347,7 @@ public class ProductDAO {
 		}
 	}
 
-	public boolean updateStatus2(int parent, String statusActive, String status) {
+	public boolean updateStatusOrder(int parent, String statusActive, String status) {
 		try {
 			PreparedStatement ps = conn.prepareStatement(
 					"UPDATE `freshop_db`.`orders` SET `status` = ? WHERE `parent` = ? and `status_active` = ?;");
@@ -875,6 +876,22 @@ public class ProductDAO {
 			e.printStackTrace();
 		}
 	}
+	public int numberOfUpdateOrder(int idUser, int parent) {
+		try {
+			PreparedStatement ps;
+			ps = conn.prepareStatement(
+					"select count(*) as num_update from orders where user_id = ? and parent = ? and status_active='modified'");
+			ps.setInt(1, idUser);
+			ps.setInt(2, parent);		
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				return rs.getInt("num_update");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 	public Orders rs(ResultSet rs) throws SQLException {
 		Orders order = new Orders();
 		int ids = rs.getInt("id");
@@ -916,7 +933,7 @@ public class ProductDAO {
 	}
 	public static void main(String[] args) throws SQLException {
 		ProductDAO productDAO = new ProductDAO();
-		int a = productDAO.getTotalProduct(null, -1, -1, -1);
+		int a = productDAO.numberOfUpdateOrder(1000, 16);
 		System.out.println(a);
 	}
 }

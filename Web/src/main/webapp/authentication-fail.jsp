@@ -74,15 +74,13 @@
 		<div class="col-sm-12 ">
 		<div class="col-sm-10 col-sm-offset-1  text-center" style="margin: auto;">
 		<div class="four_zero_four_bg">
-			<h1 class="text-center ">Xác thực thất bại</h1>
+			<h1 class="text-center ">Có gì không ổn ở đây</h1>
 		
 		
 		</div>
 		
 		<div class="contant_box_404">
-		<h3 class="h2">
-		Có nhầm lẫn ở đây không nhỉ ?
-		</h3>
+
 		 <p><a href="./"> Về trang chủ</a></p>
 		<a href="#" onclick="back()" class="link_404">Kiểm tra lại nào !</a>
 
