@@ -170,7 +170,7 @@ public class WritePDF {
 
 			// mở file để thực hiện viết
 			document.open();
-			Paragraph brand = new Paragraph("NHOM-7_ATBMHTTT", FONT_BRAND);
+			Paragraph brand = new Paragraph("NHOM-6_ATBMHTTT", FONT_BRAND);
 			brand.setAlignment(Paragraph.ALIGN_RIGHT);
 			brand.setSpacingAfter(30);
 			document.add(brand);

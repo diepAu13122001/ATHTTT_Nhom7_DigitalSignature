@@ -60,24 +60,29 @@
 					<div class="title-left">
 						<h2 style="font-weight: 500">Xác thực</h2>
 					</div>
+					<c:if test="${status!=null}">
+						<div class="alert alert-danger" role="alert">${status}</div>
+					</c:if>
+
 					<form id="upload-form" class="needs-validation"
 						action="handle-authentication" enctype="multipart/form-data"
 						method="post">
 						<div class="mb-3">
 							<label for="signature">Chữ ký (Base64)</label>
 							<div class="input-group">
-								<textarea class="form-control" id="signature"
-									name="signature" required rows="4"></textarea>
+								<textarea class="form-control" id="signature" name="signature"
+									required rows="4"></textarea>
 							</div>
 						</div>
 						<input type="hidden" name="invoice" value="${invoice}">
 						<div class="mb-3">
-							<label for="file2">Public key   <select
+							<label for="file2">Public key <select
 								class="form-select form-select-sm"
-								aria-label=".form-select-sm example" id="publickey-select" onchange="switchType()">
-									<option value ="0" selected>Base 64</option>
+								aria-label=".form-select-sm example" id="publickey-select"
+								onchange="switchType()">
+									<option value="0" selected>Base 64</option>
 									<option value="1">File</option>
-									
+
 							</select>
 
 							</label>
@@ -126,17 +131,21 @@
 	<script src="https://apis.google.com/js/platform.js?onload=onLoad"
 		async defer></script>
 	<script>
-			function switchType() {
-				var type =  $("#publickey-select").val();
-				if(type == '0'){
-					console.log('dmm');
-					$("#pk-box").html("<input type='text' class='form-control' id='public-key' name='pk-base64' placeholder='' required>");
-				}else{
-					console.log('sv');
-					$("#pk-box").html("<input type='file' class='form-control' id='public-key'  name='file-encrypt' placeholder='' required>");
-				}
-				
+		function switchType() {
+			var type = $("#publickey-select").val();
+			if (type == '0') {
+				console.log('dmm');
+				$("#pk-box")
+						.html(
+								"<input type='text' class='form-control' id='public-key' name='pk-base64' placeholder='' required>");
+			} else {
+				console.log('sv');
+				$("#pk-box")
+						.html(
+								"<input type='file' class='form-control' id='public-key'  name='file-encrypt' placeholder='' required>");
 			}
+
+		}
 	</script>
 
 </body>

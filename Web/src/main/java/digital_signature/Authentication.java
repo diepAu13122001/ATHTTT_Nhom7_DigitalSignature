@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -28,6 +29,7 @@ import dao.DigitalSignatureDAO;
 import dao.ProductDAO;
 import dao.HistoryUrl;
 import model.Customer;
+import model.DigitalSignature;
 
 /**
  * Servlet implementation class Authentication
@@ -66,7 +68,8 @@ public class Authentication extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
-		DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO)getServletContext().getAttribute("digitalSignatureDAO");
+		DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO) getServletContext()
+				.getAttribute("digitalSignatureDAO");
 		HttpSession session = request.getSession();
 		String filePublicKey = request.getParameter("pk-base64");
 		String invoice = request.getParameter("invoice");
@@ -89,23 +92,42 @@ public class Authentication extends HttpServlet {
 			} else {
 				publicKey = rsaCipher.publicKeyFile(byteUpload[0]);
 			}
-			String decryptHash = rsaCipher.decryptText(digitalSignature, publicKey);
-			
+			String publickeyStr = Base64.getEncoder().encodeToString(publicKey.getEncoded());
 			Customer customer = (Customer) session.getAttribute("user");
 			String split[] = invoice.split("_");
 			int idOrder = Integer.parseInt(split[split.length - 1]);
-			String hashInvoice = digitalSignatureDAO.getHashString(customer.getId(), idOrder);
-			if (hashInvoice.equals(decryptHash)) {
-				productDAO.updateStatus(idOrder, "NP");
-				request.setAttribute("authenticateSuccess", "Xác thực thành công");
-				request.getRequestDispatcher("payment.jsp").forward(request, response);
+			DigitalSignature ds = digitalSignatureDAO.getDigitalSignature(customer.getId(), idOrder);
+			boolean isInsert = false;
+			if (ds != null) {
+				isInsert = digitalSignatureDAO.updateDigitalSignature(customer.getId(), idOrder, digitalSignature,
+						publickeyStr);
 			} else {
-				response.sendRedirect("authentication-fail.jsp");
+				isInsert = digitalSignatureDAO.inserDigitalSignature(customer.getId(), idOrder, digitalSignature,
+						publickeyStr);
 			}
-		} catch (NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException
-				| InvalidKeyException | InvalidKeySpecException | IllegalArgumentException e) {
+
+			if (isInsert) {
+				productDAO.updateStatus2(idOrder, "public", "PR");
+				response.sendRedirect("process-order.jsp");
+			}
+
+//			String decryptHash = rsaCipher.decryptText(digitalSignature, publicKey);
+//			
+//			Customer customer = (Customer) session.getAttribute("user");
+//			String split[] = invoice.split("_");
+//			int idOrder = Integer.parseInt(split[split.length - 1]);
+//			String hashInvoice = digitalSignatureDAO.getHashString(customer.getId(), idOrder);
+//			if (hashInvoice.equals(decryptHash)) {
+//				productDAO.updateStatus(idOrder, "NP");
+//				request.setAttribute("authenticateSuccess", "Xác thực thành công");
+//				request.getRequestDispatcher("payment.jsp").forward(request, response);
+//			} else {
+//				response.sendRedirect("authentication-fail.jsp");
+//			}
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException | IllegalArgumentException e) {
 			e.printStackTrace();
-			response.sendRedirect("authentication-fail.jsp");
+			request.setAttribute("status", "Chữ ký hoặc public key không hợp lệ");
+			request.getRequestDispatcher("authentication.jsp?invoice=" + invoice).forward(request, response);
 		}
 
 	}

@@ -11,7 +11,7 @@ public class Orders {
 	Customer customer;
 	String dateCreate;
 	String nameReceiver;
-
+	String note;
 	String phoneNum;
 	String email;
 	String address;
@@ -19,7 +19,7 @@ public class Orders {
 	double grandPrice;
 	double discount;
 	String fileInvoice;
-
+	String cancelTime;
 	Shipping shipping;
 	String status;
 	String statusName;
@@ -32,8 +32,20 @@ public class Orders {
 		}
 		return result;
 	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
 	public int getParent() {
 		return parent;
+	}
+	public String getCancelTime() {
+		return cancelTime;
+	}
+	public void setCancelTime(String cancelTime) {
+		this.cancelTime = cancelTime;
 	}
 	public void setParent(int parent) {
 		this.parent = parent;

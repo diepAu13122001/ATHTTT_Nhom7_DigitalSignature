@@ -32,6 +32,7 @@ import model.Product;
 import model.ProductCategory;
 import model.Review;
 import model.Shipping;
+import utitls.Constant;
 
 public class ProductDAO {
 	DBConnect db;
@@ -100,16 +101,28 @@ public class ProductDAO {
 		}
 		return result;
 	}
-
+	public boolean updateMessage(int id,String message) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("update orders set note = ? where id = ?");
+			ps.setString(1, message);
+			ps.setInt(2, id);
+			ps.executeUpdate();
+			return true;
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	public int updateOrders(int userId, String name, String phoneNumber, String email, String address,
 			String desAddress, String dateIssue, List<OrderDetail> orders, double discount, int shipId,
-			double grandTotal, String status, String fileInvoice, int authorModified, int parent, int idOrder) {
+			double grandTotal, String status, String fileInvoice, int authorModified, int parent, int idOrder,
+			String canelTime, String note) {
 
 		try {
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO `freshop_db`.`orders` (`user_id`, `issue_date`, `phone_num`, `email`, `ship_id`, `grand_price`, `address`, `address_detail`, `discount`, "
-							+ "`name_receiver`, `status`, `file_invoice`,`date_modified`,`author_modified`,`parent`,`status_active`)"
-							+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);\r\n" + "");
+							+ "`name_receiver`, `status`, `file_invoice`,`date_modified`,`author_modified`,`parent`,`status_active`,`cancel_time`,`note`)"
+							+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);\r\n" + "");
 			ps.setInt(1, userId);
 			ps.setString(2, dateIssue);
 			ps.setString(3, phoneNumber);
@@ -126,6 +139,8 @@ public class ProductDAO {
 			ps.setInt(14, authorModified);
 			ps.setInt(15, parent);
 			ps.setString(16, "public");
+			ps.setString(17, canelTime);
+			ps.setString(18, note);
 			ps.execute();
 			ps = conn.prepareStatement(" SELECT LAST_INSERT_ID()");
 			ResultSet rs = ps.executeQuery();
@@ -201,23 +216,7 @@ public class ProductDAO {
 					+ "orders.status = status_order.status_code where orders.status_active = 'public' order by id desc");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				int id = rs.getInt("id");
-				String dateCreate = rs.getString("issue_date");
-				String phoneNum = rs.getString("phone_num");
-				String address = rs.getString("address");
-				double grandTotal = rs.getDouble("grand_price");
-				String status = rs.getString("status");
-				String statusName = rs.getString("status_name");
-				String nameReceiver = rs.getString("name_receiver");
-				Orders order = new Orders();
-				order.setId(id);
-				order.setDateCreate(dateCreate);
-				order.setPhoneNum(phoneNum);
-				order.setAddress(address);
-				order.setGrandPrice(grandTotal);
-				order.setNameReceiver(nameReceiver);
-				order.setStatus(status);
-				order.setStatusName(statusName);
+				Orders order = rs(rs);
 				orders.add(order);
 			}
 			return orders;
@@ -235,25 +234,7 @@ public class ProductDAO {
 			ps.setInt(1, userId);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				int id = rs.getInt("id");
-				String dateCreate = rs.getString("issue_date");
-				String phoneNum = rs.getString("phone_num");
-				String address = rs.getString("address");
-				double grandTotal = rs.getDouble("grand_price");
-				String status = rs.getString("status");
-				String nameReceiver = rs.getString("name_receiver");
-				String fileInvocie = rs.getString("file_invoice");
-				String statusName = rs.getString("status_name");
-				Orders order = new Orders();
-				order.setId(id);
-				order.setDateCreate(dateCreate);
-				order.setPhoneNum(phoneNum);
-				order.setAddress(address);
-				order.setGrandPrice(grandTotal);
-				order.setNameReceiver(nameReceiver);
-				order.setStatus(status);
-				order.setFileInvoice(fileInvocie);
-				order.setStatusName(statusName);
+				Orders order = rs(rs);
 				orders.add(order);
 			}
 			return orders;
@@ -272,37 +253,7 @@ public class ProductDAO {
 			ps.setString(2, statusActive);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				int ids = rs.getInt("id");
-				int userId = rs.getInt("user_id");
-				int shipId = rs.getInt("ship_id");
-				String dateCreate = rs.getString("issue_date");
-				String phoneNum = rs.getString("phone_num");
-				String address = rs.getString("address");
-				double grandTotal = rs.getDouble("grand_price");
-				String status = rs.getString("status");
-				double discount = rs.getDouble("discount");
-				String email = rs.getString("email");
-				String addressDetail = rs.getString("address_detail");
-				String nameReceiver = rs.getString("name_receiver");
-				String fileInvocie = rs.getString("file_invoice");
-				String statusName = rs.getString("status_name");
-				int parent = Integer.parseInt(rs.getString("parent"));
-				order.setStatusName(statusName);
-				order.setId(ids);
-				order.setUserId(userId);
-				order.setDateCreate(dateCreate);
-				order.setPhoneNum(phoneNum);
-				order.setAddress(address);
-				order.setGrandPrice(grandTotal);
-				order.setStatus(status);
-				order.setEmail(email);
-				order.setDiscount(discount);
-				order.setAddressDetail(addressDetail);
-				order.setFileInvoice(fileInvocie);
-				Shipping shipping = getShippingById(shipId);
-				order.setShipping(shipping);
-				order.setNameReceiver(nameReceiver);
-				order.setParent(parent);
+				order = rs(rs);
 
 			}
 			return order;
@@ -320,38 +271,7 @@ public class ProductDAO {
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				int ids = rs.getInt("id");
-				int userId = rs.getInt("user_id");
-				int shipId = rs.getInt("ship_id");
-				String dateCreate = rs.getString("issue_date");
-				String phoneNum = rs.getString("phone_num");
-				String address = rs.getString("address");
-				double grandTotal = rs.getDouble("grand_price");
-				String status = rs.getString("status");
-				double discount = rs.getDouble("discount");
-				String email = rs.getString("email");
-				String addressDetail = rs.getString("address_detail");
-				String nameReceiver = rs.getString("name_receiver");
-				String fileInvocie = rs.getString("file_invoice");
-				String statusName = rs.getString("status_name");
-				int parent = Integer.parseInt(rs.getString("parent"));
-				order.setStatusName(statusName);
-				order.setId(ids);
-				order.setUserId(userId);
-				order.setDateCreate(dateCreate);
-				order.setPhoneNum(phoneNum);
-				order.setAddress(address);
-				order.setGrandPrice(grandTotal);
-				order.setStatus(status);
-				order.setEmail(email);
-				order.setDiscount(discount);
-				order.setAddressDetail(addressDetail);
-				order.setFileInvoice(fileInvocie);
-				Shipping shipping = getShippingById(shipId);
-				order.setShipping(shipping);
-				order.setNameReceiver(nameReceiver);
-				order.setParent(parent);
-
+				order = rs(rs);
 			}
 			return order;
 		} catch (SQLException e) {
@@ -359,7 +279,23 @@ public class ProductDAO {
 		}
 		return null;
 	}
-
+	public Orders getOrderByParent(int id) {
+		Orders order = new Orders();
+		try {
+			PreparedStatement ps = conn.prepareStatement("select * from orders inner join status_order on \r\n"
+					+ "orders.status = status_order.status_code where orders.parent = ? and orders.status_active = ?");
+			ps.setInt(1, id);
+			ps.setString(2, "public");
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				order = rs(rs);
+			}
+			return order;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public List<OrderDetail> getOrderDetails(int id) {
 		List<OrderDetail> orderDetails = new ArrayList<>();
 		try {
@@ -410,16 +346,33 @@ public class ProductDAO {
 		}
 	}
 
+	public boolean updateStatus2(int parent, String statusActive, String status) {
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"UPDATE `freshop_db`.`orders` SET `status` = ? WHERE `parent` = ? and `status_active` = ?;");
+			ps.setString(1, status);
+			ps.setInt(2, parent);
+			ps.setString(3, statusActive);
+			ps.executeUpdate();
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	public int insertOrders(int userId, String name, String phoneNumber, String email, String address,
 			String desAddress, LocalDateTime dateIssue, List<ShoppingCartItem<Product>> orders, double discount,
 			int shipId, double grandTotal, String status, String fileInvoice, int authorModified) {
 
 		try {
-
+			LocalDateTime timeCancel = dateIssue.plusMinutes(Constant.TIME_CANCEL);
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO `freshop_db`.`orders` (`user_id`, `issue_date`, `phone_num`, `email`, `ship_id`,"
-							+ " `grand_price`, `address`, `address_detail`, `discount`, `name_receiver`, `status`, `file_invoice`,`date_modified`,`author_modified`,`status_active`)"
-							+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);\r\n" + "");
+							+ " `grand_price`, `address`, `address_detail`, `discount`, `name_receiver`, `status`,"
+							+ " `file_invoice`,`date_modified`,`author_modified`,`status_active`,`cancel_time`)"
+							+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);\r\n" + "");
 			ps.setInt(1, userId);
 			ps.setString(2, WritePDF.formatDate(dateIssue));
 			ps.setString(3, phoneNumber);
@@ -435,6 +388,7 @@ public class ProductDAO {
 			ps.setString(13, WritePDF.formatDate(dateIssue));
 			ps.setInt(14, authorModified);
 			ps.setString(15, "public");
+			ps.setString(16, WritePDF.formatDate(timeCancel));
 			ps.execute();
 			ps = conn.prepareStatement(" SELECT LAST_INSERT_ID()");
 			ResultSet rs = ps.executeQuery();
@@ -921,7 +875,45 @@ public class ProductDAO {
 			e.printStackTrace();
 		}
 	}
-
+	public Orders rs(ResultSet rs) throws SQLException {
+		Orders order = new Orders();
+		int ids = rs.getInt("id");
+		int userId = rs.getInt("user_id");
+		int shipId = rs.getInt("ship_id");
+		String dateCreate = rs.getString("issue_date");
+		String phoneNum = rs.getString("phone_num");
+		String address = rs.getString("address");
+		double grandTotal = rs.getDouble("grand_price");
+		String status = rs.getString("status");
+		double discount = rs.getDouble("discount");
+		String email = rs.getString("email");
+		String addressDetail = rs.getString("address_detail");
+		String nameReceiver = rs.getString("name_receiver");
+		String fileInvocie = rs.getString("file_invoice");
+		String statusName = rs.getString("status_name");
+		int parent = Integer.parseInt(rs.getString("parent"));
+		String cancelTime = rs.getString("cancel_time");
+		String note = rs.getString("note");
+		order.setStatusName(statusName);
+		order.setId(ids);
+		order.setUserId(userId);
+		order.setDateCreate(dateCreate);
+		order.setPhoneNum(phoneNum);
+		order.setAddress(address);
+		order.setGrandPrice(grandTotal);
+		order.setStatus(status);
+		order.setEmail(email);
+		order.setDiscount(discount);
+		order.setAddressDetail(addressDetail);
+		order.setFileInvoice(fileInvocie);
+		Shipping shipping = getShippingById(shipId);
+		order.setShipping(shipping);
+		order.setNameReceiver(nameReceiver);
+		order.setParent(parent);
+		order.setNote(note);
+		order.setCancelTime(cancelTime);
+		return order;
+	}
 	public static void main(String[] args) throws SQLException {
 		ProductDAO productDAO = new ProductDAO();
 		int a = productDAO.getTotalProduct(null, -1, -1, -1);

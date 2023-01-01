@@ -53,47 +53,49 @@ public class CheckOut extends HttpServlet {
 		String ward = request.getParameter("ward");
 		String shippingOption = request.getParameter("shipping-option");
 		String desAddres = request.getParameter("des-address");
-		
+
 		HttpSession session = request.getSession();
 		ShoppingCart<String, Product> cart = (ShoppingCart<String, Product>) session.getAttribute("cart");
-		ProductDAO productDAO = (ProductDAO)getServletContext().getAttribute("productDAO");
-		
+		ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("productDAO");
+
 		String address = ward + " - " + district + " - " + city;
 		LocalDateTime dateIssue = LocalDateTime.now();
 		Shipping shipping = productDAO.getShippingById(Integer.parseInt(shippingOption));
 		double subTotal = cart.getTotal();
 		double discount = 0;
-		double ship =shipping.getPrice();
-		double grandTotal = subTotal + discount+ ship;
-		String shippingType = shipping.getType();  	
-		Customer customer = (Customer)session.getAttribute("user");
-		int idOrder = productDAO.insertOrders(customer.getId(), name, phoneNum, email, address, desAddres, dateIssue, cart.getCartItems(), discount, Integer.parseInt(shippingOption), grandTotal,"NA","",customer.getId());
-		if(idOrder > 0) {
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
-	        String formatDateTime = dateIssue.format(formatter);
-			String fileName = "invoice_"+formatDateTime+"_"+customer.getId()+"_"+idOrder+".pdf";
-			String fileNameNotExt = "invoice_"+formatDateTime+"_"+customer.getId()+"_"+idOrder;
-			
+		double ship = shipping.getPrice();
+		double grandTotal = subTotal + discount + ship;
+		String shippingType = shipping.getType();
+		Customer customer = (Customer) session.getAttribute("user");
+		int idOrder = productDAO.insertOrders(customer.getId(), name, phoneNum, email, address, desAddres, dateIssue,
+				cart.getCartItems(), discount, Integer.parseInt(shippingOption), grandTotal, "NA", "",
+				customer.getId());
+		if (idOrder > 0) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
+			String formatDateTime = dateIssue.format(formatter);
+			String fileName = "invoice_" + formatDateTime + "_" + customer.getId() + "_" + idOrder + ".pdf";
+			String fileNameNotExt = "invoice_" + formatDateTime + "_" + customer.getId() + "_" + idOrder;
+
 			WritePDF.makeInvoicePDF(name, phoneNum, email, address, desAddres, shippingType, ward, dateIssue,
-					cart.getCartItems(),subTotal,discount,ship,grandTotal,fileName);
+					cart.getCartItems(), subTotal, discount, ship, grandTotal, fileName);
 			productDAO.updateFileInvoice(idOrder, fileNameNotExt);
 			try {
 				Hash hash = new Hash();
-				String hashString = hash.hashFile(WritePDF.PATH+fileName);
-				
-				DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO)getServletContext().getAttribute("digitalSignatureDAO");
+				String hashString = hash.hashFile(WritePDF.PATH + fileName);
+
+				DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO) getServletContext()
+						.getAttribute("digitalSignatureDAO");
 				digitalSignatureDAO.insertDigitalSignature(customer.getId(), idOrder, hashString);
-				
+
 			} catch (NoSuchAlgorithmException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			ServletContext context = getServletContext();
-			context.setAttribute("fileNameInvoice", fileName);	
-			response.sendRedirect("./authentication?invoice="+fileNameNotExt);
+			context.setAttribute("fileNameInvoice", fileName);
+			response.sendRedirect("./authentication?invoice=" + fileNameNotExt);
 		}
-		
 
 	}
 

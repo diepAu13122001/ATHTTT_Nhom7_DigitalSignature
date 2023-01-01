@@ -84,7 +84,7 @@
 												</select>
 											</div>
 											<div class="form-group">
-												<button class="btn btn-primary color-main"  onclick="generateKey()"
+												<button class="btn btn-primary color-main" id="createKey"  onclick="generateKey()"
 													><i class="fa fa-key"></i> Tạo khoá</button>
 											</div>
 										

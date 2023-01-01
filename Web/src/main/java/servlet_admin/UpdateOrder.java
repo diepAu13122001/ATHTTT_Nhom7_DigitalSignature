@@ -77,9 +77,10 @@ public class UpdateOrder extends HttpServlet {
 			int update = productDAO.updateOrders(orders.getUserId(), nameReciver, phoneNum, email, address,
 					addressDetail, orders.getDateCreate(), orderDetails, orders.getDiscount(),
 					orders.getShipping().getId(), grandTotal, orders.getStatus(), orders.getFileInvoice(),
-					customer.getId(), orders.getParent(), idOrder);
+					customer.getId(), orders.getParent(), idOrder,orders.getCancelTime(),orders.getNote());
 			if (update > -1) {
 				double subTotal = grandTotal - orders.getShipping().getPrice();
+				productDAO.updateStatus(update, "NA");
 				WritePDF.updateInvoicePDF(nameReciver, phoneNum, email, address, addressDetail,
 						orders.getShipping().getType(), "", orders.getDateCreate(), orderDetails, subTotal,
 						orders.getDiscount(), orders.getShipping().getPrice(), grandTotal,
