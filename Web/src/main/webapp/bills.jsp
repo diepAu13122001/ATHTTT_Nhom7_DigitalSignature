@@ -61,8 +61,7 @@
 				<div class="col">
 					<div class="e-tabs mb-3 px-3">
 						<ul class="nav nav-tabs">
-							<li class="nav-item"><a class="nav-link active" href="#">Danh
-									sách đơn hàng</a></li>
+							<li class="nav-item"><a class="nav-link active" href="#">Quản lý đơn hàng</a></li>
 						</ul>
 					</div>
 

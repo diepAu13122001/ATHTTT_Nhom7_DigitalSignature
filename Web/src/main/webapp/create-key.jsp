@@ -121,7 +121,7 @@
 						</div>
 
 					</div>
-					<div class="col-4">col-4</div>
+					<div class="col-4"></div>
 				</div>
 				</c:if>
 			</div>
