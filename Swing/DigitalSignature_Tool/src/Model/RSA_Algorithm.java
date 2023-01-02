@@ -13,10 +13,10 @@ public class RSA_Algorithm {
 	private PublicKey publicKey;
 	private Cipher cipher;
 
-	public RSA_Algorithm(int sizeOfKey) throws Exception {
+	public RSA_Algorithm() throws Exception {
 		this.cipher = Cipher.getInstance("RSA/ECB/NoPadding");
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-		generator.initialize(sizeOfKey);
+		generator.initialize(2048);
 		KeyPair pair = generator.generateKeyPair();
 		this.privateKey = pair.getPrivate();
 		this.publicKey = pair.getPublic();
@@ -36,24 +36,30 @@ public class RSA_Algorithm {
 
 	// Please put attention on the extension of the files
 	// path likes: public.key
-	private PublicKey loadPublicKey(String keyPath) throws Exception {
-		File publicKeyFile = new File(keyPath);
+	public PublicKey loadPublicKey(String keyPath) throws Exception {
+		/*File publicKeyFile = new File(keyPath);
 		byte[] publicKeyBytes = Files.readAllBytes(publicKeyFile.toPath());
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");*/
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(keyPath));
+		byte[] bytes = bis.readAllBytes();
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
+		EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytes);
 		return keyFactory.generatePublic(publicKeySpec);
 	}
 	
 	// path like: private_key.pem
-	public static PrivateKey loadPrivateKey(String keyPath) throws GeneralSecurityException, IOException {
-		File f = new File(keyPath);
+	public PrivateKey loadPrivateKey(String keyPath) throws GeneralSecurityException, IOException {
+		/*File f = new File(keyPath);
 		FileInputStream fis = new FileInputStream(f);
 		DataInputStream dis = new DataInputStream(fis);
 		byte[] keyBytes = new byte[(int) f.length()];
 		dis.readFully(keyBytes);
-		dis.close();
+		dis.close();*/
+		
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(keyPath));
+		byte[] bytes = bis.readAllBytes();
 
-		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(bytes);
 		KeyFactory kf = KeyFactory.getInstance("RSA");
 		return kf.generatePrivate(spec);
 
