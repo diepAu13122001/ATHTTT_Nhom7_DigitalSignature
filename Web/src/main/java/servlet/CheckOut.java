@@ -79,19 +79,6 @@ public class CheckOut extends HttpServlet {
 			WritePDF.makeInvoicePDF(name, phoneNum, email, address, desAddres, shippingType, ward, dateIssue,
 					cart.getCartItems(), subTotal, discount, ship, grandTotal, fileName);
 			productDAO.updateFileInvoice(idOrder, fileNameNotExt);
-			try {
-				Hash hash = new Hash();
-				String hashString = hash.hashFile(WritePDF.PATH + fileName);
-
-				DigitalSignatureDAO digitalSignatureDAO = (DigitalSignatureDAO) getServletContext()
-						.getAttribute("digitalSignatureDAO");
-				digitalSignatureDAO.insertDigitalSignature(customer.getId(), idOrder, hashString);
-
-			} catch (NoSuchAlgorithmException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
 			ServletContext context = getServletContext();
 			context.setAttribute("fileNameInvoice", fileName);
 			response.sendRedirect("./authentication?invoice=" + fileNameNotExt);

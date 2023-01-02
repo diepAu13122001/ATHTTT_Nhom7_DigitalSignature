@@ -86,9 +86,6 @@ public class CreateKey extends HttpServlet {
 
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
-		if (digitalSignatureDAO.checkExistKey(customer.getId())) {
-			digitalSignatureDAO.updateActive(customer.getId());
-		}
 		boolean isInsert = digitalSignatureDAO.inserKeyUser(customer.getId(), encodePublicKey);
 		if (isInsert) {
 			String json = new Gson().toJson(responseJsons);

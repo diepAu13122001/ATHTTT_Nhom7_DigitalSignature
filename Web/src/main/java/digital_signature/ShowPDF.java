@@ -47,6 +47,7 @@ public class ShowPDF extends HttpServlet {
 				response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
 				Files.copy(file.toPath(), response.getOutputStream());
 			} catch (NoSuchFileException e) {
+				
 				response.sendRedirect("notfound-file.jsp");
 			}
 		}

@@ -55,7 +55,8 @@ public class CheckSignature extends HttpServlet {
 			RSACipher rsaCipher = new RSACipher();
 			PublicKey publicKey = rsaCipher.publicKeyType(digitalSignature.getPublicKey());
 			String hashInvoice = new Hash().hashFile(WritePDF.PATH + fileInvoice);
-			String hashDecrypt = rsaCipher.decryptText(digitalSignature.getSignture(), publicKey);
+			System.out.println();
+			String hashDecrypt = rsaCipher.decryptText(digitalSignature.getSignture().trim(), publicKey);
 			if (hashInvoice.equals(hashDecrypt)) {
 				digitalSignatureDAO.updateStatus(idUser, parent, "SUCCESS");
 				response.getWriter().print("OK");

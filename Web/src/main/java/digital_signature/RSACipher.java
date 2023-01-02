@@ -96,7 +96,7 @@ public class RSACipher {
 
 	public byte[] encrypt(byte[] input, PrivateKey privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
 		final byte[] bytes = cipher.doFinal(input);
 		return bytes;
@@ -104,7 +104,7 @@ public class RSACipher {
 
 	public String decrypt(byte[] input, PublicKey publicKey) throws InvalidKeyException, NoSuchAlgorithmException,
 			NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
-		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.DECRYPT_MODE, publicKey);
 		final byte[] bytes = cipher.doFinal(input);
 		return new String(bytes);
@@ -112,7 +112,7 @@ public class RSACipher {
 
 	public String decryptText(String input, PublicKey publicKey) throws InvalidKeyException, NoSuchAlgorithmException,
 			NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
-		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.DECRYPT_MODE, publicKey);
 		byte[] decodeByte = Base64.getDecoder().decode(input);
 		byte[] bytes = cipher.doFinal(decodeByte);
