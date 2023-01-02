@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.nio.file.Files;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -42,9 +43,6 @@ public class Main extends JFrame {
 		rsaPanel = new javax.swing.JPanel();
 		vigenereTitle1 = new javax.swing.JLabel();
 		jPanel11 = new javax.swing.JPanel();
-		keyLb1 = new javax.swing.JLabel();
-		publickeyField = new javax.swing.JTextField();
-		importPubBtn = new javax.swing.JButton();
 		alphabetLb3 = new javax.swing.JLabel();
 		privatekeyField = new javax.swing.JTextField();
 		importPriBtn = new javax.swing.JButton();
@@ -57,7 +55,7 @@ public class Main extends JFrame {
 		billAfterSignArea = new javax.swing.JTextArea();
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-		setTitle("Encryption & Decryption Tools");
+		setTitle("Digital Signature Tool");
 		setIconImages(null);
 		setLocation(new java.awt.Point(200, 100));
 		setMinimumSize(new java.awt.Dimension(1000, 600));
@@ -74,44 +72,12 @@ public class Main extends JFrame {
 		jPanel11.setPreferredSize(new java.awt.Dimension(900, 100));
 		jPanel11.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-		keyLb1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-		keyLb1.setText("Public key");
-		keyLb1.setPreferredSize(new java.awt.Dimension(100, 30));
-		jPanel11.add(keyLb1);
-
-		publickeyField.setToolTipText("Copy Public key");
-		publickeyField.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-		publickeyField.setEnabled(false);
-		publickeyField.setPreferredSize(new java.awt.Dimension(650, 30));
-		publickeyField.addMouseListener(new java.awt.event.MouseAdapter() {
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				publickeyFieldMouseClicked(evt);
-			}
-		});
-		jPanel11.add(publickeyField);
-
-		importPubBtn.setText("Thêm khóa");
-		importPubBtn.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				importPubBtnActionPerformed(evt);
-			}
-		});
-		jPanel11.add(importPubBtn);
-
 		alphabetLb3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
 		alphabetLb3.setText("Private key");
 		alphabetLb3.setPreferredSize(new java.awt.Dimension(100, 30));
 		jPanel11.add(alphabetLb3);
 
-		privatekeyField.setToolTipText("Copy Private key");
-		privatekeyField.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-		privatekeyField.setEnabled(false);
 		privatekeyField.setPreferredSize(new java.awt.Dimension(650, 30));
-		privatekeyField.addMouseListener(new java.awt.event.MouseAdapter() {
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				privatekeyFieldMouseClicked(evt);
-			}
-		});
 		jPanel11.add(privatekeyField);
 
 		importPriBtn.setText("Thêm khóa");
@@ -196,14 +162,20 @@ public class Main extends JFrame {
 		try {
 			if (this.privatekeyField.getText().equals("")) {
 				JOptionPane.showMessageDialog(null, "Please add the private key for signing.");
+				this.billAfterSignArea.setText("");
 			} else if (this.inputPathField.getText().equals("")) {
 				JOptionPane.showMessageDialog(null, "Please add the path of the bill for signing.");
+				this.billAfterSignArea.setText("");
 			} else {
 				String path = this.inputPathField.getText();
 				SHA512_Hashing hash = new SHA512_Hashing();
 				RSA_Algorithm rsa = new RSA_Algorithm();
 				String hashFile = hash.hashFile(path);
-				this.billAfterSignArea.setText(rsa.encryptString(hashFile, this.privatekeyField.getText()));
+				if (this.privatekeyField.getText().equals(File.separator)) {
+					this.billAfterSignArea.setText(rsa.encryptString(hashFile, this.privatekeyField.getText()));
+				} else {
+					this.billAfterSignArea.setText(rsa.encryptStringWithKeyString(hashFile, this.privatekeyField.getText()));
+				}
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, e.getMessage());
@@ -221,38 +193,12 @@ public class Main extends JFrame {
 		}
 	}
 
-	private void importPubBtnActionPerformed(java.awt.event.ActionEvent evt) {
-		uploadFile(this.publickeyField);
-	}
-
 	private void importPriBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		uploadFile(this.privatekeyField);
 	}
 
 	private void chooseBillPathBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		uploadFile(this.inputPathField);
-	}
-
-	private void publickeyFieldMouseClicked(java.awt.event.MouseEvent evt) {
-		// copy public key
-		if (!this.publickeyField.getText().equals("")) {
-			String str = this.publickeyField.getText();
-			Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-			StringSelection strse1 = new StringSelection(str);
-			clip.setContents(strse1, strse1);
-			JOptionPane.showMessageDialog(null, "KEY IS COPIED!");
-		}
-	}
-
-	private void privatekeyFieldMouseClicked(java.awt.event.MouseEvent evt) {
-		// copy private key
-		if (!this.privatekeyField.getText().equals("")) {
-			String str = this.privatekeyField.getText();
-			Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-			StringSelection strse1 = new StringSelection(str);
-			clip.setContents(strse1, strse1);
-			JOptionPane.showMessageDialog(null, "KEY IS COPIED!");
-		}
 	}
 
 	public void uploadFile(JTextComponent inputField) {
@@ -276,15 +222,12 @@ public class Main extends JFrame {
 	private javax.swing.JTextArea billAfterSignArea;
 	private javax.swing.JButton chooseBillPathBtn;
 	private javax.swing.JButton importPriBtn;
-	private javax.swing.JButton importPubBtn;
 	private javax.swing.JTextField inputPathField;
 	private javax.swing.JLabel jLabel30;
 	private javax.swing.JPanel jPanel11;
 	private javax.swing.JPanel jPanel2;
 	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JLabel keyLb1;
 	private javax.swing.JTextField privatekeyField;
-	private javax.swing.JTextField publickeyField;
 	private javax.swing.JPanel rsaPanel;
 	private javax.swing.JButton signBtn;
 	private javax.swing.JLabel vigenereTitle1;
