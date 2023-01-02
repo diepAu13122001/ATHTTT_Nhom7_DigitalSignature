@@ -107,7 +107,7 @@
 					<div class="row"><strong>Hướng dẫn xác thực</strong></div>
 					<div class="row ml-2"><ul>
 							<li>1.  Tải hoá đơn về</li>
-								<li>2. Tạo chữ ký bằng tool (Tải tool tại <a  href="#">đây </a>)</li>
+								<li>2. Tạo chữ ký bằng tool (Tải tool tại <a  href="./download?filename=tool-signature-invoice.jar">đây </a>)</li>
 									<li>3. Upload chữ ký và public key lên  (Nếu chưa có khoá tạo tại  <a  href="createKey">đây </a>)</li>
 										<li>4.  Xác nhận và chờ BQT xử lý trong 24h</li>
 										<li>5.  Theo dõi trạng thái đơn hàng tại  <a  href="orders">đây </a> </li>

@@ -15,7 +15,7 @@ public class Hash {
 
 	public Hash() {
 		
-		this.hash = "SHA-256";
+		this.hash = "SHA-512";
 	}
 
 	public String getHash() {

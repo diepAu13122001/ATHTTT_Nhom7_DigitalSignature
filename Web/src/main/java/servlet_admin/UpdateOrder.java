@@ -83,8 +83,6 @@ public class UpdateOrder extends HttpServlet {
 					customer.getId(), orders.getParent(), idOrder,orders.getCancelTime(),orders.getNote());
 			if (update > -1) {
 				double subTotal = grandTotal - orders.getShipping().getPrice();
-				productDAO.updateStatus(update, "NA");
-				digitalSignatureDAO.updateStatus(orders.getUserId(), orders.getParent(), "FAIL");
 				WritePDF.updateInvoicePDF(nameReciver, phoneNum, email, address, addressDetail,
 						orders.getShipping().getType(), "", orders.getDateCreate(), orderDetails, subTotal,
 						orders.getDiscount(), orders.getShipping().getPrice(), grandTotal,
