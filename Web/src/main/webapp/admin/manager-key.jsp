@@ -22,6 +22,8 @@
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
 	crossorigin="anonymous"></script>
+	<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
 <style>
 .btn {
 	font-size: 0.875rem;
@@ -42,12 +44,12 @@
 						<li class="breadcrumb-item active">Public Key</li>
 					</ol>
 					<div class="container">
-						<div class="main-body">							
+						<div class="main-body">
 							<div class="row">
 								<div class="col-sm-12">
 									<div class="card mb-4">
 										<div class="card-header">
-											<i class="fas fa-table me-1"></i> 
+											<i class="fas fa-table me-1"></i>
 										</div>
 										<div class="card-body">
 											<table id="datatablesSimple">
@@ -58,40 +60,45 @@
 														<th>Public Key (Base64)</th>
 														<th>Ngày tạo</th>
 														<th>Trạng thái</th>
-														
+														<th>Bật /tắt</th>
 
 													</tr>
 												</thead>
 												<tfoot>
 													<tr>
-														<th>Mã hoá đơn</th>
-														<th>Ngày đặt</th>
-														<th>SĐT</th>
-														<th>Địa chỉ</th>
-														<th>Tổng giá trị(VND)</th>
-														
+														<th>Mã khoá</th>
+														<th>Mã khách hàng</th>
+														<th>Public Key (Base64)</th>
+														<th>Ngày tạo</th>
+														<th>Trạng thái</th>
+														<th>Bật /tắt</th>
+
 
 													</tr>
 												</tfoot>
 												<tbody>
-													 <c:forEach items="${publicKeys}" var="publicKey">
-														<tr 
-															style="cursor: pointer;">
+													<c:forEach items="${publicKeys}" var="publicKey">
+														<tr style="cursor: pointer;">
 															<td>${publicKey.id}</td>
 															<td>${publicKey.idUser}</td>
-															<td><input type="text" class="form-control" value=" ${publicKey.publicKeyBase64}"></td>
+															<td><input type="text" class="form-control"
+																value=" ${publicKey.publicKeyBase64}"></td>
 															<td>${publicKey.date_create}</td>
+															<td><c:if test="${publicKey.active ==1}">
+																Đang sử dụng
+															</c:if> <c:if test="${publicKey.active ==0}">
+																Không sử dụng
+															</c:if></td>
 															<td>
 															<c:if test="${publicKey.active ==1}">
-																Đang sử dụng
-															</c:if>
-																<c:if test="${publicKey.active ==0}">
-																Không sử dụng
+																<a style="cursor: pointer;" onclick="submitDisable(${publicKey.idUser},${publicKey.id},0)"><i class="fas fa-lock"></i></a>
+															</c:if> <c:if test="${publicKey.active ==0}">
+																<a style="cursor: pointer;" onclick="submitDisable(${publicKey.idUser},${publicKey.id},1)"><i class="fas fa-unlock"></i></a>
 															</c:if>
 															</td>
 
 														</tr>
-													</c:forEach> 
+													</c:forEach>
 												</tbody>
 											</table>
 
@@ -107,14 +114,58 @@
 		</main>
 	</div>
 	</div>
+	<script src="../js/jquery-3.2.1.min.js"></script>
+	<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 	<script src="../js/addcart.js"></script>
 	<script>
-	 function orderDetail(id) {	
-			window.location.href = "./order-detail-ad?id="+id;
-					 
-		 }
+		function orderDetail(id) {
+			window.location.href = "./order-detail-ad?id=" + id;
+
+		}
+		function submitDisable(userId, id,active) {
+			$.confirm({
+				title : 'Xác nhận!',
+				content : 'Bạn muốn bật/tắt khoá không ?',
+				buttons : {
+					confirm : function() {
+						disableKey(userId, id,active);
+					},
+					cancel : function() {
+						
+					},
+				}
+			});
+			}
+		
+		function disableKey(userId, id, active) {
+			$.ajax({
+				type : "GET",
+				url : "./DisableKey",
+				data:{
+					userId: userId,
+					id: id,
+					active: active
+				},
+				success: function(response) {
+					if (response == 'OK') {
+						if(active == 1){
+							showSwal('success-message', 'Bật khoá thành công');
+						}else{
+							showSwal('success-message', 'Tắt khoá thành công');
+						}
+						
+						setTimeout(function(){location.reload()}, 1500);
+					} else {
+						showSwal('error', '', 'Thất bại')
+					}
+				},
+				error: function() {
+					showSwal('error', '', 'Thất bại')
+				}
+			})
 		}
 	</script>
 	<script

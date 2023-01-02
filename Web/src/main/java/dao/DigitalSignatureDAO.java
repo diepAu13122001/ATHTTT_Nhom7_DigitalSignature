@@ -52,10 +52,10 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
+
 	public boolean updateActive(int userId) {
 		try {
-			PreparedStatement ps = conn.prepareStatement(
-					"update key_user set active = 0 where user_id = ? ");
+			PreparedStatement ps = conn.prepareStatement("update key_user set active = 0 where user_id = ? ");
 			ps.setInt(1, userId);
 			ps.executeUpdate();
 			return true;
@@ -64,6 +64,7 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
+
 	public boolean inserDigitalSignature(int userId, int idOrder, String signature, String publicKey) {
 		try {
 			PreparedStatement ps = conn.prepareStatement(
@@ -80,7 +81,7 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
-	
+
 	public boolean updateDigitalSignature(int userId, int idOrder, String signature, String publicKey) {
 		try {
 			PreparedStatement ps = conn.prepareStatement(
@@ -90,7 +91,7 @@ public class DigitalSignatureDAO {
 			ps.setString(2, publicKey);
 			ps.setInt(3, userId);
 			ps.setInt(4, idOrder);
-			
+
 			ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
@@ -98,6 +99,7 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
+
 	public boolean updateStatus(int userId, int idOrder, String status) {
 		try {
 			PreparedStatement ps = conn.prepareStatement(
@@ -106,7 +108,7 @@ public class DigitalSignatureDAO {
 			ps.setString(1, status);
 			ps.setInt(2, userId);
 			ps.setInt(3, idOrder);
-			
+
 			ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
@@ -114,6 +116,7 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
+
 	public String getHashString(int userId, int ordersId) {
 		try {
 			PreparedStatement ps = conn
@@ -130,7 +133,7 @@ public class DigitalSignatureDAO {
 		return null;
 	}
 
-	public DigitalSignature getDigitalSignature(int idUser,int idOrder) {
+	public DigitalSignature getDigitalSignature(int idUser, int idOrder) {
 		try {
 			PreparedStatement ps = conn
 					.prepareStatement("select * from digital_signature where user_id = ? and order_id = ?");
@@ -151,6 +154,20 @@ public class DigitalSignatureDAO {
 		}
 		return null;
 	}
+	public boolean checkExistPublicKey(int userId, String publicKeyBase64) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("select * from key_user where user_id = ? and public_key like ?");
+			ps.setInt(1, userId);
+			ps.setString(2, publicKeyBase64);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	public boolean checkExistKey(int userId) {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select * from key_user where user_id = ?");
@@ -164,6 +181,7 @@ public class DigitalSignatureDAO {
 		}
 		return false;
 	}
+
 	public List<PublicKey> getPublicKey(int userId) {
 		List<PublicKey> publicKeys = new ArrayList<>();
 		try {
@@ -178,13 +196,14 @@ public class DigitalSignatureDAO {
 				publicKey.setActive(rs.getInt("active"));
 				publicKey.setDate_create(rs.getString("date_create"));
 				publicKeys.add(publicKey);
-				
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return publicKeys ;
+		return publicKeys;
 	}
+
 	public String publicKeyBase64(int userId) {
 		String publicKey = "";
 		try {
@@ -193,13 +212,28 @@ public class DigitalSignatureDAO {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				publicKey = rs.getString("public_key");
-				
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return publicKey ;
+		return publicKey;
 	}
+
+	public boolean updateStatusPublicKey(int userId, int id, int active) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("update key_user set active = ? where user_id = ? and id = ?");
+			ps.setInt(1, active);
+			ps.setInt(2, userId);
+			ps.setInt(3, id);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public static void main(String[] args) throws SQLException {
 		DigitalSignatureDAO digitalSignatureDAO = new DigitalSignatureDAO();
 		System.out.println(digitalSignatureDAO.getDigitalSignature(1000, 63).getStatus());

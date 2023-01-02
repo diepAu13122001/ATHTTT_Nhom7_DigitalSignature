@@ -93,37 +93,30 @@ public class Authentication extends HttpServlet {
 				publicKey = rsaCipher.publicKeyFile(byteUpload[0]);
 			}
 			String publickeyStr = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+
 			Customer customer = (Customer) session.getAttribute("user");
 			String split[] = invoice.split("_");
 			int idOrder = Integer.parseInt(split[split.length - 1]);
 			DigitalSignature ds = digitalSignatureDAO.getDigitalSignature(customer.getId(), idOrder);
-			boolean isInsert = false;
-			if (ds != null) {
-				isInsert = digitalSignatureDAO.updateDigitalSignature(customer.getId(), idOrder, digitalSignature,
-						publickeyStr);
+			boolean isUpdate = false;
+			if (digitalSignatureDAO.checkExistPublicKey(customer.getId(), publickeyStr)) {
+				if (ds != null) {
+					isUpdate = digitalSignatureDAO.updateDigitalSignature(customer.getId(), idOrder, digitalSignature,
+							publickeyStr);
+				} else {
+					isUpdate = digitalSignatureDAO.inserDigitalSignature(customer.getId(), idOrder, digitalSignature,
+							publickeyStr);
+				}
+
+				if (isUpdate) {
+					productDAO.updateStatusOrder(idOrder, "public", "PR");
+					response.sendRedirect("process-order.jsp");
+				}
+
 			} else {
-				isInsert = digitalSignatureDAO.inserDigitalSignature(customer.getId(), idOrder, digitalSignature,
-						publickeyStr);
+				request.setAttribute("status", "Public Key không tồn tại");
+				request.getRequestDispatcher("authentication.jsp?invoice=" + invoice).forward(request, response);
 			}
-
-			if (isInsert) {
-				productDAO.updateStatusOrder(idOrder, "public", "PR");
-				response.sendRedirect("process-order.jsp");
-			}
-
-//			String decryptHash = rsaCipher.decryptText(digitalSignature, publicKey);
-//			
-//			Customer customer = (Customer) session.getAttribute("user");
-//			String split[] = invoice.split("_");
-//			int idOrder = Integer.parseInt(split[split.length - 1]);
-//			String hashInvoice = digitalSignatureDAO.getHashString(customer.getId(), idOrder);
-//			if (hashInvoice.equals(decryptHash)) {
-//				productDAO.updateStatus(idOrder, "NP");
-//				request.setAttribute("authenticateSuccess", "Xác thực thành công");
-//				request.getRequestDispatcher("payment.jsp").forward(request, response);
-//			} else {
-//				response.sendRedirect("authentication-fail.jsp");
-//			}
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | IllegalArgumentException e) {
 			e.printStackTrace();
 			request.setAttribute("status", "Chữ ký hoặc public key không hợp lệ");
