@@ -171,7 +171,8 @@ public class Main extends JFrame {
 				SHA512_Hashing hash = new SHA512_Hashing();
 				RSA_Algorithm rsa = new RSA_Algorithm();
 				String hashFile = hash.hashFile(path);
-				if (this.privatekeyField.getText().equals(File.separator)) {
+				File f = new File(this.privatekeyField.getText());
+				if (f.isFile()) {
 					this.billAfterSignArea.setText(rsa.encryptString(hashFile, this.privatekeyField.getText()));
 				} else {
 					this.billAfterSignArea.setText(rsa.encryptStringWithKeyString(hashFile, this.privatekeyField.getText()));

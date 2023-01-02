@@ -46,7 +46,6 @@ public class RSA_Algorithm {
 		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(data);
 		KeyFactory fact = KeyFactory.getInstance("RSA");
 		return fact.generatePrivate(spec);
-
 	}
 
 	// Please put attention on the extension of the files
@@ -107,6 +106,6 @@ public class RSA_Algorithm {
 
 	public static void main(String[] args) throws Exception {
 		RSA_Algorithm rsa = new RSA_Algorithm();
-		System.out.println(rsa.encode(rsa.loadPrivateKey("C:\\Users\\DELL\\Downloads\\private-key.txt").getEncoded()));
+		System.out.println(rsa.encode(rsa.loadPrivateKey("C:\\Users\\DELL\\Downloads\\private-key-kh.key").getEncoded()));
 	}
 }
